@@ -21,8 +21,8 @@ function App() {
       ])
       const playersData = await playersRes.json()
       const teamsData = await teamsRes.json()
-      setPlayers(playersData)
-      setTeams(teamsData)
+      setPlayers(Array.isArray(playersData) ? playersData : [])
+      setTeams(Array.isArray(teamsData) ? teamsData : [])
     } catch (err) {
       console.error('Error fetching data:', err)
     } finally {
