@@ -1,0 +1,256 @@
+/* ===== THEME VARIABLES ===== */
+:root, [data-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --bg-secondary: #222222;
+  --card-bg: #242424;
+  --accent-orange: #FF6600;
+  --accent-orange-light: #FF8800;
+  --accent-orange-glow: rgba(255, 102, 0, 0.25);
+  --accent-red: #e04040;
+  --primary: #FF6600;
+  --primary-hover: #FF8800;
+  --text-main: #e8e8e8;
+  --text-dim: #999999;
+  --border-color: #3a3a3a;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --input-bg: #2a2a2a;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --overlay: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="light"] {
+  --bg-color: #f0f0f0;
+  --bg-secondary: #e8e8e8;
+  --card-bg: #ffffff;
+  --accent-orange: #E85D00;
+  --accent-orange-light: #FF6600;
+  --accent-orange-glow: rgba(232, 93, 0, 0.15);
+  --accent-red: #cc3333;
+  --primary: #E85D00;
+  --primary-hover: #FF6600;
+  --text-main: #1a1a1a;
+  --text-dim: #666666;
+  --border-color: #d0d0d0;
+  --glass: rgba(0, 0, 0, 0.03);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --input-bg: #f5f5f5;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --overlay: rgba(0, 0, 0, 0.5);
+}
+
+/* ===== BASE ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+/* ===== RANKING CARDS ===== */
+.ranking-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  transition: border-color 0.2s;
+}
+
+.ranking-card:hover {
+  border-color: var(--accent-orange);
+}
+
+.ranking-card h2 {
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ranking-card h2::before {
+  content: "";
+  width: 4px;
+  height: 22px;
+  background: var(--accent-orange);
+  border-radius: 1px;
+}
+
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.player-name {
+  font-weight: 600;
+}
+
+.player-bu {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  background: var(--input-bg);
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-left: 8px;
+}
+
+.score {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  color: var(--accent-orange);
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+.rank-pill {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--input-bg);
+  color: var(--text-dim);
+  margin-right: 8px;
+}
+
+tr:nth-child(1) .rank-pill { background: #FFD700; color: #000; }
+tr:nth-child(2) .rank-pill { background: #C0C0C0; color: #000; }
+tr:nth-child(3) .rank-pill { background: #CD7F32; color: #000; }
+
+.ranking-card.full-width {
+  grid-column: 1 / -1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ===== ANIMATIONS ===== */
+.tab-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== APP WRAPPER ===== */
+.app-wrapper {
+  min-height: 100vh;
+}
+
+/* ===== WELCOME SECTION ===== */
+.welcome-banner {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 2rem;
+}
+
+.welcome-banner h2 {
+  font-size: 1.6rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-main);
+}
+
+.welcome-banner h2::before {
+  display: none;
+}
+
+.welcome-banner p {
+  color: var(--text-dim);
+  margin: 0 0 1.5rem 0;
+}
+
+.welcome-banner .cta-btn {
+  background: var(--accent-orange);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.welcome-banner .cta-btn:hover {
+  background: var(--accent-orange-light);
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.pagination button {
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--accent-orange);
+  color: #fff;
+  border-color: var(--accent-orange);
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}

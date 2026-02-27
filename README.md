@@ -1,51 +1,11 @@
-# Elopingpong
+# Frontend (FE)
 
-This is the main project repository for Elopingpong.
+This directory contains the frontend application for Elopingpong.
 
-## Project Structure
+## Setup
 
-- `be/` - Backend application (submodule)
-- `fe/` - Frontend application (submodule)
+Instructions for setting up and running the frontend will be added here.
 
-## Clone del Repository
+## Technologies
 
-Per clonare correttamente il repository con tutti i submodules:
-
-### Opzione 1: Clone con submodules (consigliato)
-```bash
-git clone --recurse-submodules https://github.com/marco-scarnato/elopingpong.git
-```
-
-### Opzione 2: Clone e inizializzazione manuale
-```bash
-# Clone del repository principale
-git clone https://github.com/marco-scarnato/elopingpong.git
-
-# Entra nella directory del progetto
-cd elopingpong
-
-# Inizializza e aggiorna i submodules
-git submodule update --init --recursive
-```
-
-## Aggiornamento Submodules
-
-Per aggiornare i submodules alle ultime modifiche:
-
-```bash
-# Aggiorna il repository principale
-git pull
-
-# Aggiorna i submodules
-git submodule update --remote --recursive
-```
-
-Oppure in un solo comando:
-
-```bash
-git pull --recurse-submodules
-```
-
-## Getting Started
-
-Please refer to the README files in each subdirectory for specific setup instructions.
+Frontend technologies and frameworks will be documented here.

@@ -1,6 +1,0 @@
-[submodule "be"]
-	path = be
-	url = https://github.com/marco-scarnato/elopingpong-be.git
-[submodule "fe"]
-	path = fe
-	url = https://github.com/marco-scarnato/elopingpong-fe.git
