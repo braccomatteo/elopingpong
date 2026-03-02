@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkToken = async (token) => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/me', {
+      const response = await fetch('/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (name, password) => {
-    const response = await fetch('http://localhost:3000/api/auth/login', {
+    const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, password })
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (name, bu, password) => {
-    const response = await fetch('http://localhost:3000/api/auth/register', {
+    const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, bu, password })
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (updates) => {
     try {
-      const response = await fetch('http://localhost:3000/api/players/profile', {
+      const response = await fetch('/api/players/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

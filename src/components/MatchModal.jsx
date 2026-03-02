@@ -23,7 +23,7 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3000/api/matches', {
+      const response = await fetch('/api/matches', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,20 +81,20 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
           <div className="form-group">
             <label>Punteggio (Tu vs Avversario)</label>
             <div className="score-inputs">
-              <input 
-                type="number" 
-                placeholder="Tu" 
-                value={creatorScore} 
-                onChange={(e) => setCreatorScore(e.target.value)} 
+              <input
+                type="number"
+                placeholder="Tu"
+                value={creatorScore}
+                onChange={(e) => setCreatorScore(e.target.value)}
                 min="0"
                 required
               />
               <span>-</span>
-              <input 
-                type="number" 
-                placeholder="Lui" 
-                value={opponentScore} 
-                onChange={(e) => setOpponentScore(e.target.value)} 
+              <input
+                type="number"
+                placeholder="Lui"
+                value={opponentScore}
+                onChange={(e) => setOpponentScore(e.target.value)}
                 min="0"
                 required
               />

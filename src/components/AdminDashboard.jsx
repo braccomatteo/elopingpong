@@ -40,14 +40,14 @@ const AdminDashboard = ({ players, onUpdate }) => {
   /* ---- Fetch functions ---- */
   const fetchPlayers = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/players');
+      const res = await fetch('/api/players');
       setPlayerList(await res.json());
     } catch (err) { console.error(err); }
   };
 
   const fetchMatches = async (page = 1) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/matches/all?page=${page}&limit=${LIMIT}`, { headers: headers() });
+      const res = await fetch(`/api/matches/all?page=${page}&limit=${LIMIT}`, { headers: headers() });
       const data = await res.json();
       setMatches(data.matches || []);
       setMatchTotalPages(data.totalPages || 1);
@@ -57,7 +57,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
 
   const fetchTeamMatches = async (page = 1) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/team-matches/all?page=${page}&limit=${LIMIT}`, { headers: headers() });
+      const res = await fetch(`/api/team-matches/all?page=${page}&limit=${LIMIT}`, { headers: headers() });
       const data = await res.json();
       setTeamMatches(data.matches || []);
       setTmTotalPages(data.totalPages || 1);
@@ -73,7 +73,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const deletePlayer = async (id) => {
     if (!window.confirm('Eliminare questo giocatore e tutti i suoi match?')) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/players/${id}`, { method: 'DELETE', headers: headers() });
+      const res = await fetch(`/api/players/${id}`, { method: 'DELETE', headers: headers() });
       if (res.ok) { fetchPlayers(); onUpdate(); }
     } catch (err) { console.error(err); }
   };
@@ -81,7 +81,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const deleteMatch = async (id) => {
     if (!window.confirm('Eliminare questo match? I punteggi verranno ricalcolati.')) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/matches/${id}`, { method: 'DELETE', headers: headers() });
+      const res = await fetch(`/api/matches/${id}`, { method: 'DELETE', headers: headers() });
       if (res.ok) { fetchMatches(matchPage); onUpdate(); }
     } catch (err) { console.error(err); }
   };
@@ -89,7 +89,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const deleteTeamMatch = async (id) => {
     if (!window.confirm('Eliminare questo match doppio? I punteggi verranno ricalcolati.')) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/team-matches/${id}`, { method: 'DELETE', headers: headers() });
+      const res = await fetch(`/api/team-matches/${id}`, { method: 'DELETE', headers: headers() });
       if (res.ok) { fetchTeamMatches(tmPage); onUpdate(); }
     } catch (err) { console.error(err); }
   };
@@ -102,7 +102,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
       return;
     }
     try {
-      const res = await fetch('http://localhost:3000/api/matches/admin', {
+      const res = await fetch('/api/matches/admin', {
         method: 'POST',
         headers: jsonHeaders(),
         body: JSON.stringify({ creator_id: sCreatorId, opponent_id: sOpponentId, creator_score: parseInt(sCreatorScore), opponent_score: parseInt(sOpponentScore) })
@@ -127,7 +127,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
     const unique = new Set([dP1, dP2, dP3, dP4]);
     if (unique.size < 4) { setDoublesError('Seleziona 4 giocatori diversi.'); return; }
     try {
-      const res = await fetch('http://localhost:3000/api/team-matches', {
+      const res = await fetch('/api/team-matches', {
         method: 'POST',
         headers: jsonHeaders(),
         body: JSON.stringify({
