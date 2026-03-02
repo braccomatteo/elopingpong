@@ -17,7 +17,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
-      const result = isLogin 
+      const result = isLogin
         ? await login(formData.name, formData.password)
         : await register(formData.name, formData.bu, formData.password);
 
@@ -45,36 +45,45 @@ const AuthModal = ({ isOpen, onClose }) => {
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Nome</label>
-            <input 
-              type="text" 
-              placeholder="es. Marco S." 
+            <input
+              type="text"
+              placeholder="es. Marco S."
               value={formData.name}
-              onChange={e => setFormData({...formData, name: e.target.value})}
-              required 
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
+              required
             />
           </div>
 
           {!isLogin && (
             <div className="input-group">
               <label>Business Unit</label>
-              <input 
-                type="text" 
-                placeholder="es. Engineering" 
+              <select
                 value={formData.bu}
-                onChange={e => setFormData({...formData, bu: e.target.value})}
-                required 
-              />
+                onChange={e => setFormData({ ...formData, bu: e.target.value })}
+                required
+              >
+                <option value="">Seleziona una BU</option>
+                <option value="BU3 - AITE">BU3 - AITE</option>
+                <option value="BU4 - PTE">BU4 - PTE</option>
+                <option value="BU5 - AIBA">BU5 - AIBA</option>
+                <option value="BU6 - PBA">BU6 - PBA</option>
+                <option value="BU7 - AIIN">BU7 - AIIN</option>
+                <option value="BU8 - PIN">BU8 - PIN</option>
+                <option value="BU9 - QOA">BU9 - QOA</option>
+                <option value="BU10 - DGO">BU10 - DGO</option>
+                <option value="ALTRO">ALTRO</option>
+              </select>
             </div>
           )}
 
           <div className="input-group">
             <label>Password</label>
-            <input 
-              type="password" 
-              placeholder="••••••••" 
+            <input
+              type="password"
+              placeholder="••••••••"
               value={formData.password}
-              onChange={e => setFormData({...formData, password: e.target.value})}
-              required 
+              onChange={e => setFormData({ ...formData, password: e.target.value })}
+              required
             />
           </div>
 
