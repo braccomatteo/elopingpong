@@ -75,7 +75,8 @@
   letter-spacing: 0.5px;
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
   width: 100%;
   padding: 0.7rem 0.8rem;
   background: var(--input-bg);
@@ -88,7 +89,8 @@
   box-sizing: border-box;
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.input-group select:focus {
   border-color: var(--accent-orange);
 }
 

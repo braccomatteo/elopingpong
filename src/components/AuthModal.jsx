@@ -63,6 +63,8 @@ const AuthModal = ({ isOpen, onClose }) => {
                 required
               >
                 <option value="">Seleziona una BU</option>
+                <option value="BU1 - AIFR">BU1 - AIFR</option>
+                <option value="BU2 - PFR">BU2 - PFR</option>
                 <option value="BU3 - AITE">BU3 - AITE</option>
                 <option value="BU4 - PTE">BU4 - PTE</option>
                 <option value="BU5 - AIBA">BU5 - AIBA</option>
