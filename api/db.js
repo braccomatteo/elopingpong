@@ -1,8 +1,10 @@
 const { Pool } = require('pg');
 
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('neon.tech') ? { rejectUnauthorized: false } : false,
+  connectionString,
+  ssl: process.env.NODE_ENV === 'production' || connectionString?.includes('neon.tech') ? { rejectUnauthorized: false } : false,
 });
 
 module.exports = {
