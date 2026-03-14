@@ -28,7 +28,7 @@ const MatchHistory = ({ matches = [] }) => {
             const rightSide = isDouble ? `${m.op1_name} & ${m.op2_name}` : m.op1_name;
             return (
               <tr key={`${m.match_type}-${m.id}`}>
-                <td>{new Date(m.created_at).toLocaleString([], { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                <td>{new Date(m.created_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                 <td>{isDouble ? '2v2' : '1v1'} {m.points_type}pt</td>
                 <td>{leftSide} <span style={{ color: 'var(--accent-orange)' }}>vs</span> {rightSide}</td>
                 <td className="score">{m.t1_score} - {m.t2_score}</td>
