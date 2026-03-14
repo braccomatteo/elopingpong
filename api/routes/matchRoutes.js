@@ -3,7 +3,11 @@ const router = express.Router();
 const matchController = require('../controllers/matchController');
 const { authMiddleware, adminOnly } = require('../middleware/authMiddleware');
 
-// Apply auth middleware to all match routes
+// Public routes
+router.get('/history', matchController.getUnifiedHistory);
+router.get('/history/player/:playerId', matchController.getPlayerHistory);
+
+// Apply auth middleware to all remaining match routes
 router.use(authMiddleware);
 
 router.post('/', matchController.createMatch);

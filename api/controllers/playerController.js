@@ -3,7 +3,7 @@ const db = require('../db');
 exports.getAllPlayers = async (req, res) => {
   try {
     const result = await db.query(
-      "SELECT id, name, bu, role, score_21 FROM players WHERE role != 'admin' ORDER BY score_21 DESC"
+      "SELECT id, name, bu, role, score_overall, score_1v1_21, score_1v1_11, score_2v2_21, score_2v2_11, score_21 FROM players WHERE role != 'admin' ORDER BY score_overall DESC"
     );
     res.json(result.rows);
   } catch (err) {
@@ -50,8 +50,10 @@ exports.updateProfile = async (req, res) => {
       values.push(bu);
     }
     if (password) {
+      const bcrypt = require('bcryptjs');
+      const hashedPassword = await bcrypt.hash(password, 10);
       fields.push(`password = $${idx++}`);
-      values.push(password);
+      values.push(hashedPassword);
     }
 
     values.push(userId);

@@ -3,9 +3,6 @@ const router = express.Router();
 const teamMatchController = require('../controllers/teamMatchController');
 const { authMiddleware, adminOnly } = require('../middleware/authMiddleware');
 
-// Public: get all teams
-router.get('/teams', teamMatchController.getAllTeams);
-
 // Protected: create a team match
 router.post('/', authMiddleware, teamMatchController.createTeamMatch);
 

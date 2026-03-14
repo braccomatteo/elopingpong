@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const db = require('../db');
 
 const register = async (req, res) => {
@@ -9,13 +10,14 @@ const register = async (req, res) => {
   }
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const result = await db.query(
-      'INSERT INTO players (name, bu, password, role, score_21) VALUES ($1, $2, $3, \'player\', 1000) RETURNING id, name, bu, role',
-      [name, bu, password]
+      'INSERT INTO players (name, bu, password, role) VALUES ($1, $2, $3, \'player\') RETURNING id, name, bu, role',
+      [name, bu, hashedPassword]
     );
     
     const user = result.rows[0];
-    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({ user, token });
   } catch (err) {
@@ -37,11 +39,16 @@ const login = async (req, res) => {
     const result = await db.query('SELECT * FROM players WHERE name = $1', [name]);
     const user = result.rows[0];
 
-    if (!user || user.password !== password) {
+    if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '7d' });
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign({ id: user.id, name: user.name, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
       user: { id: user.id, name: user.name, bu: user.bu, role: user.role },

@@ -7,22 +7,18 @@ import './Rankings.css'
 
 function App() {
   const [players, setPlayers] = useState([])
-  const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('singles21')
+  const [activeTab, setActiveTab] = useState('overall')
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
   const { user } = useAuth()
 
   const fetchData = async () => {
     try {
-      const [playersRes, teamsRes] = await Promise.all([
-        fetch('/api/players'),
-        fetch('/api/team-matches/teams')
+      const [playersRes] = await Promise.all([
+        fetch('/api/players')
       ])
       const playersData = await playersRes.json()
-      const teamsData = await teamsRes.json()
       setPlayers(Array.isArray(playersData) ? playersData : [])
-      setTeams(Array.isArray(teamsData) ? teamsData : [])
     } catch (err) {
       console.error('Error fetching data:', err)
     } finally {
@@ -36,8 +32,12 @@ function App() {
 
   if (loading) return <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}><h1>Loading rankings...</h1></div>
 
-  const players21 = [...players].sort((a, b) => b.score_21 - a.score_21)
-  const sortedTeams = [...teams].sort((a, b) => b.score_21 - a.score_21)
+  const playersOverall = [...players].sort((a, b) => b.score_overall - a.score_overall)
+  const players1v1_21 = [...players].sort((a, b) => b.score_1v1_21 - a.score_1v1_21)
+  const players1v1_11 = [...players].sort((a, b) => b.score_1v1_11 - a.score_1v1_11)
+
+  const players2v2_21 = [...players].sort((a, b) => b.score_2v2_21 - a.score_2v2_21)
+  const players2v2_11 = [...players].sort((a, b) => b.score_2v2_11 - a.score_2v2_11)
 
   return (
     <div className="app-wrapper">
@@ -69,9 +69,9 @@ function App() {
         )}
 
         <div className="tab-content">
-          {activeTab === 'singles21' && (
+          {activeTab === 'overall' && (
             <section className="ranking-card full-width">
-              <h2>Singles (21 pts)</h2>
+              <h2>Overall Ranking</h2>
               <table>
                 <thead>
                   <tr>
@@ -81,14 +81,14 @@ function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {players21.length > 0 ? players21.map((p, i) => (
+                  {playersOverall.length > 0 ? playersOverall.map((p, i) => (
                     <tr key={p.id}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{p.score_21}</td>
+                      <td className="score">{p.score_overall}</td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -96,27 +96,109 @@ function App() {
             </section>
           )}
 
-          {activeTab === 'doubles' && (
+          {activeTab === '1v1_21' && (
             <section className="ranking-card full-width">
-              <h2>Doubles (21 pts)</h2>
+              <h2>1v1 (21 Punti)</h2>
               <table>
                 <thead>
                   <tr>
                     <th>Rank</th>
-                    <th>Team</th>
+                    <th>Player</th>
                     <th>ELO</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedTeams.length > 0 ? sortedTeams.map((t, i) => (
-                    <tr key={t.id}>
+                  {players1v1_21.length > 0 ? players1v1_21.map((p, i) => (
+                    <tr key={p.id}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <div className="player-name">{t.p1_name} & {t.p2_name}</div>
+                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{t.score_21}</td>
+                      <td className="score">{p.score_1v1_21}</td>
                     </tr>
-                  )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun team registrato</td></tr>}
+                  )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
+                </tbody>
+              </table>
+            </section>
+          )}
+
+          {activeTab === '1v1_11' && (
+            <section className="ranking-card full-width">
+              <h2>1v1 (11 Punti)</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>ELO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {players1v1_11.length > 0 ? players1v1_11.map((p, i) => (
+                    <tr key={p.id}>
+                      <td><span className="rank-pill">{i + 1}</span></td>
+                      <td>
+                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-bu">{p.bu}</span>
+                      </td>
+                      <td className="score">{p.score_1v1_11}</td>
+                    </tr>
+                  )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
+                </tbody>
+              </table>
+            </section>
+          )}
+
+          {activeTab === '2v2_21' && (
+            <section className="ranking-card full-width">
+              <h2>2v2 (21 Punti)</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>ELO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {players2v2_21.length > 0 ? players2v2_21.map((p, i) => (
+                    <tr key={p.id}>
+                      <td><span className="rank-pill">{i + 1}</span></td>
+                      <td>
+                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-bu">{p.bu}</span>
+                      </td>
+                      <td className="score">{p.score_2v2_21}</td>
+                    </tr>
+                  )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
+                </tbody>
+              </table>
+            </section>
+          )}
+
+          {activeTab === '2v2_11' && (
+            <section className="ranking-card full-width">
+              <h2>2v2 (11 Punti)</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>ELO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {players2v2_11.length > 0 ? players2v2_11.map((p, i) => (
+                    <tr key={p.id}>
+                      <td><span className="rank-pill">{i + 1}</span></td>
+                      <td>
+                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-bu">{p.bu}</span>
+                      </td>
+                      <td className="score">{p.score_2v2_11}</td>
+                    </tr>
+                  )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
             </section>

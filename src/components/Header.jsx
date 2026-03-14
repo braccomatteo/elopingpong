@@ -18,21 +18,39 @@ const Header = ({ activeTab, onTabChange }) => {
         </div>
 
         <div className="tabs">
-          <button 
-            className={`tab-btn ${activeTab === 'singles21' ? 'active' : ''}`}
-            onClick={() => onTabChange('singles21')}
+          <button
+            className={`tab-btn ${activeTab === 'overall' ? 'active' : ''}`}
+            onClick={() => onTabChange('overall')}
           >
-            Singles
+            Overall
           </button>
-          <button 
-            className={`tab-btn ${activeTab === 'doubles' ? 'active' : ''}`}
-            onClick={() => onTabChange('doubles')}
+          <button
+            className={`tab-btn ${activeTab === '1v1_21' ? 'active' : ''}`}
+            onClick={() => onTabChange('1v1_21')}
           >
-            Doubles
+            1v1 (21)
           </button>
-          
+          <button
+            className={`tab-btn ${activeTab === '1v1_11' ? 'active' : ''}`}
+            onClick={() => onTabChange('1v1_11')}
+          >
+            1v1 (11)
+          </button>
+          <button
+            className={`tab-btn ${activeTab === '2v2_21' ? 'active' : ''}`}
+            onClick={() => onTabChange('2v2_21')}
+          >
+            2v2 (21)
+          </button>
+          <button
+            className={`tab-btn ${activeTab === '2v2_11' ? 'active' : ''}`}
+            onClick={() => onTabChange('2v2_11')}
+          >
+            2v2 (11)
+          </button>
+
           {user?.role === 'admin' && (
-            <button 
+            <button
               className={`tab-btn admin-link ${activeTab === 'admin' ? 'active' : ''}`}
               onClick={() => onTabChange('admin')}
             >

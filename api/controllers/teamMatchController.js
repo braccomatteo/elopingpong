@@ -1,42 +1,42 @@
 const db = require('../db');
 
-// Helper: find or create a team for two players (order-independent)
-const getOrCreateTeam = async (p1_id, p2_id) => {
-  // Always store in sorted order so (A,B) === (B,A)
-  const [first, second] = [p1_id, p2_id].sort();
-
-  const existing = await db.query(
-    'SELECT * FROM teams WHERE player1_id = $1 AND player2_id = $2',
-    [first, second]
-  );
-
-  if (existing.rows.length > 0) {
-    return existing.rows[0];
-  }
-
-  const result = await db.query(
-    'INSERT INTO teams (player1_id, player2_id, score_21) VALUES ($1, $2, 1000) RETURNING *',
-    [first, second]
-  );
-  return result.rows[0];
-};
-
 const recalculateTeamScores = async () => {
   try {
     await db.query('BEGIN');
-    await db.query('UPDATE teams SET score_21 = 1000');
+
+    // Reset all 2v2 scores to 1000 (score_overall is recalculated separately)
+    await db.query("UPDATE players SET score_2v2_21 = 1000, score_2v2_11 = 1000 WHERE role != 'admin'");
 
     const matches = await db.query(
-      'SELECT * FROM team_matches ORDER BY created_at ASC'
+      'SELECT * FROM team_matches ORDER BY created_at ASC, id ASC'
     );
 
     for (const match of matches.rows) {
-      const winnerId = match.team_score > match.opponent_score ? match.team_id : match.opponent_team_id;
-      const loserId = match.team_score > match.opponent_score ? match.opponent_team_id : match.team_id;
+      const isTeam1Winner = match.team_score > match.opponent_score;
+      const specificField = match.points_type === 11 ? 'score_2v2_11' : 'score_2v2_21';
 
-      await db.query('UPDATE teams SET score_21 = score_21 + 100 WHERE id = $1', [winnerId]);
-      await db.query('UPDATE teams SET score_21 = GREATEST(score_21 - 50, 0) WHERE id = $1', [loserId]);
+      const t1p1 = match.p1_id;
+      const t1p2 = match.p2_id;
+      const t2p1 = match.op1_id;
+      const t2p2 = match.op2_id;
+
+      // Update specific 2v2 points type score for individuals
+      if (isTeam1Winner) {
+        await db.query(`UPDATE players SET ${specificField} = ${specificField} + 100 WHERE id IN ($1, $2)`, [t1p1, t1p2]);
+        await db.query(`UPDATE players SET ${specificField} = GREATEST(${specificField} - 50, 0) WHERE id IN ($1, $2)`, [t2p1, t2p2]);
+      } else {
+        await db.query(`UPDATE players SET ${specificField} = ${specificField} + 100 WHERE id IN ($1, $2)`, [t2p1, t2p2]);
+        await db.query(`UPDATE players SET ${specificField} = GREATEST(${specificField} - 50, 0) WHERE id IN ($1, $2)`, [t1p1, t1p2]);
+      }
     }
+
+    // Recalculate score_overall from all category scores
+    await db.query(`
+      UPDATE players SET score_overall = (
+        (score_1v1_21 - 1000) + (score_1v1_11 - 1000) +
+        (score_2v2_21 - 1000) + (score_2v2_11 - 1000)
+      ) + 1000 WHERE role != 'admin'
+    `);
 
     await db.query('COMMIT');
   } catch (err) {
@@ -47,7 +47,7 @@ const recalculateTeamScores = async () => {
 };
 
 exports.createTeamMatch = async (req, res) => {
-  const { p1_id, p2_id, op1_id, op2_id, team_score, opponent_score } = req.body;
+  const { p1_id, p2_id, op1_id, op2_id, team_score, opponent_score, points_type } = req.body;
 
   const allIds = [p1_id, p2_id, op1_id, op2_id];
   const unique = new Set(allIds);
@@ -64,15 +64,12 @@ exports.createTeamMatch = async (req, res) => {
   }
 
   try {
-    const team = await getOrCreateTeam(p1_id, p2_id);
-    const opponentTeam = await getOrCreateTeam(op1_id, op2_id);
-
-    const winnerId = team_score > opponent_score ? team.id : opponentTeam.id;
+    const matchPointsType = points_type === 11 ? 11 : 21;
 
     await db.query(
-      `INSERT INTO team_matches (team_id, opponent_team_id, team_score, opponent_score, winner_id)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [team.id, opponentTeam.id, team_score, opponent_score, winnerId]
+      `INSERT INTO team_matches (p1_id, p2_id, op1_id, op2_id, team_score, opponent_score, points_type)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [p1_id, p2_id, op1_id, op2_id, team_score, opponent_score, matchPointsType]
     );
 
     await recalculateTeamScores();
@@ -93,15 +90,13 @@ exports.getAllTeamMatches = async (req, res) => {
 
     const result = await db.query(`
       SELECT tm.*,
-        t1p1.name as t1_p1_name, t1p2.name as t1_p2_name,
-        t2p1.name as t2_p1_name, t2p2.name as t2_p2_name
+        p1.name as t1_p1_name, p2.name as t1_p2_name,
+        op1.name as t2_p1_name, op2.name as t2_p2_name
       FROM team_matches tm
-      JOIN teams t1 ON tm.team_id = t1.id
-      JOIN teams t2 ON tm.opponent_team_id = t2.id
-      JOIN players t1p1 ON t1.player1_id = t1p1.id
-      JOIN players t1p2 ON t1.player2_id = t1p2.id
-      JOIN players t2p1 ON t2.player1_id = t2p1.id
-      JOIN players t2p2 ON t2.player2_id = t2p2.id
+      JOIN players p1 ON tm.p1_id = p1.id
+      JOIN players p2 ON tm.p2_id = p2.id
+      JOIN players op1 ON tm.op1_id = op1.id
+      JOIN players op2 ON tm.op2_id = op2.id
       ORDER BY tm.created_at DESC
       LIMIT $1 OFFSET $2
     `, [limit, offset]);
@@ -123,21 +118,6 @@ exports.deleteTeamMatch = async (req, res) => {
     await db.query('DELETE FROM team_matches WHERE id = $1', [id]);
     await recalculateTeamScores();
     res.json({ message: 'Match doppio eliminato e punteggi ricalcolati.' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-exports.getAllTeams = async (req, res) => {
-  try {
-    const result = await db.query(`
-      SELECT t.*, p1.name as p1_name, p2.name as p2_name 
-      FROM teams t
-      JOIN players p1 ON t.player1_id = p1.id
-      JOIN players p2 ON t.player2_id = p2.id
-      ORDER BY t.score_21 DESC
-    `);
-    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -14,26 +14,27 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const [playerList, setPlayerList] = useState([]);
 
   /* ---- Singles state ---- */
-  const [matches, setMatches] = useState([]);
-  const [matchPage, setMatchPage] = useState(1);
-  const [matchTotalPages, setMatchTotalPages] = useState(1);
   const [sCreatorId, setSCreatorId] = useState('');
   const [sOpponentId, setSOpponentId] = useState('');
   const [sCreatorScore, setSCreatorScore] = useState('');
   const [sOpponentScore, setSOpponentScore] = useState('');
+  const [sPointsType, setSPointsType] = useState('21');
   const [singlesError, setSinglesError] = useState('');
 
   /* ---- Doubles state ---- */
-  const [teamMatches, setTeamMatches] = useState([]);
-  const [tmPage, setTmPage] = useState(1);
-  const [tmTotalPages, setTmTotalPages] = useState(1);
   const [dP1, setDP1] = useState('');
   const [dP2, setDP2] = useState('');
   const [dP3, setDP3] = useState('');
   const [dP4, setDP4] = useState('');
   const [dScore1, setDScore1] = useState('');
   const [dScore2, setDScore2] = useState('');
+  const [dPointsType, setDPointsType] = useState('21');
   const [doublesError, setDoublesError] = useState('');
+
+  /* ---- Unified History state ---- */
+  const [historyMatches, setHistoryMatches] = useState([]);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyTotalPages, setHistoryTotalPages] = useState(1);
 
   const [loading, setLoading] = useState(true);
 
@@ -45,28 +46,18 @@ const AdminDashboard = ({ players, onUpdate }) => {
     } catch (err) { console.error(err); }
   };
 
-  const fetchMatches = async (page = 1) => {
+  const fetchHistory = async (page = 1) => {
     try {
-      const res = await fetch(`/api/matches/all?page=${page}&limit=${LIMIT}`, { headers: headers() });
+      const res = await fetch(`/api/matches/history?page=${page}&limit=${LIMIT}`, { headers: headers() });
       const data = await res.json();
-      setMatches(data.matches || []);
-      setMatchTotalPages(data.totalPages || 1);
-      setMatchPage(data.page || 1);
-    } catch (err) { console.error(err); }
-  };
-
-  const fetchTeamMatches = async (page = 1) => {
-    try {
-      const res = await fetch(`/api/team-matches/all?page=${page}&limit=${LIMIT}`, { headers: headers() });
-      const data = await res.json();
-      setTeamMatches(data.matches || []);
-      setTmTotalPages(data.totalPages || 1);
-      setTmPage(data.page || 1);
+      setHistoryMatches(data.matches || []);
+      setHistoryTotalPages(data.totalPages || 1);
+      setHistoryPage(data.page || 1);
     } catch (err) { console.error(err); }
   };
 
   useEffect(() => {
-    Promise.all([fetchPlayers(), fetchMatches(), fetchTeamMatches()]).finally(() => setLoading(false));
+    Promise.all([fetchPlayers(), fetchHistory()]).finally(() => setLoading(false));
   }, []);
 
   /* ---- Delete handlers ---- */
@@ -78,19 +69,12 @@ const AdminDashboard = ({ players, onUpdate }) => {
     } catch (err) { console.error(err); }
   };
 
-  const deleteMatch = async (id) => {
+  const deleteMatch = async (id, isDouble) => {
     if (!window.confirm('Eliminare questo match? I punteggi verranno ricalcolati.')) return;
     try {
-      const res = await fetch(`/api/matches/${id}`, { method: 'DELETE', headers: headers() });
-      if (res.ok) { fetchMatches(matchPage); onUpdate(); }
-    } catch (err) { console.error(err); }
-  };
-
-  const deleteTeamMatch = async (id) => {
-    if (!window.confirm('Eliminare questo match doppio? I punteggi verranno ricalcolati.')) return;
-    try {
-      const res = await fetch(`/api/team-matches/${id}`, { method: 'DELETE', headers: headers() });
-      if (res.ok) { fetchTeamMatches(tmPage); onUpdate(); }
+      const endpoint = isDouble ? `/api/team-matches/${id}` : `/api/matches/${id}`;
+      const res = await fetch(endpoint, { method: 'DELETE', headers: headers() });
+      if (res.ok) { fetchHistory(historyPage); onUpdate(); }
     } catch (err) { console.error(err); }
   };
 
@@ -105,11 +89,11 @@ const AdminDashboard = ({ players, onUpdate }) => {
       const res = await fetch('/api/matches/admin', {
         method: 'POST',
         headers: jsonHeaders(),
-        body: JSON.stringify({ creator_id: sCreatorId, opponent_id: sOpponentId, creator_score: parseInt(sCreatorScore), opponent_score: parseInt(sOpponentScore) })
+        body: JSON.stringify({ creator_id: sCreatorId, opponent_id: sOpponentId, creator_score: parseInt(sCreatorScore), opponent_score: parseInt(sOpponentScore), points_type: parseInt(sPointsType) })
       });
       if (res.ok) {
         setSCreatorId(''); setSOpponentId(''); setSCreatorScore(''); setSOpponentScore(''); setSinglesError('');
-        fetchMatches(1); onUpdate();
+        fetchHistory(1); onUpdate();
       } else {
         const data = await res.json();
         setSinglesError(data.error || 'Errore durante la creazione.');
@@ -133,12 +117,13 @@ const AdminDashboard = ({ players, onUpdate }) => {
         body: JSON.stringify({
           p1_id: dP1, p2_id: dP2,
           op1_id: dP3, op2_id: dP4,
-          team_score: parseInt(dScore1), opponent_score: parseInt(dScore2)
+          team_score: parseInt(dScore1), opponent_score: parseInt(dScore2),
+          points_type: parseInt(dPointsType)
         })
       });
       if (res.ok) {
         setDP1(''); setDP2(''); setDP3(''); setDP4(''); setDScore1(''); setDScore2(''); setDoublesError('');
-        fetchTeamMatches(1); onUpdate();
+        fetchHistory(1); onUpdate();
       } else {
         const data = await res.json();
         setDoublesError(data.error || 'Errore durante la creazione.');
@@ -155,10 +140,13 @@ const AdminDashboard = ({ players, onUpdate }) => {
           Giocatori
         </button>
         <button className={`admin-tab-btn ${adminTab === 'singles' ? 'active' : ''}`} onClick={() => setAdminTab('singles')}>
-          Partite 21
+          Ins. Singolo
         </button>
         <button className={`admin-tab-btn ${adminTab === 'doubles' ? 'active' : ''}`} onClick={() => setAdminTab('doubles')}>
-          Partite Doppie
+          Ins. Doppio
+        </button>
+        <button className={`admin-tab-btn ${adminTab === 'history' ? 'active' : ''}`} onClick={() => setAdminTab('history')}>
+          Storico Match
         </button>
       </div>
 
@@ -171,14 +159,18 @@ const AdminDashboard = ({ players, onUpdate }) => {
           ) : (
             <table className="admin-table">
               <thead>
-                <tr><th>Nome</th><th>BU</th><th>ELO</th><th>Azioni</th></tr>
+                <tr><th>Nome</th><th>BU</th><th>Overall</th><th>1v1 21</th><th>1v1 11</th><th>2v2 21</th><th>2v2 11</th><th>Azioni</th></tr>
               </thead>
               <tbody>
                 {playerList.map(p => (
                   <tr key={p.id}>
                     <td>{p.name}</td>
                     <td>{p.bu}</td>
-                    <td className="score">{p.score_21}</td>
+                    <td className="score">{p.score_overall}</td>
+                    <td className="score">{p.score_1v1_21}</td>
+                    <td className="score">{p.score_1v1_11}</td>
+                    <td className="score">{p.score_2v2_21}</td>
+                    <td className="score">{p.score_2v2_11}</td>
                     <td><button className="delete-btn" onClick={() => deletePlayer(p.id)}>Elimina</button></td>
                   </tr>
                 ))}
@@ -209,35 +201,13 @@ const AdminDashboard = ({ players, onUpdate }) => {
               <div className="form-row">
                 <input type="number" placeholder="Punti G1" value={sCreatorScore} onChange={e => setSCreatorScore(e.target.value)} min="0" required />
                 <input type="number" placeholder="Punti G2" value={sOpponentScore} onChange={e => setSOpponentScore(e.target.value)} min="0" required />
+                <select value={sPointsType} onChange={e => setSPointsType(e.target.value)} style={{ width: 'auto' }}>
+                  <option value="21">21 pt</option>
+                  <option value="11">11 pt</option>
+                </select>
               </div>
               <button type="submit" className="submit-btn">Registra Match</button>
             </form>
-          </section>
-
-          <section className="ranking-card" style={{ marginTop: '1.5rem' }}>
-            <h2>Storico Partite Singolo</h2>
-            {matches.length === 0 ? (
-              <div className="empty-state">Nessuna partita registrata.</div>
-            ) : (
-              <>
-                <table className="admin-table">
-                  <thead>
-                    <tr><th>Data</th><th>Giocatori</th><th>Risultato</th><th>Azioni</th></tr>
-                  </thead>
-                  <tbody>
-                    {matches.map(m => (
-                      <tr key={m.id}>
-                        <td>{new Date(m.created_at).toLocaleDateString()}</td>
-                        <td>{m.creator_name} vs {m.opponent_name}</td>
-                        <td className="score">{m.creator_score} - {m.opponent_score}</td>
-                        <td><button className="delete-btn" onClick={() => deleteMatch(m.id)}>Elimina</button></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <Pagination page={matchPage} totalPages={matchTotalPages} onPageChange={(p) => fetchMatches(p)} />
-              </>
-            )}
           </section>
         </>
       )}
@@ -273,38 +243,50 @@ const AdminDashboard = ({ players, onUpdate }) => {
               <div className="form-row">
                 <input type="number" placeholder="Punti Team 1" value={dScore1} onChange={e => setDScore1(e.target.value)} min="0" required />
                 <input type="number" placeholder="Punti Team 2" value={dScore2} onChange={e => setDScore2(e.target.value)} min="0" required />
+                <select value={dPointsType} onChange={e => setDPointsType(e.target.value)} style={{ width: 'auto' }}>
+                  <option value="21">21 pt</option>
+                  <option value="11">11 pt</option>
+                </select>
               </div>
               <button type="submit" className="submit-btn">Registra Match Doppio</button>
             </form>
           </section>
-
-          <section className="ranking-card" style={{ marginTop: '1.5rem' }}>
-            <h2>Storico Partite Doppie</h2>
-            {teamMatches.length === 0 ? (
-              <div className="empty-state">Nessuna partita doppia registrata.</div>
-            ) : (
-              <>
-                <table className="admin-table">
-                  <thead>
-                    <tr><th>Data</th><th>Team 1</th><th>Team 2</th><th>Risultato</th><th>Azioni</th></tr>
-                  </thead>
-                  <tbody>
-                    {teamMatches.map(m => (
-                      <tr key={m.id}>
-                        <td>{new Date(m.created_at).toLocaleDateString()}</td>
-                        <td>{m.t1_p1_name} & {m.t1_p2_name}</td>
-                        <td>{m.t2_p1_name} & {m.t2_p2_name}</td>
-                        <td className="score">{m.team_score} - {m.opponent_score}</td>
-                        <td><button className="delete-btn" onClick={() => deleteTeamMatch(m.id)}>Elimina</button></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <Pagination page={tmPage} totalPages={tmTotalPages} onPageChange={(p) => fetchTeamMatches(p)} />
-              </>
-            )}
-          </section>
         </>
+      )}
+
+      {/* ===================== TAB: STORICO UNIFICATO ===================== */}
+      {adminTab === 'history' && (
+        <section className="ranking-card">
+          <h2>Storico Partite (Singoli e Doppi)</h2>
+          {historyMatches.length === 0 ? (
+            <div className="empty-state">Nessun match registrato.</div>
+          ) : (
+            <>
+              <table className="admin-table">
+                <thead>
+                  <tr><th>Data</th><th>Tipo</th><th>Sfida</th><th>Risultato</th><th>Azioni</th></tr>
+                </thead>
+                <tbody>
+                  {historyMatches.map(m => {
+                    const isDouble = m.match_type === 'doubles';
+                    const leftSide = isDouble ? `${m.p1_name} & ${m.p2_name}` : m.p1_name;
+                    const rightSide = isDouble ? `${m.op1_name} & ${m.op2_name}` : m.op1_name;
+                    return (
+                      <tr key={m.id}>
+                        <td>{new Date(m.created_at).toLocaleString([], { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                        <td>{m.points_type} pt</td>
+                        <td>{leftSide} <span style={{ color: 'var(--accent-orange)' }}>vs</span> {rightSide}</td>
+                        <td className="score">{m.t1_score} - {m.t2_score}</td>
+                        <td><button className="delete-btn" onClick={() => deleteMatch(m.id, isDouble)}>Elimina</button></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <Pagination page={historyPage} totalPages={historyTotalPages} onPageChange={(p) => fetchHistory(p)} />
+            </>
+          )}
+        </section>
       )}
     </div>
   );
