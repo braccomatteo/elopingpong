@@ -1,38 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Pagination from './Pagination';
 
 const LIMIT = 20;
 
-const MatchHistory = ({ matchType, pointsType }) => {
-  const [matches, setMatches] = useState([]);
+const MatchHistory = ({ matches = [] }) => {
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  const fetchHistory = async (p = 1) => {
-    try {
-      const params = new URLSearchParams({ page: p, limit: LIMIT });
-      if (matchType) params.set('match_type', matchType);
-      if (pointsType) params.set('points_type', pointsType);
-
-      const res = await fetch(`/api/matches/history?${params}`);
-      const data = await res.json();
-      setMatches(data.matches || []);
-      setTotalPages(data.totalPages || 1);
-      setPage(data.page || 1);
-    } catch (err) {
-      console.error('Error fetching history:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    fetchHistory(1);
-  }, [matchType, pointsType]);
-
-  if (loading) return <div style={{ textAlign: 'center', padding: '1rem', opacity: 0.6 }}>Caricamento storico...</div>;
+  const totalPages = Math.ceil(matches.length / LIMIT);
+  const paginated = matches.slice((page - 1) * LIMIT, page * LIMIT);
 
   if (matches.length === 0) return <div style={{ textAlign: 'center', padding: '1rem', opacity: 0.6 }}>Nessun match registrato.</div>;
 
@@ -48,7 +22,7 @@ const MatchHistory = ({ matchType, pointsType }) => {
           </tr>
         </thead>
         <tbody>
-          {matches.map(m => {
+          {paginated.map(m => {
             const isDouble = m.match_type === 'doubles';
             const leftSide = isDouble ? `${m.p1_name} & ${m.p2_name}` : m.p1_name;
             const rightSide = isDouble ? `${m.op1_name} & ${m.op2_name}` : m.op1_name;
@@ -63,7 +37,7 @@ const MatchHistory = ({ matchType, pointsType }) => {
           })}
         </tbody>
       </table>
-      <Pagination page={page} totalPages={totalPages} onPageChange={(p) => fetchHistory(p)} />
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   );
 };

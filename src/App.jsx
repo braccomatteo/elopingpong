@@ -8,6 +8,7 @@ import './Rankings.css'
 
 function App() {
   const [players, setPlayers] = useState([])
+  const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overall')
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
@@ -15,11 +16,14 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const [playersRes] = await Promise.all([
-        fetch('/api/players')
+      const [playersRes, historyRes] = await Promise.all([
+        fetch('/api/players'),
+        fetch('/api/matches/history?limit=200')
       ])
       const playersData = await playersRes.json()
+      const historyData = await historyRes.json()
       setPlayers(Array.isArray(playersData) ? playersData : [])
+      setMatches(Array.isArray(historyData.matches) ? historyData.matches : [])
     } catch (err) {
       console.error('Error fetching data:', err)
     } finally {
@@ -39,6 +43,12 @@ function App() {
 
   const players2v2_21 = [...players].sort((a, b) => b.score_2v2_21 - a.score_2v2_21)
   const players2v2_11 = [...players].sort((a, b) => b.score_2v2_11 - a.score_2v2_11)
+
+  const matchesAll = matches
+  const matches1v1_21 = matches.filter(m => m.match_type === 'singles' && m.points_type === 21)
+  const matches1v1_11 = matches.filter(m => m.match_type === 'singles' && m.points_type === 11)
+  const matches2v2_21 = matches.filter(m => m.match_type === 'doubles' && m.points_type === 21)
+  const matches2v2_11 = matches.filter(m => m.match_type === 'doubles' && m.points_type === 11)
 
   return (
     <div className="app-wrapper">
@@ -95,7 +105,7 @@ function App() {
                 </tbody>
               </table>
               <h2 style={{ marginTop: '2rem' }}>Storico Partite</h2>
-              <MatchHistory />
+              <MatchHistory matches={matchesAll} />
             </section>
           )}
 
@@ -124,7 +134,7 @@ function App() {
                 </tbody>
               </table>
               <h2 style={{ marginTop: '2rem' }}>Storico 1v1 (21)</h2>
-              <MatchHistory matchType="singles" pointsType={21} />
+              <MatchHistory matches={matches1v1_21} />
             </section>
           )}
 
@@ -153,7 +163,7 @@ function App() {
                 </tbody>
               </table>
               <h2 style={{ marginTop: '2rem' }}>Storico 1v1 (11)</h2>
-              <MatchHistory matchType="singles" pointsType={11} />
+              <MatchHistory matches={matches1v1_11} />
             </section>
           )}
 
@@ -182,7 +192,7 @@ function App() {
                 </tbody>
               </table>
               <h2 style={{ marginTop: '2rem' }}>Storico 2v2 (21)</h2>
-              <MatchHistory matchType="doubles" pointsType={21} />
+              <MatchHistory matches={matches2v2_21} />
             </section>
           )}
 
@@ -211,7 +221,7 @@ function App() {
                 </tbody>
               </table>
               <h2 style={{ marginTop: '2rem' }}>Storico 2v2 (11)</h2>
-              <MatchHistory matchType="doubles" pointsType={11} />
+              <MatchHistory matches={matches2v2_11} />
             </section>
           )}
 
