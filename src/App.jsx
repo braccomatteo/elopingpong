@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Header from './components/Header'
 import MatchModal from './components/MatchModal'
+import MatchHistory from './components/MatchHistory'
 import AdminDashboard from './components/AdminDashboard'
 import { useAuth } from './context/AuthContext'
 import './Rankings.css'
@@ -93,6 +94,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
+              <h2 style={{ marginTop: '2rem' }}>Storico Partite</h2>
+              <MatchHistory />
             </section>
           )}
 
@@ -120,6 +123,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
+              <h2 style={{ marginTop: '2rem' }}>Storico 1v1 (21)</h2>
+              <MatchHistory matchType="singles" pointsType={21} />
             </section>
           )}
 
@@ -147,6 +152,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
+              <h2 style={{ marginTop: '2rem' }}>Storico 1v1 (11)</h2>
+              <MatchHistory matchType="singles" pointsType={11} />
             </section>
           )}
 
@@ -174,6 +181,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
+              <h2 style={{ marginTop: '2rem' }}>Storico 2v2 (21)</h2>
+              <MatchHistory matchType="doubles" pointsType={21} />
             </section>
           )}
 
@@ -201,6 +210,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
+              <h2 style={{ marginTop: '2rem' }}>Storico 2v2 (11)</h2>
+              <MatchHistory matchType="doubles" pointsType={11} />
             </section>
           )}
 

@@ -151,58 +151,61 @@ exports.getUnifiedHistory = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const offset = (page - 1) * limit;
+    const matchType = req.query.match_type; // 'singles' or 'doubles'
+    const pointsType = req.query.points_type ? parseInt(req.query.points_type) : null; // 11 or 21
 
-    const countResult = await db.query(`
-      SELECT SUM(cnt) as count FROM (
-        SELECT COUNT(*) as cnt FROM matches
-        UNION ALL
-        SELECT COUNT(*) as cnt FROM team_matches
-      ) as t
-    `);
+    // Build the CTE parts based on filters
+    const cteParts = [];
+    const params = [];
+    let paramIdx = 1;
+
+    if (!matchType || matchType === 'singles') {
+      const ptFilter = pointsType ? ` WHERE points_type = $${paramIdx++}` : '';
+      if (pointsType) params.push(pointsType);
+      cteParts.push(`
+        SELECT id, created_at, points_type, 'singles' as match_type,
+          creator_id as p1_id, NULL::uuid as p2_id,
+          opponent_id as op1_id, NULL::uuid as op2_id,
+          creator_score as t1_score, opponent_score as t2_score
+        FROM matches${ptFilter}
+      `);
+    }
+
+    if (!matchType || matchType === 'doubles') {
+      const ptFilter = pointsType ? ` WHERE points_type = $${paramIdx++}` : '';
+      if (pointsType) params.push(pointsType);
+      cteParts.push(`
+        SELECT id, created_at, points_type, 'doubles' as match_type,
+          p1_id, p2_id, op1_id, op2_id,
+          team_score as t1_score, opponent_score as t2_score
+        FROM team_matches${ptFilter}
+      `);
+    }
+
+    const cte = cteParts.join(' UNION ALL ');
+
+    const countResult = await db.query(
+      `SELECT COUNT(*) FROM (${cte}) as t`, params
+    );
     const total = parseInt(countResult.rows[0].count);
 
+    const limitParam = paramIdx++;
+    const offsetParam = paramIdx++;
+    const allParams = [...params, limit, offset];
+
     const result = await db.query(`
-      WITH UnifiedHistory AS (
-        SELECT 
-          id, 
-          created_at, 
-          points_type, 
-          'singles' as match_type,
-          creator_id as p1_id, 
-          NULL::uuid as p2_id, 
-          opponent_id as op1_id, 
-          NULL::uuid as op2_id, 
-          creator_score as t1_score, 
-          opponent_score as t2_score
-        FROM matches
-        UNION ALL
-        SELECT 
-          id, 
-          created_at, 
-          points_type, 
-          'doubles' as match_type,
-          p1_id, 
-          p2_id, 
-          op1_id, 
-          op2_id, 
-          team_score as t1_score, 
-          opponent_score as t2_score
-        FROM team_matches
-      )
-      SELECT 
-        uh.*,
-        p1.name as p1_name,
-        p2.name as p2_name,
-        op1.name as op1_name,
-        op2.name as op2_name
+      WITH UnifiedHistory AS (${cte})
+      SELECT uh.*,
+        p1.name as p1_name, p2.name as p2_name,
+        op1.name as op1_name, op2.name as op2_name
       FROM UnifiedHistory uh
       LEFT JOIN players p1 ON uh.p1_id = p1.id
       LEFT JOIN players p2 ON uh.p2_id = p2.id
       LEFT JOIN players op1 ON uh.op1_id = op1.id
       LEFT JOIN players op2 ON uh.op2_id = op2.id
       ORDER BY uh.created_at DESC
-      LIMIT $1 OFFSET $2
-    `, [limit, offset]);
+      LIMIT $${limitParam} OFFSET $${offsetParam}
+    `, allParams);
 
     res.json({
       matches: result.rows,
