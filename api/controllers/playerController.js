@@ -3,7 +3,7 @@ const db = require('../db');
 exports.getAllPlayers = async (req, res) => {
   try {
     const result = await db.query(
-      "SELECT id, name, bu, role, score_overall, score_1v1_21, score_1v1_11, score_2v2_21, score_2v2_11 FROM players WHERE role != 'admin' ORDER BY score_overall DESC"
+      "SELECT id, name, bu, role, score_overall::float, score_1v1_21::float, score_1v1_11::float, score_2v2_21::float, score_2v2_11::float FROM players WHERE role != 'admin' ORDER BY score_overall DESC"
     );
     res.json(result.rows);
   } catch (err) {

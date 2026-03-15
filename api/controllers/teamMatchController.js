@@ -1,50 +1,5 @@
 const db = require('../db');
-
-const recalculateTeamScores = async () => {
-  try {
-    await db.query('BEGIN');
-
-    // Reset all 2v2 scores to 1000 (score_overall is recalculated separately)
-    await db.query("UPDATE players SET score_2v2_21 = 1000, score_2v2_11 = 1000 WHERE role != 'admin'");
-
-    const matches = await db.query(
-      'SELECT * FROM team_matches ORDER BY created_at ASC, id ASC'
-    );
-
-    for (const match of matches.rows) {
-      const isTeam1Winner = match.team_score > match.opponent_score;
-      const specificField = match.points_type === 11 ? 'score_2v2_11' : 'score_2v2_21';
-
-      const t1p1 = match.p1_id;
-      const t1p2 = match.p2_id;
-      const t2p1 = match.op1_id;
-      const t2p2 = match.op2_id;
-
-      // Update specific 2v2 points type score for individuals
-      if (isTeam1Winner) {
-        await db.query(`UPDATE players SET ${specificField} = ${specificField} + 100 WHERE id IN ($1, $2)`, [t1p1, t1p2]);
-        await db.query(`UPDATE players SET ${specificField} = GREATEST(${specificField} - 50, 0) WHERE id IN ($1, $2)`, [t2p1, t2p2]);
-      } else {
-        await db.query(`UPDATE players SET ${specificField} = ${specificField} + 100 WHERE id IN ($1, $2)`, [t2p1, t2p2]);
-        await db.query(`UPDATE players SET ${specificField} = GREATEST(${specificField} - 50, 0) WHERE id IN ($1, $2)`, [t1p1, t1p2]);
-      }
-    }
-
-    // Recalculate score_overall from all category scores
-    await db.query(`
-      UPDATE players SET score_overall = (
-        (score_1v1_21 - 1000) + (score_1v1_11 - 1000) +
-        (score_2v2_21 - 1000) + (score_2v2_11 - 1000)
-      ) + 1000 WHERE role != 'admin'
-    `);
-
-    await db.query('COMMIT');
-  } catch (err) {
-    await db.query('ROLLBACK');
-    console.error('Error recalculating team scores:', err);
-    throw err;
-  }
-};
+const { recalculateAll } = require('../elo');
 
 exports.createTeamMatch = async (req, res) => {
   const { p1_id, p2_id, op1_id, op2_id, team_score, opponent_score, points_type } = req.body;
@@ -72,7 +27,7 @@ exports.createTeamMatch = async (req, res) => {
       [p1_id, p2_id, op1_id, op2_id, team_score, opponent_score, matchPointsType]
     );
 
-    await recalculateTeamScores();
+    await recalculateAll();
     res.status(201).json({ message: 'Match doppio creato e punteggi aggiornati.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -116,7 +71,7 @@ exports.deleteTeamMatch = async (req, res) => {
   const { id } = req.params;
   try {
     await db.query('DELETE FROM team_matches WHERE id = $1', [id]);
-    await recalculateTeamScores();
+    await recalculateAll();
     res.json({ message: 'Match doppio eliminato e punteggi ricalcolati.' });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -8,11 +8,11 @@ CREATE TABLE IF NOT EXISTS players (
     bu VARCHAR(50) NOT NULL,
     password VARCHAR(255),
     role VARCHAR(20) DEFAULT 'player',
-    score_overall INTEGER DEFAULT 1000,
-    score_1v1_21 INTEGER DEFAULT 1000,
-    score_1v1_11 INTEGER DEFAULT 1000,
-    score_2v2_21 INTEGER DEFAULT 1000,
-    score_2v2_11 INTEGER DEFAULT 1000
+    score_overall NUMERIC(8,2) DEFAULT 1000,
+    score_1v1_21 NUMERIC(8,2) DEFAULT 1000,
+    score_1v1_11 NUMERIC(8,2) DEFAULT 1000,
+    score_2v2_21 NUMERIC(8,2) DEFAULT 1000,
+    score_2v2_11 NUMERIC(8,2) DEFAULT 1000
 );
 
 -- Create Matches table (singles only)

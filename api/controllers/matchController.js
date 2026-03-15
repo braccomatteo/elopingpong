@@ -1,43 +1,5 @@
 const db = require('../db');
-
-const recalculateScores = async () => {
-  try {
-    await db.query('BEGIN');
-
-    // Reset all 1v1 scores to 1000 (score_overall is recalculated separately)
-    await db.query("UPDATE players SET score_1v1_21 = 1000, score_1v1_11 = 1000 WHERE role != 'admin'");
-
-    // Get all verified matches in chronological order
-    const matches = await db.query(
-      "SELECT * FROM matches WHERE status = 'verified' ORDER BY created_at ASC, id ASC"
-    );
-
-    for (const match of matches.rows) {
-      const winnerId = match.creator_score > match.opponent_score ? match.creator_id : match.opponent_id;
-      const loserId = match.creator_score > match.opponent_score ? match.opponent_id : match.creator_id;
-
-      const specificField = match.points_type === 11 ? 'score_1v1_11' : 'score_1v1_21';
-
-      // Update specific 1v1 points type score
-      await db.query(`UPDATE players SET ${specificField} = ${specificField} + 100 WHERE id = $1`, [winnerId]);
-      await db.query(`UPDATE players SET ${specificField} = GREATEST(${specificField} - 50, 0) WHERE id = $1`, [loserId]);
-    }
-
-    // Recalculate score_overall from all category scores
-    await db.query(`
-      UPDATE players SET score_overall = (
-        (score_1v1_21 - 1000) + (score_1v1_11 - 1000) +
-        (score_2v2_21 - 1000) + (score_2v2_11 - 1000)
-      ) + 1000 WHERE role != 'admin'
-    `);
-
-    await db.query('COMMIT');
-  } catch (err) {
-    await db.query('ROLLBACK');
-    console.error('Error recalculating scores:', err);
-    throw err;
-  }
-};
+const { recalculateAll } = require('../elo');
 
 exports.createMatch = async (req, res) => {
   const { opponent_id, creator_score, opponent_score, points_type } = req.body;
@@ -66,7 +28,7 @@ exports.createMatch = async (req, res) => {
       [creator_id, opponent_id, creator_score, opponent_score, matchPointsType, winnerId]
     );
 
-    await recalculateScores();
+    await recalculateAll();
     res.status(201).json({ message: "Match creato e punteggi aggiornati." });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -106,7 +68,7 @@ exports.deleteMatch = async (req, res) => {
   const { id } = req.params;
   try {
     await db.query('DELETE FROM matches WHERE id = $1', [id]);
-    await recalculateScores();
+    await recalculateAll();
     res.json({ message: "Match eliminato e punteggi ricalcolati." });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -139,7 +101,7 @@ exports.createMatchAdmin = async (req, res) => {
       [creator_id, opponent_id, creator_score, opponent_score, matchPointsType, winnerId]
     );
 
-    await recalculateScores();
+    await recalculateAll();
     res.status(201).json({ message: "Match admin creato e punteggi aggiornati." });
   } catch (err) {
     res.status(500).json({ error: err.message });

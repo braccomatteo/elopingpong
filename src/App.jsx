@@ -99,7 +99,7 @@ function App() {
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{p.score_overall}</td>
+                      <td className="score">{Math.round(p.score_overall)}</td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -128,7 +128,7 @@ function App() {
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{p.score_1v1_21}</td>
+                      <td className="score">{Math.round(p.score_1v1_21)}</td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -157,7 +157,7 @@ function App() {
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{p.score_1v1_11}</td>
+                      <td className="score">{Math.round(p.score_1v1_11)}</td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -186,7 +186,7 @@ function App() {
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{p.score_2v2_21}</td>
+                      <td className="score">{Math.round(p.score_2v2_21)}</td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -215,7 +215,7 @@ function App() {
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{p.score_2v2_11}</td>
+                      <td className="score">{Math.round(p.score_2v2_11)}</td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>

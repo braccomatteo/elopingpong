@@ -166,11 +166,11 @@ const AdminDashboard = ({ players, onUpdate }) => {
                   <tr key={p.id}>
                     <td>{p.name}</td>
                     <td>{p.bu}</td>
-                    <td className="score">{p.score_overall}</td>
-                    <td className="score">{p.score_1v1_21}</td>
-                    <td className="score">{p.score_1v1_11}</td>
-                    <td className="score">{p.score_2v2_21}</td>
-                    <td className="score">{p.score_2v2_11}</td>
+                    <td className="score">{Math.round(p.score_overall)}</td>
+                    <td className="score">{Math.round(p.score_1v1_21)}</td>
+                    <td className="score">{Math.round(p.score_1v1_11)}</td>
+                    <td className="score">{Math.round(p.score_2v2_21)}</td>
+                    <td className="score">{Math.round(p.score_2v2_11)}</td>
                     <td><button className="delete-btn" onClick={() => deletePlayer(p.id)}>Elimina</button></td>
                   </tr>
                 ))}
