@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
 import ProfileModal from './ProfileModal';
+import InfoModal from './InfoModal';
 import ThemeToggle from './ThemeToggle';
 import './Header.css';
 
@@ -9,6 +10,7 @@ const Header = ({ activeTab, onTabChange }) => {
   const { user, logout } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   return (
     <>
@@ -61,6 +63,7 @@ const Header = ({ activeTab, onTabChange }) => {
 
         <div className="user-section">
           <ThemeToggle />
+          <button className="info-btn" onClick={() => setIsInfoOpen(true)} title="Come funziona il ranking">ⓘ</button>
           {user ? (
             <div className="profile-badge">
               <span className="user-name">{user.name}</span>
@@ -77,6 +80,7 @@ const Header = ({ activeTab, onTabChange }) => {
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+      <InfoModal isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
     </>
   );
 };
