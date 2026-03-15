@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('../db');
 
 const OVERALL_WEIGHTS = {
   score_1v1_21: 0.4,

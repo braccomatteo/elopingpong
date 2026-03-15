@@ -1,5 +1,5 @@
 const db = require('../db');
-const { recalculateAll } = require('../elo');
+const { recalculateAll } = require('./elo');
 
 exports.createMatch = async (req, res) => {
   const { opponent_id, creator_score, opponent_score, points_type } = req.body;

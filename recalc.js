@@ -1,6 +1,6 @@
 require('dotenv').config();
 const db = require('./api/db');
-const { recalculateAll } = require('./api/elo');
+const { recalculateAll } = require('./api/controllers/elo');
 
 async function manualRecalc() {
     try {
