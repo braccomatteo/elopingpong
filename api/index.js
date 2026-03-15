@@ -5,10 +5,10 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-const authRoutes = require('./routes/authRoutes');
-const matchRoutes = require('./routes/matchRoutes');
-const playerRoutes = require('./routes/playerRoutes');
-const teamMatchRoutes = require('./routes/teamMatchRoutes');
+const authRoutes = require('../lib/routes/authRoutes');
+const matchRoutes = require('../lib/routes/matchRoutes');
+const playerRoutes = require('../lib/routes/playerRoutes');
+const teamMatchRoutes = require('../lib/routes/teamMatchRoutes');
 
 app.use(cors());
 app.use(express.json());
