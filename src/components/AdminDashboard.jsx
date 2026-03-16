@@ -110,6 +110,24 @@ const AdminDashboard = ({ players, onUpdate }) => {
     } catch (err) { console.error(err); }
   };
 
+  /* ---- Permanent delete handlers ---- */
+  const permDeletePlayer = async (id) => {
+    if (!window.confirm('Eliminare DEFINITIVAMENTE questo giocatore? Questa azione è irreversibile.')) return;
+    try {
+      const res = await fetch(`/api/players/trash/player/${id}`, { method: 'DELETE', headers: headers() });
+      if (res.ok) fetchTrash();
+    } catch (err) { console.error(err); }
+  };
+
+  const permDeleteMatch = async (id, isDouble) => {
+    if (!window.confirm('Eliminare DEFINITIVAMENTE questo match? Questa azione è irreversibile.')) return;
+    try {
+      const endpoint = isDouble ? `/api/players/trash/team-match/${id}` : `/api/players/trash/match/${id}`;
+      const res = await fetch(endpoint, { method: 'DELETE', headers: headers() });
+      if (res.ok) fetchTrash();
+    } catch (err) { console.error(err); }
+  };
+
   /* ---- Create singles ---- */
   const handleSinglesSubmit = async (e) => {
     e.preventDefault();
@@ -348,7 +366,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <td>{p.bu}</td>
                           <td>{new Date(p.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                           <td>{p.deleted_by_name || '—'}</td>
-                          <td><button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem' }} onClick={() => restorePlayer(p.id)}>Ripristina</button></td>
+                          <td>
+                            <button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem', marginRight: '0.4rem' }} onClick={() => restorePlayer(p.id)}>Ripristina</button>
+                            <button className="delete-btn" onClick={() => permDeletePlayer(p.id)}>Elimina</button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -371,7 +392,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <td className="score">{m.creator_score} - {m.opponent_score}</td>
                           <td>{new Date(m.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                           <td>{m.deleted_by_name || '—'}</td>
-                          <td><button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem' }} onClick={() => restoreMatch(m.id, false)}>Ripristina</button></td>
+                          <td>
+                            <button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem', marginRight: '0.4rem' }} onClick={() => restoreMatch(m.id, false)}>Ripristina</button>
+                            <button className="delete-btn" onClick={() => permDeleteMatch(m.id, false)}>Elimina</button>
+                          </td>
                         </tr>
                       ))}
                       {trashData.teamMatches.map(m => (
@@ -382,7 +406,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <td className="score">{m.team_score} - {m.opponent_score}</td>
                           <td>{new Date(m.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                           <td>{m.deleted_by_name || '—'}</td>
-                          <td><button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem' }} onClick={() => restoreMatch(m.id, true)}>Ripristina</button></td>
+                          <td>
+                            <button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem', marginRight: '0.4rem' }} onClick={() => restoreMatch(m.id, true)}>Ripristina</button>
+                            <button className="delete-btn" onClick={() => permDeleteMatch(m.id, true)}>Elimina</button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
