@@ -36,6 +36,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const [historyPage, setHistoryPage] = useState(1);
   const [historyTotalPages, setHistoryTotalPages] = useState(1);
 
+  /* ---- Trash state ---- */
+  const [trashData, setTrashData] = useState({ players: [], matches: [], teamMatches: [] });
+  const [trashLoading, setTrashLoading] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   /* ---- Fetch functions ---- */
@@ -54,6 +58,16 @@ const AdminDashboard = ({ players, onUpdate }) => {
       setHistoryTotalPages(data.totalPages || 1);
       setHistoryPage(data.page || 1);
     } catch (err) { console.error(err); }
+  };
+
+  const fetchTrash = async () => {
+    setTrashLoading(true);
+    try {
+      const res = await fetch('/api/players/trash', { headers: headers() });
+      const data = await res.json();
+      setTrashData(data);
+    } catch (err) { console.error(err); }
+    setTrashLoading(false);
   };
 
   useEffect(() => {
@@ -75,6 +89,24 @@ const AdminDashboard = ({ players, onUpdate }) => {
       const endpoint = isDouble ? `/api/team-matches/${id}` : `/api/matches/${id}`;
       const res = await fetch(endpoint, { method: 'DELETE', headers: headers() });
       if (res.ok) { fetchHistory(historyPage); onUpdate(); }
+    } catch (err) { console.error(err); }
+  };
+
+  /* ---- Restore handlers ---- */
+  const restorePlayer = async (id) => {
+    if (!window.confirm('Ripristinare questo giocatore e tutti i suoi match?')) return;
+    try {
+      const res = await fetch(`/api/players/restore/${id}`, { method: 'POST', headers: headers() });
+      if (res.ok) { fetchTrash(); fetchPlayers(); fetchHistory(1); onUpdate(); }
+    } catch (err) { console.error(err); }
+  };
+
+  const restoreMatch = async (id, isDouble) => {
+    if (!window.confirm('Ripristinare questo match? I punteggi verranno ricalcolati.')) return;
+    try {
+      const endpoint = isDouble ? `/api/team-matches/restore/${id}` : `/api/matches/restore/${id}`;
+      const res = await fetch(endpoint, { method: 'POST', headers: headers() });
+      if (res.ok) { fetchTrash(); fetchHistory(1); onUpdate(); }
     } catch (err) { console.error(err); }
   };
 
@@ -147,6 +179,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
         </button>
         <button className={`admin-tab-btn ${adminTab === 'history' ? 'active' : ''}`} onClick={() => setAdminTab('history')}>
           Storico Match
+        </button>
+        <button className={`admin-tab-btn ${adminTab === 'trash' ? 'active' : ''}`} onClick={() => { setAdminTab('trash'); fetchTrash(); }}>
+          Cestino
         </button>
       </div>
 
@@ -284,6 +319,76 @@ const AdminDashboard = ({ players, onUpdate }) => {
                 </tbody>
               </table>
               <Pagination page={historyPage} totalPages={historyTotalPages} onPageChange={(p) => fetchHistory(p)} />
+            </>
+          )}
+        </section>
+      )}
+
+      {/* ===================== TAB: CESTINO ===================== */}
+      {adminTab === 'trash' && (
+        <section className="ranking-card">
+          <h2>Cestino</h2>
+          {trashLoading ? (
+            <div className="empty-state">Caricamento...</div>
+          ) : (trashData.players.length === 0 && trashData.matches.length === 0 && trashData.teamMatches.length === 0) ? (
+            <div className="empty-state">Il cestino è vuoto.</div>
+          ) : (
+            <>
+              {trashData.players.length > 0 && (
+                <>
+                  <h3 style={{ marginTop: '1rem' }}>Giocatori eliminati</h3>
+                  <table className="admin-table">
+                    <thead>
+                      <tr><th>Nome</th><th>BU</th><th>Eliminato il</th><th>Eliminato da</th><th>Azioni</th></tr>
+                    </thead>
+                    <tbody>
+                      {trashData.players.map(p => (
+                        <tr key={p.id}>
+                          <td>{p.name}</td>
+                          <td>{p.bu}</td>
+                          <td>{new Date(p.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                          <td>{p.deleted_by_name || '—'}</td>
+                          <td><button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem' }} onClick={() => restorePlayer(p.id)}>Ripristina</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+              {(trashData.matches.length > 0 || trashData.teamMatches.length > 0) && (
+                <>
+                  <h3 style={{ marginTop: '1rem' }}>Match eliminati</h3>
+                  <table className="admin-table">
+                    <thead>
+                      <tr><th>Data</th><th>Tipo</th><th>Sfida</th><th>Risultato</th><th>Eliminato il</th><th>Eliminato da</th><th>Azioni</th></tr>
+                    </thead>
+                    <tbody>
+                      {trashData.matches.map(m => (
+                        <tr key={`s-${m.id}`}>
+                          <td>{new Date(m.created_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                          <td>{m.points_type} pt</td>
+                          <td>{m.creator_name} <span style={{ color: 'var(--accent-orange)' }}>vs</span> {m.opponent_name}</td>
+                          <td className="score">{m.creator_score} - {m.opponent_score}</td>
+                          <td>{new Date(m.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                          <td>{m.deleted_by_name || '—'}</td>
+                          <td><button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem' }} onClick={() => restoreMatch(m.id, false)}>Ripristina</button></td>
+                        </tr>
+                      ))}
+                      {trashData.teamMatches.map(m => (
+                        <tr key={`d-${m.id}`}>
+                          <td>{new Date(m.created_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                          <td>{m.points_type} pt</td>
+                          <td>{m.p1_name} & {m.p2_name} <span style={{ color: 'var(--accent-orange)' }}>vs</span> {m.op1_name} & {m.op2_name}</td>
+                          <td className="score">{m.team_score} - {m.opponent_score}</td>
+                          <td>{new Date(m.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                          <td>{m.deleted_by_name || '—'}</td>
+                          <td><button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem' }} onClick={() => restoreMatch(m.id, true)}>Ripristina</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
             </>
           )}
         </section>
