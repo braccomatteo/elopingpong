@@ -49,12 +49,16 @@ const PlayerStats = ({ playerId, onClose }) => {
 
   // ELO chart data
   const eloKey = eloCategory === 'overall' ? 'overall' : `score_${eloCategory}`;
-  const eloData = (eloHistory[eloKey] || []).map((p, i) => ({
-    game: i + 1,
-    elo: p.elo,
-    opp: p.opp,
-    score: p.score
-  }));
+  const eloRaw = eloHistory[eloKey] || [];
+  const eloData = [
+    { game: 0, elo: 1000, opp: 'Baseline', score: '—' },
+    ...eloRaw.map((p, i) => ({
+      game: i + 1,
+      elo: p.elo,
+      opp: p.opp,
+      score: p.score
+    }))
+  ];
 
   // Win/Loss pie data
   const pieData = totalGames > 0
