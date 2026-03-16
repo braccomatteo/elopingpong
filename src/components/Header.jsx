@@ -6,7 +6,7 @@ import InfoModal from './InfoModal';
 import ThemeToggle from './ThemeToggle';
 import './Header.css';
 
-const Header = ({ activeTab, onTabChange }) => {
+const Header = ({ activeTab, onTabChange, onStatsClick }) => {
   const { user, logout } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -68,7 +68,7 @@ const Header = ({ activeTab, onTabChange }) => {
           </button>
           {user ? (
             <div className="profile-badge">
-              <span className="user-name clickable" onClick={() => onTabChange('stats')}>{user.name}</span>
+              <span className="user-name clickable" onClick={() => onStatsClick(user.id)}>{user.name}</span>
               <button className="profile-menu-btn" onClick={() => setIsProfileOpen(true)}>Profilo</button>
               <button className="logout-btn" onClick={logout}>Logout</button>
             </div>

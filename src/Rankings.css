@@ -115,6 +115,14 @@ td {
   font-weight: 600;
 }
 
+.player-name.clickable {
+  cursor: pointer;
+}
+
+.player-name.clickable:hover {
+  color: var(--accent-orange);
+}
+
 .player-bu {
   font-size: 0.75rem;
   color: var(--text-dim);

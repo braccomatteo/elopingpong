@@ -14,11 +14,13 @@ function App() {
   const [activeTab, setActiveTab] = useState('overall')
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
   const [showAllPlayers, setShowAllPlayers] = useState(false)
+  const [statsPlayerId, setStatsPlayerId] = useState(null)
   const { user, justLoggedIn, setJustLoggedIn } = useAuth()
 
   // Switch to stats tab when user freshly logs in
   useEffect(() => {
     if (justLoggedIn && user) {
+      setStatsPlayerId(user.id)
       setActiveTab('stats')
       setJustLoggedIn(false)
     }
@@ -83,7 +85,7 @@ function App() {
 
   return (
     <div className="app-wrapper">
-      <Header activeTab={activeTab} onTabChange={setActiveTab} />
+      <Header activeTab={activeTab} onTabChange={setActiveTab} onStatsClick={(id) => { setStatsPlayerId(id); setActiveTab('stats'); }} />
 
       <div className="container">
         {!user && (
@@ -127,7 +129,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, null) ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
                       <td className="score">{Math.round(p.score_overall)}</td>
@@ -156,7 +158,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_1v1_21') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
                       <td className="score">{Math.round(p.score_1v1_21)}</td>
@@ -185,7 +187,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_1v1_11') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
                       <td className="score">{Math.round(p.score_1v1_11)}</td>
@@ -214,7 +216,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_2v2_21') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
                       <td className="score">{Math.round(p.score_2v2_21)}</td>
@@ -243,7 +245,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_2v2_11') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
                       <td className="score">{Math.round(p.score_2v2_11)}</td>
@@ -256,8 +258,8 @@ function App() {
             </section>
           )}
 
-          {activeTab === 'stats' && user && (
-            <PlayerStats playerId={user.id} onClose={() => setActiveTab('overall')} />
+          {activeTab === 'stats' && statsPlayerId && (
+            <PlayerStats playerId={statsPlayerId} onClose={() => { setStatsPlayerId(null); setActiveTab('overall'); }} />
           )}
 
           {activeTab === 'admin' && user?.role === 'admin' && (
