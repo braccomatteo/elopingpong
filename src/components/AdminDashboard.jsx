@@ -367,8 +367,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <td>{new Date(p.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                           <td>{p.deleted_by_name || '—'}</td>
                           <td>
-                            <button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem', marginRight: '0.4rem' }} onClick={() => restorePlayer(p.id)}>Ripristina</button>
-                            <button className="delete-btn" onClick={() => permDeletePlayer(p.id)}>Elimina</button>
+                            <div className="trash-actions">
+                              <button className="trash-btn restore" onClick={() => restorePlayer(p.id)}>Ripristina</button>
+                              <button className="trash-btn perm-delete" onClick={() => permDeletePlayer(p.id)}>Elimina</button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -393,8 +395,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <td>{new Date(m.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                           <td>{m.deleted_by_name || '—'}</td>
                           <td>
-                            <button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem', marginRight: '0.4rem' }} onClick={() => restoreMatch(m.id, false)}>Ripristina</button>
-                            <button className="delete-btn" onClick={() => permDeleteMatch(m.id, false)}>Elimina</button>
+                            <div className="trash-actions">
+                              <button className="trash-btn restore" onClick={() => restoreMatch(m.id, false)}>Ripristina</button>
+                              <button className="trash-btn perm-delete" onClick={() => permDeleteMatch(m.id, false)}>Elimina</button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -407,8 +411,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <td>{new Date(m.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                           <td>{m.deleted_by_name || '—'}</td>
                           <td>
-                            <button className="submit-btn" style={{ padding: '0.3rem 0.8rem', fontSize: '0.85rem', marginRight: '0.4rem' }} onClick={() => restoreMatch(m.id, true)}>Ripristina</button>
-                            <button className="delete-btn" onClick={() => permDeleteMatch(m.id, true)}>Elimina</button>
+                            <div className="trash-actions">
+                              <button className="trash-btn restore" onClick={() => restoreMatch(m.id, true)}>Ripristina</button>
+                              <button className="trash-btn perm-delete" onClick={() => permDeleteMatch(m.id, true)}>Elimina</button>
+                            </div>
                           </td>
                         </tr>
                       ))}

@@ -139,6 +139,44 @@
   color: #fff;
 }
 
+/* Trash action buttons */
+.trash-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.trash-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  border: 1px solid;
+}
+
+.trash-btn.restore {
+  color: var(--accent-green, #22c55e);
+  border-color: var(--accent-green, #22c55e);
+  background: transparent;
+}
+
+.trash-btn.restore:hover {
+  background: var(--accent-green, #22c55e);
+  color: #fff;
+}
+
+.trash-btn.perm-delete {
+  color: var(--accent-red);
+  border-color: var(--accent-red);
+  background: transparent;
+}
+
+.trash-btn.perm-delete:hover {
+  background: var(--accent-red);
+  color: #fff;
+}
+
 .admin-link {
   color: var(--accent-orange) !important;
   font-weight: bold;
