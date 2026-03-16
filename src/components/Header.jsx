@@ -68,7 +68,7 @@ const Header = ({ activeTab, onTabChange }) => {
           </button>
           {user ? (
             <div className="profile-badge">
-              <span className="user-name">{user.name}</span>
+              <span className="user-name clickable" onClick={() => onTabChange('stats')}>{user.name}</span>
               <button className="profile-menu-btn" onClick={() => setIsProfileOpen(true)}>Profilo</button>
               <button className="logout-btn" onClick={logout}>Logout</button>
             </div>

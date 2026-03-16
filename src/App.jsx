@@ -3,6 +3,7 @@ import Header from './components/Header'
 import MatchModal from './components/MatchModal'
 import MatchHistory from './components/MatchHistory'
 import AdminDashboard from './components/AdminDashboard'
+import PlayerStats from './components/PlayerStats'
 import { useAuth } from './context/AuthContext'
 import './Rankings.css'
 
@@ -13,7 +14,15 @@ function App() {
   const [activeTab, setActiveTab] = useState('overall')
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
   const [showAllPlayers, setShowAllPlayers] = useState(false)
-  const { user } = useAuth()
+  const { user, justLoggedIn, setJustLoggedIn } = useAuth()
+
+  // Switch to stats tab when user freshly logs in
+  useEffect(() => {
+    if (justLoggedIn && user) {
+      setActiveTab('stats')
+      setJustLoggedIn(false)
+    }
+  }, [justLoggedIn, user])
 
   const fetchData = async () => {
     try {
@@ -245,6 +254,10 @@ function App() {
               <h2 style={{ marginTop: '2rem' }}>Storico 2v2 (11)</h2>
               <MatchHistory matches={matches2v2_11} />
             </section>
+          )}
+
+          {activeTab === 'stats' && user && (
+            <PlayerStats playerId={user.id} onClose={() => setActiveTab('overall')} />
           )}
 
           {activeTab === 'admin' && user?.role === 'admin' && (

@@ -1,0 +1,441 @@
+/* ===== STATS PAGE ===== */
+.stats-page {
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.stats-loading {
+  text-align: center;
+  padding: 4rem;
+  color: var(--text-dim);
+  font-size: 1rem;
+}
+
+/* Header */
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.stats-header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.stats-player-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stats-player-bu {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  background: var(--input-bg);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.stats-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.stats-close-btn:hover {
+  color: var(--text-main);
+  background: var(--input-bg);
+}
+
+/* Overview Cards */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 14px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.2s;
+}
+
+.stat-card:hover {
+  border-color: var(--accent-orange);
+}
+
+.stat-card.highlight {
+  border-color: var(--accent-orange);
+  background: linear-gradient(135deg, rgba(255, 102, 0, 0.08), transparent);
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.stat-sub {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.rank-value {
+  color: var(--accent-orange);
+}
+
+.elo-value {
+  color: var(--accent-orange);
+}
+
+.winrate-value {
+  color: #22c55e;
+}
+
+.streak-win {
+  color: #22c55e;
+}
+
+.streak-loss {
+  color: #ef4444;
+}
+
+/* ELO Score Grid */
+.stats-elo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.elo-mini-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.elo-mini-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.elo-mini-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.elo-mini-games {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+}
+
+/* Sections */
+.stats-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 1rem;
+}
+
+.stats-section h2 {
+  font-size: 1rem;
+  margin: 0 0 16px 0;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-section h2::before {
+  content: "";
+  width: 3px;
+  height: 16px;
+  background: var(--accent-orange);
+  border-radius: 1px;
+}
+
+.stats-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stats-section-header h2 {
+  margin-bottom: 0;
+}
+
+/* ELO Chart Tabs */
+.elo-chart-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.elo-tab {
+  background: var(--input-bg);
+  border: none;
+  color: var(--text-dim);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.elo-tab.active {
+  color: #fff;
+}
+
+.elo-tab:hover:not(.active) {
+  color: var(--text-main);
+}
+
+/* Chart container */
+.chart-container {
+  width: 100%;
+}
+
+/* Tooltip */
+.stats-tooltip {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.stats-tooltip-elo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  font-family: "JetBrains Mono", monospace;
+}
+
+.stats-tooltip-date {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+/* Charts Row */
+.stats-charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stats-section-half {
+  margin-bottom: 0;
+}
+
+/* Pie Chart */
+.pie-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pie-center-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.pie-center-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #22c55e;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.pie-center-text {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.pie-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.pie-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Head to Head */
+.h2h-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.h2h-card {
+  background: var(--input-bg);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.h2h-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.h2h-bar-container {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--border-color);
+}
+
+.h2h-bar-win {
+  background: #22c55e;
+  transition: width 0.3s;
+}
+
+.h2h-bar-loss {
+  background: #ef4444;
+  transition: width 0.3s;
+}
+
+.h2h-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.h2h-w {
+  color: #22c55e;
+  font-weight: 700;
+}
+
+.h2h-l {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.h2h-total {
+  color: var(--text-dim);
+}
+
+/* Empty state */
+.stats-empty {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-dim);
+}
+
+.stats-empty p {
+  font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stats-elo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .elo-chart-tabs {
+    flex-wrap: wrap;
+  }
+
+  .stats-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-header-left {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stats-player-name {
+    font-size: 1.4rem;
+  }
+
+  .h2h-grid {
+    grid-template-columns: 1fr;
+  }
+}
