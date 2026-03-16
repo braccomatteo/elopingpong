@@ -52,7 +52,8 @@ const PlayerStats = ({ playerId, onClose }) => {
   const eloData = (eloHistory[eloKey] || []).map((p, i) => ({
     game: i + 1,
     elo: p.elo,
-    date: new Date(p.date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })
+    opp: p.opp,
+    score: p.score
   }));
 
   // Win/Loss pie data
@@ -73,10 +74,12 @@ const PlayerStats = ({ playerId, onClose }) => {
   // Custom tooltip for ELO chart
   const EloTooltip = ({ active, payload }) => {
     if (active && payload?.[0]) {
+      const p = payload[0].payload;
       return (
         <div className="stats-tooltip">
           <span className="stats-tooltip-elo">{payload[0].value}</span>
-          <span className="stats-tooltip-date">{payload[0].payload.date}</span>
+          <span className="stats-tooltip-score">{p.score}</span>
+          <span className="stats-tooltip-opp">vs {p.opp}</span>
         </div>
       );
     }
@@ -124,15 +127,18 @@ const PlayerStats = ({ playerId, onClose }) => {
 
       {/* ELO Scores Grid */}
       <div className="stats-elo-grid">
-        {Object.entries(CAT_LABELS).map(([key, label]) => (
-          <div className="elo-mini-card" key={key}>
-            <span className="elo-mini-label">{label}</span>
-            <span className="elo-mini-value" style={{ color: COLORS[key] }}>
-              {Math.round(player[`score_${key}`])}
-            </span>
-            <span className="elo-mini-games">{player[`games_${key}`] || 0} partite</span>
-          </div>
-        ))}
+        {Object.entries(CAT_LABELS).map(([key, label]) => {
+          const games = player[`games_${key}`] || 0;
+          return (
+            <div className={`elo-mini-card${games === 0 ? ' unplayed' : ''}`} key={key}>
+              <span className="elo-mini-label">{label}</span>
+              <span className="elo-mini-value" style={games > 0 ? { color: COLORS[key] } : undefined}>
+                {Math.round(player[`score_${key}`])}
+              </span>
+              <span className="elo-mini-games">{games} partite</span>
+            </div>
+          );
+        })}
       </div>
 
       {/* ELO Progression Chart */}
