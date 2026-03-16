@@ -41,7 +41,7 @@ const PlayerStats = ({ playerId, onClose }) => {
   if (loading) return <div className="stats-loading">Caricamento statistiche...</div>;
   if (!stats) return <div className="stats-loading">Errore nel caricamento.</div>;
 
-  const { player, rank, totalPlayers, eloHistory, winLoss, streak, h2h } = stats;
+  const { player, rank, totalPlayers, eloHistory, winLoss, streak, h2h, extremes } = stats;
   const totalGames = Object.values(winLoss).reduce((a, c) => a + c.w + c.l, 0);
   const totalWins = Object.values(winLoss).reduce((a, c) => a + c.w, 0);
   const totalLosses = Object.values(winLoss).reduce((a, c) => a + c.l, 0);
@@ -124,6 +124,48 @@ const PlayerStats = ({ playerId, onClose }) => {
           </span>
         </div>
       </div>
+
+      {/* Extremes */}
+      {totalGames > 0 && extremes && (
+        <div className="stats-extremes">
+          {extremes.bestGain && (
+            <div className="extreme-card extreme-up">
+              <span className="extreme-icon">🔥</span>
+              <div className="extreme-info">
+                <span className="extreme-title">Miglior Guadagno</span>
+                <span className="extreme-detail">+{extremes.bestGain.delta} pts vs {extremes.bestGain.opp} ({extremes.bestGain.score})</span>
+              </div>
+            </div>
+          )}
+          {extremes.worstLoss && (
+            <div className="extreme-card extreme-down">
+              <span className="extreme-icon">💀</span>
+              <div className="extreme-info">
+                <span className="extreme-title">Peggior Perdita</span>
+                <span className="extreme-detail">{extremes.worstLoss.delta} pts vs {extremes.worstLoss.opp} ({extremes.worstLoss.score})</span>
+              </div>
+            </div>
+          )}
+          {extremes.bestWin && (
+            <div className="extreme-card extreme-up">
+              <span className="extreme-icon">⭐</span>
+              <div className="extreme-info">
+                <span className="extreme-title">Miglior Vittoria</span>
+                <span className="extreme-detail">vs {extremes.bestWin.opp} ({extremes.bestWin.score}) — ELO avv. {extremes.bestWin.oppElo}</span>
+              </div>
+            </div>
+          )}
+          {extremes.worstDefeat && (
+            <div className="extreme-card extreme-down">
+              <span className="extreme-icon">😬</span>
+              <div className="extreme-info">
+                <span className="extreme-title">Peggior Sconfitta</span>
+                <span className="extreme-detail">vs {extremes.worstDefeat.opp} ({extremes.worstDefeat.score}) — ELO avv. {extremes.worstDefeat.oppElo}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ELO Scores Grid */}
       <div className="stats-elo-grid">

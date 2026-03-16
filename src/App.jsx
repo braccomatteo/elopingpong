@@ -59,6 +59,17 @@ function App() {
 
   const isInactive = (p, gamesKey) => (gamesKey ? (p[gamesKey] || 0) : totalGames(p)) === 0
 
+  const DeltaBadge = ({ value }) => {
+    if (!value || Math.round(value) === 0) return null
+    const rounded = Math.round(value)
+    const isPositive = rounded > 0
+    return (
+      <span className={`delta-badge ${isPositive ? 'delta-up' : 'delta-down'}`}>
+        {isPositive ? '▲' : '▼'} {isPositive ? '+' : ''}{rounded}
+      </span>
+    )
+  }
+
   const playersOverall = filterAndSort('score_overall', null)
   const players1v1_21 = filterAndSort('score_1v1_21', 'games_1v1_21')
   const players1v1_11 = filterAndSort('score_1v1_11', 'games_1v1_11')
@@ -132,7 +143,7 @@ function App() {
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{Math.round(p.score_overall)}</td>
+                      <td className="score">{Math.round(p.score_overall)} <DeltaBadge value={p.last_delta_overall} /></td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -161,7 +172,7 @@ function App() {
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{Math.round(p.score_1v1_21)}</td>
+                      <td className="score">{Math.round(p.score_1v1_21)} <DeltaBadge value={p.last_delta_1v1_21} /></td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -190,7 +201,7 @@ function App() {
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{Math.round(p.score_1v1_11)}</td>
+                      <td className="score">{Math.round(p.score_1v1_11)} <DeltaBadge value={p.last_delta_1v1_11} /></td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -219,7 +230,7 @@ function App() {
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{Math.round(p.score_2v2_21)}</td>
+                      <td className="score">{Math.round(p.score_2v2_21)} <DeltaBadge value={p.last_delta_2v2_21} /></td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
@@ -248,7 +259,7 @@ function App() {
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <span className="player-bu">{p.bu}</span>
                       </td>
-                      <td className="score">{Math.round(p.score_2v2_11)}</td>
+                      <td className="score">{Math.round(p.score_2v2_11)} <DeltaBadge value={p.last_delta_2v2_11} /></td>
                     </tr>
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>

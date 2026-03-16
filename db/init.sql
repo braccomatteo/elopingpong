@@ -17,6 +17,11 @@ CREATE TABLE IF NOT EXISTS players (
     games_1v1_11 INTEGER DEFAULT 0,
     games_2v2_21 INTEGER DEFAULT 0,
     games_2v2_11 INTEGER DEFAULT 0,
+    last_delta_overall NUMERIC(8,2) DEFAULT 0,
+    last_delta_1v1_21 NUMERIC(8,2) DEFAULT 0,
+    last_delta_1v1_11 NUMERIC(8,2) DEFAULT 0,
+    last_delta_2v2_21 NUMERIC(8,2) DEFAULT 0,
+    last_delta_2v2_11 NUMERIC(8,2) DEFAULT 0,
     deleted_at TIMESTAMPTZ DEFAULT NULL,
     deleted_by UUID DEFAULT NULL
 );
