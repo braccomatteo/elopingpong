@@ -149,6 +149,20 @@ tr:nth-child(1) .rank-pill { background: #FFD700; color: #000; }
 tr:nth-child(2) .rank-pill { background: #C0C0C0; color: #000; }
 tr:nth-child(3) .rank-pill { background: #CD7F32; color: #000; }
 
+/* Inactive (no games played) players */
+tr.inactive-player {
+  opacity: 0.35;
+}
+
+tr.inactive-player .rank-pill {
+  background: var(--input-bg) !important;
+  color: var(--text-dim) !important;
+}
+
+tr.inactive-player .score {
+  color: var(--text-dim);
+}
+
 .ranking-card.full-width {
   grid-column: 1 / -1;
   max-width: 800px;

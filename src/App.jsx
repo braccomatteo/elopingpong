@@ -12,6 +12,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overall')
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
+  const [showAllPlayers, setShowAllPlayers] = useState(false)
   const { user } = useAuth()
 
   const fetchData = async () => {
@@ -37,12 +38,33 @@ function App() {
 
   if (loading) return <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}><h1>Loading rankings...</h1></div>
 
-  const playersOverall = [...players].sort((a, b) => b.score_overall - a.score_overall)
-  const players1v1_21 = [...players].sort((a, b) => b.score_1v1_21 - a.score_1v1_21)
-  const players1v1_11 = [...players].sort((a, b) => b.score_1v1_11 - a.score_1v1_11)
+  const totalGames = (p) => (p.games_1v1_21 || 0) + (p.games_1v1_11 || 0) + (p.games_2v2_21 || 0) + (p.games_2v2_11 || 0)
 
-  const players2v2_21 = [...players].sort((a, b) => b.score_2v2_21 - a.score_2v2_21)
-  const players2v2_11 = [...players].sort((a, b) => b.score_2v2_11 - a.score_2v2_11)
+  const filterAndSort = (sortKey, gamesKey) => {
+    const sorted = [...players].sort((a, b) => b[sortKey] - a[sortKey])
+    if (showAllPlayers) return sorted
+    return sorted.filter(p => (gamesKey ? (p[gamesKey] || 0) : totalGames(p)) > 0)
+  }
+
+  const isInactive = (p, gamesKey) => (gamesKey ? (p[gamesKey] || 0) : totalGames(p)) === 0
+
+  const playersOverall = filterAndSort('score_overall', null)
+  const players1v1_21 = filterAndSort('score_1v1_21', 'games_1v1_21')
+  const players1v1_11 = filterAndSort('score_1v1_11', 'games_1v1_11')
+  const players2v2_21 = filterAndSort('score_2v2_21', 'games_2v2_21')
+  const players2v2_11 = filterAndSort('score_2v2_11', 'games_2v2_11')
+
+  const toggleIcon = (
+    <button
+      onClick={() => setShowAllPlayers(!showAllPlayers)}
+      title={showAllPlayers ? 'Mostra solo giocatori attivi' : 'Mostra tutti i giocatori'}
+      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'inline-flex', alignItems: 'center', marginLeft: '8px', opacity: showAllPlayers ? 1 : 0.5 }}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-dim)' }}>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    </button>
+  )
 
   const matchesAll = matches
   const matches1v1_21 = matches.filter(m => m.match_type === 'singles' && m.points_type === 21)
@@ -82,7 +104,7 @@ function App() {
         <div className="tab-content">
           {activeTab === 'overall' && (
             <section className="ranking-card full-width">
-              <h2>Overall Ranking</h2>
+              <h2>Overall Ranking {toggleIcon}</h2>
               <table>
                 <thead>
                   <tr>
@@ -93,7 +115,7 @@ function App() {
                 </thead>
                 <tbody>
                   {playersOverall.length > 0 ? playersOverall.map((p, i) => (
-                    <tr key={p.id}>
+                    <tr key={p.id} className={isInactive(p, null) ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
@@ -111,7 +133,7 @@ function App() {
 
           {activeTab === '1v1_21' && (
             <section className="ranking-card full-width">
-              <h2>1v1 (21 Punti)</h2>
+              <h2>1v1 (21 Punti) {toggleIcon}</h2>
               <table>
                 <thead>
                   <tr>
@@ -122,7 +144,7 @@ function App() {
                 </thead>
                 <tbody>
                   {players1v1_21.length > 0 ? players1v1_21.map((p, i) => (
-                    <tr key={p.id}>
+                    <tr key={p.id} className={isInactive(p, 'games_1v1_21') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
@@ -140,7 +162,7 @@ function App() {
 
           {activeTab === '1v1_11' && (
             <section className="ranking-card full-width">
-              <h2>1v1 (11 Punti)</h2>
+              <h2>1v1 (11 Punti) {toggleIcon}</h2>
               <table>
                 <thead>
                   <tr>
@@ -151,7 +173,7 @@ function App() {
                 </thead>
                 <tbody>
                   {players1v1_11.length > 0 ? players1v1_11.map((p, i) => (
-                    <tr key={p.id}>
+                    <tr key={p.id} className={isInactive(p, 'games_1v1_11') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
@@ -169,7 +191,7 @@ function App() {
 
           {activeTab === '2v2_21' && (
             <section className="ranking-card full-width">
-              <h2>2v2 (21 Punti)</h2>
+              <h2>2v2 (21 Punti) {toggleIcon}</h2>
               <table>
                 <thead>
                   <tr>
@@ -180,7 +202,7 @@ function App() {
                 </thead>
                 <tbody>
                   {players2v2_21.length > 0 ? players2v2_21.map((p, i) => (
-                    <tr key={p.id}>
+                    <tr key={p.id} className={isInactive(p, 'games_2v2_21') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
@@ -198,7 +220,7 @@ function App() {
 
           {activeTab === '2v2_11' && (
             <section className="ranking-card full-width">
-              <h2>2v2 (11 Punti)</h2>
+              <h2>2v2 (11 Punti) {toggleIcon}</h2>
               <table>
                 <thead>
                   <tr>
@@ -209,7 +231,7 @@ function App() {
                 </thead>
                 <tbody>
                   {players2v2_11.length > 0 ? players2v2_11.map((p, i) => (
-                    <tr key={p.id}>
+                    <tr key={p.id} className={isInactive(p, 'games_2v2_11') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className="player-name">{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
