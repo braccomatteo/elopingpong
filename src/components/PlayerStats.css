@@ -448,38 +448,40 @@
   color: var(--text-dim);
 }
 
-/* Nemesis & Prey */
-.h2h-nemesis {
-  background: #7c3aed !important;
-  border-color: #7c3aed !important;
-  color: #fff;
+/* Incubo & Preda */
+.h2h-incubo {
+  background: linear-gradient(135deg, #2d2d3d, #4a4a5a, #2d2d3d) !important;
+  border-color: #6b6b7b !important;
+  color: #e0e0e0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.h2h-nemesis .h2h-name,
-.h2h-nemesis .h2h-w,
-.h2h-nemesis .h2h-l,
-.h2h-nemesis .h2h-total {
-  color: rgba(255, 255, 255, 0.9);
+.h2h-incubo .h2h-name,
+.h2h-incubo .h2h-w,
+.h2h-incubo .h2h-l,
+.h2h-incubo .h2h-total {
+  color: rgba(224, 224, 224, 0.9);
 }
 
-.h2h-nemesis .h2h-bar-container {
-  background: rgba(255, 255, 255, 0.25);
+.h2h-incubo .h2h-bar-container {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.h2h-prey {
-  background: #f59e0b !important;
-  border-color: #f59e0b !important;
-  color: #1a1a1a;
+.h2h-preda {
+  background: linear-gradient(135deg, #b8860b, #daa520, #f5d061, #daa520, #b8860b) !important;
+  border-color: #daa520 !important;
+  color: #1a1200;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 8px rgba(218, 165, 32, 0.3);
 }
 
-.h2h-prey .h2h-name,
-.h2h-prey .h2h-w,
-.h2h-prey .h2h-l,
-.h2h-prey .h2h-total {
-  color: rgba(0, 0, 0, 0.8);
+.h2h-preda .h2h-name,
+.h2h-preda .h2h-w,
+.h2h-preda .h2h-l,
+.h2h-preda .h2h-total {
+  color: rgba(26, 18, 0, 0.85);
 }
 
-.h2h-prey .h2h-bar-container {
+.h2h-preda .h2h-bar-container {
   background: rgba(0, 0, 0, 0.15);
 }
 
