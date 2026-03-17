@@ -300,7 +300,7 @@ const PlayerStats = ({ playerId, onClose }) => {
                   <div className="h2h-name-row">
                     <span className="h2h-name">{opp.name}</span>
                     {isIncubo && <span className="h2h-tag">🐺 Incubo</span>}
-                    {isPreda && <span className="h2h-tag">🎯 Preda</span>}
+                    {isPreda && <span className="h2h-tag">� Preda</span>}
                   </div>
                   <div className="h2h-bar-container">
                     <div className="h2h-bar h2h-bar-win" style={{ width: `${oppWinRate}%` }} />
