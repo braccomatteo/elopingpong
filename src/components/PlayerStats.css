@@ -448,6 +448,56 @@
   color: var(--text-dim);
 }
 
+/* Nemesis & Prey */
+.h2h-nemesis {
+  background: #7c3aed !important;
+  border-color: #7c3aed !important;
+  color: #fff;
+}
+
+.h2h-nemesis .h2h-name,
+.h2h-nemesis .h2h-w,
+.h2h-nemesis .h2h-l,
+.h2h-nemesis .h2h-total {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.h2h-nemesis .h2h-bar-container {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.h2h-prey {
+  background: #f59e0b !important;
+  border-color: #f59e0b !important;
+  color: #1a1a1a;
+}
+
+.h2h-prey .h2h-name,
+.h2h-prey .h2h-w,
+.h2h-prey .h2h-l,
+.h2h-prey .h2h-total {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.h2h-prey .h2h-bar-container {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.h2h-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.h2h-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
 /* Empty state */
 .stats-empty {
   text-align: center;

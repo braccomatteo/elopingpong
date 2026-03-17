@@ -75,6 +75,23 @@ const PlayerStats = ({ playerId, onClose }) => {
       'Win %': v.w + v.l > 0 ? Math.round((v.w / (v.w + v.l)) * 100) : 0
     }));
 
+  // Nemesis (bestia nera) & Prey (vittima preferita)
+  const eligible = h2h.filter(o => o.total >= 2);
+  const nemesis = eligible.length > 0
+    ? eligible.reduce((worst, o) => {
+        const wr = o.wins / o.total;
+        const worstWr = worst.wins / worst.total;
+        return wr < worstWr || (wr === worstWr && o.total > worst.total) ? o : worst;
+      })
+    : null;
+  const prey = eligible.length > 0
+    ? eligible.reduce((best, o) => {
+        const wr = o.wins / o.total;
+        const bestWr = best.wins / best.total;
+        return wr > bestWr || (wr === bestWr && o.total > best.total) ? o : best;
+      })
+    : null;
+
   // Custom tooltip for ELO chart
   const EloTooltip = ({ active, payload }) => {
     if (active && payload?.[0]) {
@@ -292,9 +309,16 @@ const PlayerStats = ({ playerId, onClose }) => {
           <div className="h2h-grid">
             {h2h.map((opp, i) => {
               const oppWinRate = Math.round((opp.wins / opp.total) * 100);
+              const isNemesis = opp.total >= 2 && nemesis && opp.name === nemesis.name;
+              const isPrey = opp.total >= 2 && prey && opp.name === prey.name;
+              const cardClass = `h2h-card${isNemesis ? ' h2h-nemesis' : ''}${isPrey ? ' h2h-prey' : ''}`;
               return (
-                <div className="h2h-card" key={i}>
-                  <span className="h2h-name">{opp.name}</span>
+                <div className={cardClass} key={i}>
+                  <div className="h2h-name-row">
+                    <span className="h2h-name">{opp.name}</span>
+                    {isNemesis && <span className="h2h-tag">🐺 Bestia Nera</span>}
+                    {isPrey && <span className="h2h-tag">🎯 Vittima Preferita</span>}
+                  </div>
                   <div className="h2h-bar-container">
                     <div className="h2h-bar h2h-bar-win" style={{ width: `${oppWinRate}%` }} />
                     <div className="h2h-bar h2h-bar-loss" style={{ width: `${100 - oppWinRate}%` }} />
