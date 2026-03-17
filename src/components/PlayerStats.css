@@ -183,14 +183,15 @@
 .has-tooltip {
   position: relative;
   cursor: default;
+  overflow: visible;
 }
 
 .has-tooltip::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  left: calc(100% + 6px);
+  transform: translateY(-50%);
   background: var(--card-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);

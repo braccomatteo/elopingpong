@@ -172,20 +172,20 @@ const PlayerStats = ({ playerId, onClose }) => {
             </div>
           )}
           {predaList.length > 0 && (
-            <div className="extreme-card extreme-up has-tooltip" data-tooltip={predaList.map(o => o.name).join(', ')}>
+            <div className="extreme-card extreme-up">
               <span className="extreme-icon">{"\u{1F43A}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Incubo di</span>
-                <span className="extreme-detail">{predaList.length} giocator{predaList.length === 1 ? 'e' : 'i'}</span>
+                <span className="extreme-detail has-tooltip" data-tooltip={predaList.map(o => o.name).join(', ')}>{predaList.length} giocator{predaList.length === 1 ? 'e' : 'i'}</span>
               </div>
             </div>
           )}
           {incuboList.length > 0 && (
-            <div className="extreme-card extreme-down has-tooltip" data-tooltip={incuboList.map(o => o.name).join(', ')}>
+            <div className="extreme-card extreme-down">
               <span className="extreme-icon">{"\u{1F407}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Preda di</span>
-                <span className="extreme-detail">{incuboList.length} giocator{incuboList.length === 1 ? 'e' : 'i'}</span>
+                <span className="extreme-detail has-tooltip" data-tooltip={incuboList.map(o => o.name).join(', ')}>{incuboList.length} giocator{incuboList.length === 1 ? 'e' : 'i'}</span>
               </div>
             </div>
           )}
