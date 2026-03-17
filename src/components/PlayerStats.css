@@ -500,6 +500,32 @@
   white-space: nowrap;
 }
 
+.h2h-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.h2h-summary-item {
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: default;
+  padding: 4px 10px;
+  border-radius: 6px;
+  position: relative;
+}
+
+.h2h-summary-preda {
+  background: linear-gradient(135deg, #8b6914, #a67c00, #c9a227);
+  color: #fff;
+}
+
+.h2h-summary-incubo {
+  background: linear-gradient(135deg, #2d2d3d, #4a4a5a, #2d2d3d);
+  color: #e0e0e0;
+}
+
 /* Empty state */
 .stats-empty {
   text-align: center;
