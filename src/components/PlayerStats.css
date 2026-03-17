@@ -190,7 +190,7 @@
   content: attr(data-tooltip);
   position: absolute;
   top: 50%;
-  left: calc(100% + 6px);
+  left: calc(100% + 12px);
   transform: translateY(-50%);
   background: var(--card-bg);
   color: var(--text-color);
