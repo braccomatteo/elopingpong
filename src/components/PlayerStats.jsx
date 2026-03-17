@@ -130,7 +130,10 @@ const PlayerStats = ({ playerId, onClose }) => {
       </div>
 
       {/* Extremes */}
-      {totalGames > 0 && extremes && (
+      {totalGames > 0 && extremes && (() => {
+        const predaList = h2h.filter(o => o.wins >= 2 && o.wins > o.losses);
+        const incuboList = h2h.filter(o => o.losses >= 2 && o.losses > o.wins);
+        return (
         <div className="stats-extremes">
           {extremes.bestGain && (
             <div className="extreme-card extreme-up">
@@ -168,8 +171,27 @@ const PlayerStats = ({ playerId, onClose }) => {
               </div>
             </div>
           )}
+          {predaList.length > 0 && (
+            <div className="extreme-card extreme-up has-tooltip" data-tooltip={predaList.map(o => o.name).join(', ')}>
+              <span className="extreme-icon">{"\u{1F43A}"}</span>
+              <div className="extreme-info">
+                <span className="extreme-title">Incubo di</span>
+                <span className="extreme-detail">{predaList.length} giocator{predaList.length === 1 ? 'e' : 'i'}</span>
+              </div>
+            </div>
+          )}
+          {incuboList.length > 0 && (
+            <div className="extreme-card extreme-down has-tooltip" data-tooltip={incuboList.map(o => o.name).join(', ')}>
+              <span className="extreme-icon">{"\u{1F407}"}</span></span>
+              <div className="extreme-info">
+                <span className="extreme-title">Preda di</span>
+                <span className="extreme-detail">{incuboList.length} giocator{incuboList.length === 1 ? 'e' : 'i'}</span>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+        );
+      })()}
 
       {/* ELO Scores Grid */}
       <div className="stats-elo-grid">
@@ -286,26 +308,9 @@ const PlayerStats = ({ playerId, onClose }) => {
       )}
 
       {/* Head to Head */}
-      {h2h.length > 0 && (() => {
-        const predaList = h2h.filter(o => o.wins >= 2 && o.wins > o.losses);
-        const incuboList = h2h.filter(o => o.losses >= 2 && o.losses > o.wins);
-        return (
+      {h2h.length > 0 && (
         <div className="stats-section">
           <h2>Head to Head</h2>
-          {(predaList.length > 0 || incuboList.length > 0) && (
-            <div className="h2h-summary">
-              {predaList.length > 0 && (
-                <span className="h2h-summary-item h2h-summary-preda" title={predaList.map(o => o.name).join(', ')}>
-                  {"\u{1F43A}"} Sei l'incubo di {predaList.length} giocator{predaList.length === 1 ? 'e' : 'i'}
-                </span>
-              )}
-              {incuboList.length > 0 && (
-                <span className="h2h-summary-item h2h-summary-incubo" title={incuboList.map(o => o.name).join(', ')}>
-                  {"\u{1F407}"} Sei la preda di {incuboList.length} giocator{incuboList.length === 1 ? 'e' : 'i'}
-                </span>
-              )}
-            </div>
-          )}
           <div className="h2h-grid">
             {h2h.map((opp, i) => {
               const oppWinRate = Math.round((opp.wins / opp.total) * 100);
@@ -333,8 +338,7 @@ const PlayerStats = ({ playerId, onClose }) => {
             })}
           </div>
         </div>
-        );
-      })()}
+      )}
 
       {totalGames === 0 && (
         <div className="stats-empty">
