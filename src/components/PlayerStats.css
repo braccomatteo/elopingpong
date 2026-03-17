@@ -470,7 +470,7 @@
 .h2h-preda {
   background: linear-gradient(135deg, #b8860b, #daa520, #f5d061, #daa520, #b8860b) !important;
   border-color: #daa520 !important;
-  color: #1a1200;
+  color: #fff;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 8px rgba(218, 165, 32, 0.3);
 }
 
@@ -478,11 +478,11 @@
 .h2h-preda .h2h-w,
 .h2h-preda .h2h-l,
 .h2h-preda .h2h-total {
-  color: rgba(26, 18, 0, 0.85);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .h2h-preda .h2h-bar-container {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .h2h-name-row {
