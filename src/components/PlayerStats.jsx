@@ -134,7 +134,7 @@ const PlayerStats = ({ playerId, onClose }) => {
         <div className="stats-extremes">
           {extremes.bestGain && (
             <div className="extreme-card extreme-up">
-              <span className="extreme-icon">🔥</span>
+              <span className="extreme-icon">{"\u{1F525}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Miglior Guadagno</span>
                 <span className="extreme-detail">+{extremes.bestGain.delta} pts vs {extremes.bestGain.opp} ({extremes.bestGain.score})</span>
@@ -143,7 +143,7 @@ const PlayerStats = ({ playerId, onClose }) => {
           )}
           {extremes.worstLoss && (
             <div className="extreme-card extreme-down">
-              <span className="extreme-icon">💀</span>
+              <span className="extreme-icon">{"\u{1F480}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Peggior Perdita</span>
                 <span className="extreme-detail">{extremes.worstLoss.delta} pts vs {extremes.worstLoss.opp} ({extremes.worstLoss.score})</span>
@@ -152,19 +152,19 @@ const PlayerStats = ({ playerId, onClose }) => {
           )}
           {extremes.bestWin && (
             <div className="extreme-card extreme-up">
-              <span className="extreme-icon">⭐</span>
+              <span className="extreme-icon">{"\u2B50"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Miglior Vittoria</span>
-                <span className="extreme-detail">vs {extremes.bestWin.opp} ({extremes.bestWin.score}) — ELO avv. {extremes.bestWin.oppElo}</span>
+                <span className="extreme-detail">vs {extremes.bestWin.opp} ({extremes.bestWin.score}) {"\u2014"} ELO avv. {extremes.bestWin.oppElo}</span>
               </div>
             </div>
           )}
           {extremes.worstDefeat && (
             <div className="extreme-card extreme-down">
-              <span className="extreme-icon">😬</span>
+              <span className="extreme-icon">{"\u{1F62C}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Peggior Sconfitta</span>
-                <span className="extreme-detail">vs {extremes.worstDefeat.opp} ({extremes.worstDefeat.score}) — ELO avv. {extremes.worstDefeat.oppElo}</span>
+                <span className="extreme-detail">vs {extremes.worstDefeat.opp} ({extremes.worstDefeat.score}) {"\u2014"} ELO avv. {extremes.worstDefeat.oppElo}</span>
               </div>
             </div>
           )}
@@ -299,8 +299,8 @@ const PlayerStats = ({ playerId, onClose }) => {
                 <div className={cardClass} key={i}>
                   <div className="h2h-name-row">
                     <span className="h2h-name">{opp.name}</span>
-                    {isIncubo && <span className="h2h-tag">🐺 Incubo</span>}
-                    {isPreda && <span className="h2h-tag">� Preda</span>}
+                    {isIncubo && <span className="h2h-tag">{"\u{1F43A}"} Incubo</span>}
+                    {isPreda && <span className="h2h-tag">{'\u{1F407}'} Preda</span>}
                   </div>
                   <div className="h2h-bar-container">
                     <div className="h2h-bar h2h-bar-win" style={{ width: `${oppWinRate}%` }} />
