@@ -131,8 +131,8 @@ const PlayerStats = ({ playerId, onClose }) => {
 
       {/* Extremes */}
       {totalGames > 0 && extremes && (() => {
-        const predaList = h2h.filter(o => o.wins >= 2 && o.wins > o.losses);
-        const incuboList = h2h.filter(o => o.losses >= 2 && o.losses > o.wins);
+        const predaList = h2h.filter(o => (o.wins - o.losses) >= 2 && o.wins / o.total >= 0.7);
+        const incuboList = h2h.filter(o => (o.losses - o.wins) >= 2 && o.losses / o.total >= 0.7);
         return (
         <div className="stats-extremes">
           {extremes.bestGain && (
@@ -314,8 +314,8 @@ const PlayerStats = ({ playerId, onClose }) => {
           <div className="h2h-grid">
             {h2h.map((opp, i) => {
               const oppWinRate = Math.round((opp.wins / opp.total) * 100);
-              const isPreda = opp.wins >= 2 && opp.wins > opp.losses;
-              const isIncubo = opp.losses >= 2 && opp.losses > opp.wins;
+              const isPreda = (opp.wins - opp.losses) >= 2 && opp.wins / opp.total >= 0.7;
+              const isIncubo = (opp.losses - opp.wins) >= 2 && opp.losses / opp.total >= 0.7;
               const cardClass = `h2h-card${isIncubo ? ' h2h-incubo' : ''}${isPreda ? ' h2h-preda' : ''}`;
               return (
                 <div className={cardClass} key={i}>
