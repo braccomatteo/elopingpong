@@ -57,6 +57,36 @@
   animation: dropdownFade 0.15s ease-out;
 }
 
+.custom-select-search {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.custom-select-search input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.custom-select-search input:focus {
+  border-color: var(--accent-orange);
+}
+
+.custom-select-option.no-results {
+  color: var(--text-dim);
+  font-style: italic;
+  cursor: default;
+}
+
 .custom-select-option {
   padding: 0.6rem 0.8rem;
   font-size: 0.9rem;
