@@ -21,14 +21,23 @@
 
 .custom-select-input {
   flex: 1;
-  border: none;
-  background: transparent;
+  border: none !important;
+  background: transparent !important;
   color: var(--text-main);
   font-size: 0.9rem;
-  padding: 0.7rem 0;
-  outline: none;
+  padding: 0.7rem 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
   cursor: pointer;
   min-width: 0;
+  font-family: inherit;
+  width: auto !important;
+}
+
+.custom-select-input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .custom-select-input::placeholder {
