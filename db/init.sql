@@ -82,6 +82,15 @@ INSERT INTO companies (name, bus) VALUES
   ('NON-REPLYER', '{}')
 ON CONFLICT (name) DO NOTHING;
 
+-- Global stats (single row, updated by recalculateAll)
+CREATE TABLE IF NOT EXISTS global_stats (
+    id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+    biggest_upset_underdog VARCHAR(100),
+    biggest_upset_favorite VARCHAR(100),
+    biggest_upset_elo_diff INTEGER DEFAULT 0
+);
+INSERT INTO global_stats (id) VALUES (1) ON CONFLICT DO NOTHING;
+
 -- Seed Admin only
 INSERT INTO players (name, bu, role, score_overall, score_1v1_21, score_1v1_11, score_2v2_21, score_2v2_11, password, approved) VALUES 
 ('Admin', 'Management', 'admin', 1000, 1000, 1000, 1000, 1000, 'adminpassword', TRUE)

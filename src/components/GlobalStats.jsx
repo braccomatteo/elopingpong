@@ -27,27 +27,12 @@ const GlobalStats = () => {
             <span className="gs-card-sub">{stats.totalSingles} singoli · {stats.totalDoubles} doppi</span>
           </div>
 
-          {stats.highestElo && (
-            <div className="gs-card">
-              <span className="gs-card-label">ELO più alto</span>
-              <span className="gs-card-value gs-val-orange">{stats.highestElo.elo}</span>
-              <span className="gs-card-sub">{stats.highestElo.name}</span>
-            </div>
-          )}
-
           <div className="gs-card">
             <span className="gs-card-label">Margine medio</span>
             <span className="gs-card-value">{stats.avgMargin}</span>
             <span className="gs-card-sub">punti di scarto</span>
           </div>
 
-          {stats.bestWinRate && (
-            <div className="gs-card">
-              <span className="gs-card-label">Miglior Win Rate</span>
-              <span className="gs-card-value gs-val-green">{stats.bestWinRate.winrate}%</span>
-              <span className="gs-card-sub">{stats.bestWinRate.name}</span>
-            </div>
-          )}
         </div>
       </div>
 
