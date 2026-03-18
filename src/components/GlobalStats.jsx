@@ -17,61 +17,65 @@ const GlobalStats = () => {
 
   return (
     <div className="global-stats">
-      <h2>Statistiche Globali</h2>
+      <div className="gs-section">
+        <h2>Statistiche Globali</h2>
 
-      <div className="gs-top">
-        <div className="gs-total">
-          <span className="gs-number">{stats.totalMatches}</span>
-          <span className="gs-label">partite</span>
-          <span className="gs-detail">{stats.totalSingles} singoli / {stats.totalDoubles} doppi</span>
-        </div>
-
-        {stats.highestElo && (
-          <div className="gs-featured">
-            <span className="gs-featured-label">ELO più alto</span>
-            <span className="gs-featured-name">{stats.highestElo.name}</span>
-            <span className="gs-featured-value">{stats.highestElo.elo}</span>
+        <div className="gs-cards">
+          <div className="gs-card gs-card-highlight">
+            <span className="gs-card-label">Partite</span>
+            <span className="gs-card-value gs-val-orange">{stats.totalMatches}</span>
+            <span className="gs-card-sub">{stats.totalSingles} singoli · {stats.totalDoubles} doppi</span>
           </div>
-        )}
 
-        <div className="gs-featured">
-          <span className="gs-featured-label">Margine medio</span>
-          <span className="gs-featured-value">{stats.avgMargin}</span>
-          <span className="gs-detail">punti di scarto</span>
+          {stats.highestElo && (
+            <div className="gs-card">
+              <span className="gs-card-label">ELO più alto</span>
+              <span className="gs-card-value gs-val-orange">{stats.highestElo.elo}</span>
+              <span className="gs-card-sub">{stats.highestElo.name}</span>
+            </div>
+          )}
+
+          <div className="gs-card">
+            <span className="gs-card-label">Margine medio</span>
+            <span className="gs-card-value">{stats.avgMargin}</span>
+            <span className="gs-card-sub">punti di scarto</span>
+          </div>
+
+          {stats.bestWinRate && (
+            <div className="gs-card">
+              <span className="gs-card-label">Miglior Win Rate</span>
+              <span className="gs-card-value gs-val-green">{stats.bestWinRate.winrate}%</span>
+              <span className="gs-card-sub">{stats.bestWinRate.name}</span>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="gs-bottom">
+      <div className="gs-extremes">
         {stats.longestStreak && stats.longestStreak.streak > 1 && (
-          <div className="gs-pill">
-            <span className="gs-pill-name">{stats.longestStreak.name}</span>
-            <span className="gs-pill-text">è in streak da</span>
-            <span className="gs-pill-accent">{stats.longestStreak.streak}W</span>
+          <div className="gs-extreme gs-extreme-up">
+            <div className="gs-extreme-info">
+              <span className="gs-extreme-title">Streak attiva</span>
+              <span className="gs-extreme-detail"><strong>{stats.longestStreak.name}</strong> — {stats.longestStreak.streak} vittorie consecutive</span>
+            </div>
           </div>
         )}
 
         {stats.biggestUpset && (
-          <div className="gs-pill">
-            <span className="gs-pill-name">{stats.biggestUpset.underdog}</span>
-            <span className="gs-pill-text">ha battuto</span>
-            <span className="gs-pill-name">{stats.biggestUpset.favorite}</span>
-            <span className="gs-pill-dim">Δ{stats.biggestUpset.eloDiff}</span>
-          </div>
-        )}
-
-        {stats.bestWinRate && (
-          <div className="gs-pill">
-            <span className="gs-pill-name">{stats.bestWinRate.name}</span>
-            <span className="gs-pill-text">miglior win rate</span>
-            <span className="gs-pill-accent">{stats.bestWinRate.winrate}%</span>
+          <div className="gs-extreme gs-extreme-up">
+            <div className="gs-extreme-info">
+              <span className="gs-extreme-title">Upset più grande</span>
+              <span className="gs-extreme-detail"><strong>{stats.biggestUpset.underdog}</strong> ha battuto <strong>{stats.biggestUpset.favorite}</strong> con Δ{stats.biggestUpset.eloDiff} di svantaggio</span>
+            </div>
           </div>
         )}
 
         {stats.mostImproved && (
-          <div className="gs-pill">
-            <span className="gs-pill-name">{stats.mostImproved.name}</span>
-            <span className="gs-pill-text">più migliorato</span>
-            <span className="gs-pill-accent">+{stats.mostImproved.gain}</span>
+          <div className="gs-extreme gs-extreme-up">
+            <div className="gs-extreme-info">
+              <span className="gs-extreme-title">Più migliorato</span>
+              <span className="gs-extreme-detail"><strong>{stats.mostImproved.name}</strong> — +{stats.mostImproved.gain} ELO dal primo match</span>
+            </div>
           </div>
         )}
       </div>
