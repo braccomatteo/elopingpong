@@ -103,7 +103,13 @@ function App() {
       <div className="container">
         {!user && (
           <div className="welcome-banner">
-            Benvenuto! Accedi o registrati per inserire le tue partite.
+            Benvenuto! Accedi o registrati per visualizzare statistiche, storico partite e inserire i tuoi match.
+          </div>
+        )}
+
+        {user && !user.approved && user.role !== 'admin' && (
+          <div className="pending-banner">
+            {"\u23F3"} Il tuo account è in attesa di approvazione da parte di un admin. Puoi inserire fino a 5 partite. Il tuo nome non apparirà in classifica fino all'approvazione.
           </div>
         )}
 
@@ -142,7 +148,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, null) ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_overall} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
@@ -151,8 +157,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
-              <h2 style={{ marginTop: '2rem' }}>Storico Partite</h2>
-              <MatchHistory matches={matchesAll} />
+              {user && <><h2 style={{ marginTop: '2rem' }}>Storico Partite</h2>
+              <MatchHistory matches={matchesAll} /></>}
             </section>
           )}
 
@@ -172,7 +178,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_1v1_21') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_1v1_21} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
@@ -181,8 +187,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
-              <h2 style={{ marginTop: '2rem' }}>Storico 1v1 (21)</h2>
-              <MatchHistory matches={matches1v1_21} />
+              {user && <><h2 style={{ marginTop: '2rem' }}>Storico 1v1 (21)</h2>
+              <MatchHistory matches={matches1v1_21} /></>}
             </section>
           )}
 
@@ -202,7 +208,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_1v1_11') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_1v1_11} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
@@ -211,8 +217,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
-              <h2 style={{ marginTop: '2rem' }}>Storico 1v1 (11)</h2>
-              <MatchHistory matches={matches1v1_11} />
+              {user && <><h2 style={{ marginTop: '2rem' }}>Storico 1v1 (11)</h2>
+              <MatchHistory matches={matches1v1_11} /></>}
             </section>
           )}
 
@@ -232,7 +238,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_2v2_21') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_2v2_21} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
@@ -241,8 +247,8 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
-              <h2 style={{ marginTop: '2rem' }}>Storico 2v2 (21)</h2>
-              <MatchHistory matches={matches2v2_21} />
+              {user && <><h2 style={{ marginTop: '2rem' }}>Storico 2v2 (21)</h2>
+              <MatchHistory matches={matches2v2_21} /></>}
             </section>
           )}
 
@@ -262,7 +268,7 @@ function App() {
                     <tr key={p.id} className={isInactive(p, 'games_2v2_11') ? 'inactive-player' : ''}>
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
-                        <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
+                        <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_2v2_11} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
@@ -271,12 +277,12 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
-              <h2 style={{ marginTop: '2rem' }}>Storico 2v2 (11)</h2>
-              <MatchHistory matches={matches2v2_11} />
+              {user && <><h2 style={{ marginTop: '2rem' }}>Storico 2v2 (11)</h2>
+              <MatchHistory matches={matches2v2_11} /></>}
             </section>
           )}
 
-          {activeTab === 'stats' && statsPlayerId && (
+          {activeTab === 'stats' && statsPlayerId && user && (
             <PlayerStats playerId={statsPlayerId} onClose={() => { setStatsPlayerId(null); setActiveTab('overall'); }} />
           )}
 

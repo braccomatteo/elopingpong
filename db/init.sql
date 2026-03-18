@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS players (
     last_delta_2v2_21 NUMERIC(8,2) DEFAULT 0,
     last_delta_2v2_11 NUMERIC(8,2) DEFAULT 0,
     deleted_at TIMESTAMPTZ DEFAULT NULL,
-    deleted_by UUID DEFAULT NULL
+    deleted_by UUID DEFAULT NULL,
+    approved BOOLEAN DEFAULT FALSE
 );
 
 -- Create Matches table (singles only)
@@ -82,6 +83,6 @@ INSERT INTO companies (name, bus) VALUES
 ON CONFLICT (name) DO NOTHING;
 
 -- Seed Admin only
-INSERT INTO players (name, bu, role, score_overall, score_1v1_21, score_1v1_11, score_2v2_21, score_2v2_11, password) VALUES 
-('Admin', 'Management', 'admin', 1000, 1000, 1000, 1000, 1000, 'adminpassword')
+INSERT INTO players (name, bu, role, score_overall, score_1v1_21, score_1v1_11, score_2v2_21, score_2v2_11, password, approved) VALUES 
+('Admin', 'Management', 'admin', 1000, 1000, 1000, 1000, 1000, 'adminpassword', TRUE)
 ON CONFLICT (name) DO NOTHING;

@@ -253,6 +253,19 @@ tr.inactive-player .score {
   background: var(--accent-orange-light);
 }
 
+.pending-banner {
+  text-align: center;
+  padding: 12px 20px;
+  background: rgba(255, 165, 0, 0.1);
+  border: 1px solid var(--accent-orange);
+  border-left: 4px solid var(--accent-orange);
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 /* ===== PAGINATION ===== */
 .pagination {
   display: flex;

@@ -14,6 +14,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const [playerList, setPlayerList] = useState([]);
   const [editingPlayer, setEditingPlayer] = useState(null);
   const [editForm, setEditForm] = useState({ name: '', company: '', bu: '' });
+  const [editNewCompany, setEditNewCompany] = useState(false);
+  const [editCustomCompany, setEditCustomCompany] = useState('');
+  const [companies, setCompanies] = useState([]);
 
   /* ---- Singles state ---- */
   const [sCreatorId, setSCreatorId] = useState('');
@@ -42,6 +45,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const [trashData, setTrashData] = useState({ players: [], matches: [], teamMatches: [] });
   const [trashLoading, setTrashLoading] = useState(false);
 
+  /* ---- Pending state ---- */
+  const [pendingPlayers, setPendingPlayers] = useState([]);
+  const [pendingLoading, setPendingLoading] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   /* ---- Fetch functions ---- */
@@ -49,6 +56,14 @@ const AdminDashboard = ({ players, onUpdate }) => {
     try {
       const res = await fetch('/api/players');
       setPlayerList(await res.json());
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchCompanies = async () => {
+    try {
+      const res = await fetch('/api/companies');
+      const data = await res.json();
+      if (Array.isArray(data)) setCompanies(data);
     } catch (err) { console.error(err); }
   };
 
@@ -72,8 +87,25 @@ const AdminDashboard = ({ players, onUpdate }) => {
     setTrashLoading(false);
   };
 
+  const fetchPending = async () => {
+    setPendingLoading(true);
+    try {
+      const res = await fetch('/api/players/pending', { headers: headers() });
+      const data = await res.json();
+      if (Array.isArray(data)) setPendingPlayers(data);
+    } catch (err) { console.error(err); }
+    setPendingLoading(false);
+  };
+
+  const approvePlayer = async (id) => {
+    try {
+      const res = await fetch(`/api/players/approve/${id}`, { method: 'POST', headers: headers() });
+      if (res.ok) { fetchPending(); fetchPlayers(); onUpdate(); }
+    } catch (err) { console.error(err); }
+  };
+
   useEffect(() => {
-    Promise.all([fetchPlayers(), fetchHistory()]).finally(() => setLoading(false));
+    Promise.all([fetchPlayers(), fetchHistory(), fetchCompanies(), fetchPending()]).finally(() => setLoading(false));
   }, []);
 
   /* ---- Delete handlers ---- */
@@ -133,17 +165,46 @@ const AdminDashboard = ({ players, onUpdate }) => {
   /* ---- Edit player ---- */
   const startEdit = (p) => {
     setEditingPlayer(p.id);
-    setEditForm({ name: p.name, company: p.company || '', bu: p.bu || '' });
+    const knownCompany = companies.find(c => c.name === (p.company || ''));
+    if (knownCompany) {
+      setEditForm({ name: p.name, company: p.company || '', bu: p.bu || '' });
+      setEditNewCompany(false);
+      setEditCustomCompany('');
+    } else if (p.company) {
+      setEditForm({ name: p.name, company: '', bu: p.bu || '' });
+      setEditNewCompany(true);
+      setEditCustomCompany(p.company);
+    } else {
+      setEditForm({ name: p.name, company: '', bu: '' });
+      setEditNewCompany(false);
+      setEditCustomCompany('');
+    }
   };
 
   const cancelEdit = () => {
     setEditingPlayer(null);
     setEditForm({ name: '', company: '', bu: '' });
+    setEditNewCompany(false);
+    setEditCustomCompany('');
+  };
+
+  const handleEditCompanyChange = (value) => {
+    if (value === '__new__') {
+      setEditNewCompany(true);
+      setEditCustomCompany('');
+      setEditForm({ ...editForm, company: '', bu: '' });
+    } else {
+      setEditNewCompany(false);
+      setEditCustomCompany('');
+      setEditForm({ ...editForm, company: value, bu: '' });
+    }
   };
 
   const saveEdit = async (id) => {
     try {
-      const payload = { ...editForm, company: editForm.company ? editForm.company.toUpperCase() : editForm.company };
+      const company = editNewCompany ? editCustomCompany.trim().toUpperCase() : editForm.company;
+      const bu = editForm.bu;
+      const payload = { name: editForm.name, company, bu };
       const res = await fetch(`/api/players/${id}`, {
         method: 'PUT',
         headers: jsonHeaders(),
@@ -152,6 +213,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
       if (res.ok) {
         setEditingPlayer(null);
         fetchPlayers();
+        fetchCompanies();
         onUpdate();
       } else {
         const data = await res.json();
@@ -233,6 +295,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
         <button className={`admin-tab-btn ${adminTab === 'trash' ? 'active' : ''}`} onClick={() => { setAdminTab('trash'); fetchTrash(); }}>
           Cestino
         </button>
+        <button className={`admin-tab-btn ${adminTab === 'pending' ? 'active' : ''}`} onClick={() => { setAdminTab('pending'); fetchPending(); }}>
+          In Attesa {pendingPlayers.length > 0 && <span style={{ background: 'var(--accent-red)', color: '#fff', borderRadius: '50%', padding: '1px 6px', fontSize: '0.7rem', marginLeft: '4px' }}>{pendingPlayers.length}</span>}
+        </button>
       </div>
 
       {/* ===================== TAB: GIOCATORI ===================== */}
@@ -250,10 +315,30 @@ const AdminDashboard = ({ players, onUpdate }) => {
                 {playerList.map(p => (
                   <tr key={p.id}>
                     {editingPlayer === p.id ? (
+                      (() => {
+                        const editCompanyObj = companies.find(c => c.name === editForm.company);
+                        const editBus = editCompanyObj?.bus || [];
+                        return (
                       <>
                         <td><input className="edit-input" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} /></td>
-                        <td><input className="edit-input" value={editForm.company} onChange={e => setEditForm({ ...editForm, company: e.target.value })} /></td>
-                        <td><input className="edit-input" value={editForm.bu} onChange={e => setEditForm({ ...editForm, bu: e.target.value })} /></td>
+                        <td>
+                          <select className="edit-input" value={editNewCompany ? '__new__' : editForm.company} onChange={e => handleEditCompanyChange(e.target.value)}>
+                            <option value="">--</option>
+                            {companies.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                            <option value="__new__">+ Nuova...</option>
+                          </select>
+                          {editNewCompany && <input className="edit-input" style={{ marginTop: 4 }} placeholder="Nome company" value={editCustomCompany} onChange={e => setEditCustomCompany(e.target.value)} />}
+                        </td>
+                        <td>
+                          {editBus.length > 0 ? (
+                            <select className="edit-input" value={editForm.bu} onChange={e => setEditForm({ ...editForm, bu: e.target.value })}>
+                              <option value="">--</option>
+                              {editBus.map(bu => <option key={bu} value={bu}>{bu}</option>)}
+                            </select>
+                          ) : (
+                            <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>{'\u2014'}</span>
+                          )}
+                        </td>
                         <td className="score">{Math.round(p.score_overall)}</td>
                         <td className="score">{Math.round(p.score_1v1_21)}</td>
                         <td className="score">{Math.round(p.score_1v1_11)}</td>
@@ -266,6 +351,8 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           </div>
                         </td>
                       </>
+                        );
+                      })()
                     ) : (
                       <>
                         <td>{p.name}</td>
@@ -483,6 +570,40 @@ const AdminDashboard = ({ players, onUpdate }) => {
                 </>
               )}
             </>
+          )}
+        </section>
+      )}
+
+      {/* ===================== TAB: IN ATTESA ===================== */}
+      {adminTab === 'pending' && (
+        <section className="ranking-card">
+          <h2>Giocatori in Attesa di Approvazione</h2>
+          {pendingLoading ? (
+            <div className="empty-state">Caricamento...</div>
+          ) : pendingPlayers.length === 0 ? (
+            <div className="empty-state">Nessun giocatore in attesa.</div>
+          ) : (
+            <table className="admin-table">
+              <thead>
+                <tr><th>Nome</th><th>Company</th><th>BU</th><th>Match</th><th>Azioni</th></tr>
+              </thead>
+              <tbody>
+                {pendingPlayers.map(p => (
+                  <tr key={p.id}>
+                    <td>{p.name}</td>
+                    <td>{p.company || '\u2014'}</td>
+                    <td>{p.bu || '\u2014'}</td>
+                    <td>{p.match_count}/5</td>
+                    <td>
+                      <div className="trash-actions">
+                        <button className="trash-btn restore" onClick={() => approvePlayer(p.id)}>Approva</button>
+                        <button className="delete-btn" onClick={() => deletePlayer(p.id)}>Rifiuta</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </section>
       )}
