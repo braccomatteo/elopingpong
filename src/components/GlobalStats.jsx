@@ -18,56 +18,69 @@ const GlobalStats = () => {
   return (
     <div className="global-stats">
       <h2>Statistiche Globali</h2>
-      <div className="global-stats-grid">
-        <div className="global-stat-card">
-          <span className="global-stat-value">{stats.totalMatches}</span>
-          <span className="global-stat-label">Partite Totali</span>
-          <span className="global-stat-sub">{stats.totalSingles} singoli · {stats.totalDoubles} doppi</span>
+
+      <div className="gs-hero-row">
+        <div className="gs-hero-card">
+          <span className="gs-big-number">{stats.totalMatches}</span>
+          <div className="gs-hero-detail">
+            <span className="gs-hero-label">partite giocate</span>
+            <span className="gs-hero-breakdown">{stats.totalSingles} singoli · {stats.totalDoubles} doppi</span>
+          </div>
         </div>
 
-        {stats.mostActive && (
-          <div className="global-stat-card">
-            <span className="global-stat-value">{stats.mostActive.name}</span>
-            <span className="global-stat-label">Più Attivo</span>
-            <span className="global-stat-sub">{stats.mostActive.games} partite</span>
+        {stats.highestElo && (
+          <div className="gs-hero-card gs-elo-card">
+            <span className="gs-big-number">{stats.highestElo.elo}</span>
+            <div className="gs-hero-detail">
+              <span className="gs-hero-name">{stats.highestElo.name}</span>
+              <span className="gs-hero-label">ELO più alto</span>
+            </div>
           </div>
         )}
 
-        {stats.highestElo && (
-          <div className="global-stat-card">
-            <span className="global-stat-value">{stats.highestElo.name}</span>
-            <span className="global-stat-label">ELO Più Alto</span>
-            <span className="global-stat-sub">{stats.highestElo.elo} punti</span>
+        <div className="gs-hero-card">
+          <span className="gs-big-number">{stats.avgMargin}</span>
+          <div className="gs-hero-detail">
+            <span className="gs-hero-label">margine medio</span>
+            <span className="gs-hero-breakdown">punti di scarto</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="gs-highlights">
+        {stats.mostActive && (
+          <div className="gs-highlight">
+            <div className="gs-highlight-content">
+              <span className="gs-highlight-name">{stats.mostActive.name}</span>
+              <span className="gs-highlight-desc">è il più attivo con <strong>{stats.mostActive.games}</strong> partite</span>
+            </div>
           </div>
         )}
 
         {stats.longestStreak && stats.longestStreak.streak > 1 && (
-          <div className="global-stat-card">
-            <span className="global-stat-value">{stats.longestStreak.name}</span>
-            <span className="global-stat-label">Streak Attiva 🔥</span>
-            <span className="global-stat-sub">{stats.longestStreak.streak} vittorie consecutive</span>
+          <div className="gs-highlight">
+            <div className="gs-highlight-content">
+              <span className="gs-highlight-name">{stats.longestStreak.name}</span>
+              <span className="gs-highlight-desc">è in streak da <strong>{stats.longestStreak.streak}</strong> vittorie</span>
+            </div>
           </div>
         )}
 
         {stats.biggestUpset && (
-          <div className="global-stat-card">
-            <span className="global-stat-value">{stats.biggestUpset.underdog}</span>
-            <span className="global-stat-label">Upset più Grande</span>
-            <span className="global-stat-sub">ha battuto {stats.biggestUpset.favorite} (Δ{stats.biggestUpset.eloDiff})</span>
+          <div className="gs-highlight">
+            <div className="gs-highlight-content">
+              <span className="gs-highlight-name">{stats.biggestUpset.underdog}</span>
+              <span className="gs-highlight-desc">ha battuto <strong>{stats.biggestUpset.favorite}</strong> con Δ{stats.biggestUpset.eloDiff} di svantaggio</span>
+            </div>
           </div>
         )}
 
-        <div className="global-stat-card">
-          <span className="global-stat-value">{stats.avgMargin}</span>
-          <span className="global-stat-label">Margine Medio</span>
-          <span className="global-stat-sub">punti di scarto</span>
-        </div>
-
         {stats.mostCommonMatchup && (
-          <div className="global-stat-card">
-            <span className="global-stat-value matchup">{stats.mostCommonMatchup.players}</span>
-            <span className="global-stat-label">Sfida più Frequente</span>
-            <span className="global-stat-sub">{stats.mostCommonMatchup.times} volte</span>
+          <div className="gs-highlight">
+            <div className="gs-highlight-content">
+              <span className="gs-highlight-name">{stats.mostCommonMatchup.players}</span>
+              <span className="gs-highlight-desc">la rivalità più accesa — <strong>{stats.mostCommonMatchup.times}</strong> scontri</span>
+            </div>
           </div>
         )}
       </div>

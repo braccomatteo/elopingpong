@@ -14,51 +14,111 @@
   display: none;
 }
 
-.global-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+/* ===== HERO ROW: big numbers ===== */
+.gs-hero-row {
+  display: flex;
   gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.global-stat-card {
+.gs-hero-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   background: var(--input-bg);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 1rem;
+  padding: 1rem 1.2rem;
+}
+
+.gs-big-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.gs-hero-detail {
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
-.global-stat-value {
-  font-size: 1.1rem;
+.gs-hero-name {
+  font-size: 0.95rem;
   font-weight: 700;
-  color: var(--accent-orange);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #fff;
 }
 
-.global-stat-value.matchup {
-  font-size: 0.85rem;
-}
-
-.global-stat-label {
-  font-size: 0.75rem;
+.gs-hero-label {
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.global-stat-sub {
-  font-size: 0.8rem;
+.gs-hero-breakdown {
+  font-size: 0.75rem;
   color: var(--text-dim);
-  opacity: 0.7;
+  opacity: 0.6;
+  margin-top: 1px;
 }
 
-@media (max-width: 600px) {
-  .global-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+/* ===== HIGHLIGHTS: narrative lines ===== */
+.gs-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gs-highlight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--input-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.gs-highlight:last-child {
+  border-bottom: none;
+}
+
+.gs-highlight-content {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.gs-highlight-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.gs-highlight-desc {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.gs-highlight-desc strong {
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .gs-hero-row {
+    flex-direction: column;
+  }
+
+  .gs-highlight-content {
+    flex-direction: column;
+    gap: 0;
   }
 }
