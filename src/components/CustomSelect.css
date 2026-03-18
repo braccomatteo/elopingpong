@@ -5,7 +5,7 @@
 
 .custom-select-trigger {
   width: 100%;
-  padding: 0.7rem 0.8rem;
+  padding: 0 0.8rem;
   background-color: var(--input-bg);
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -19,15 +19,19 @@
   box-sizing: border-box;
 }
 
-.custom-select-trigger:hover {
-  border-color: var(--text-dim);
+.custom-select-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  padding: 0.7rem 0;
+  outline: none;
+  cursor: pointer;
+  min-width: 0;
 }
 
-.custom-select-trigger.open {
-  border-color: var(--accent-orange);
-}
-
-.custom-select-trigger .placeholder {
+.custom-select-input::placeholder {
   color: var(--text-dim);
 }
 
@@ -40,6 +44,18 @@
 
 .custom-select-trigger.open svg {
   transform: rotate(180deg);
+}
+
+.custom-select-trigger:hover {
+  border-color: var(--text-dim);
+}
+
+.custom-select-trigger.open {
+  border-color: var(--accent-orange);
+}
+
+.custom-select-trigger.open .custom-select-input {
+  cursor: text;
 }
 
 .custom-select-options {
@@ -55,36 +71,6 @@
   z-index: 100;
   box-shadow: 0 8px 24px var(--shadow);
   animation: dropdownFade 0.15s ease-out;
-}
-
-.custom-select-search {
-  position: sticky;
-  top: 0;
-  background: var(--card-bg);
-  padding: 0.4rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.custom-select-search input {
-  width: 100%;
-  padding: 0.4rem 0.6rem;
-  background: var(--input-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 3px;
-  color: var(--text-main);
-  font-size: 0.85rem;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.custom-select-search input:focus {
-  border-color: var(--accent-orange);
-}
-
-.custom-select-option.no-results {
-  color: var(--text-dim);
-  font-style: italic;
-  cursor: default;
 }
 
 .custom-select-option {
@@ -107,6 +93,12 @@
 .custom-select-option.special {
   color: var(--text-main);
   font-size: 0.85rem;
+}
+
+.custom-select-option.no-results {
+  color: var(--text-dim);
+  font-style: italic;
+  cursor: default;
 }
 
 .custom-select-options::-webkit-scrollbar {

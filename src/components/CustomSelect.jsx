@@ -25,24 +25,21 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
 
   return (
     <div className="custom-select" ref={ref}>
-      <div className={`custom-select-trigger${open ? ' open' : ''}`} onClick={() => { setOpen(!open); setSearch(''); }}>
-        <span className={selected ? '' : 'placeholder'}>{selected ? selected.label : placeholder}</span>
+      <div className={`custom-select-trigger${open ? ' open' : ''}`} onClick={() => { if (!open) { setOpen(true); setSearch(''); } }}>
+        <input
+          ref={inputRef}
+          type="text"
+          className="custom-select-input"
+          placeholder={placeholder}
+          value={open ? search : (selected ? selected.label : '')}
+          onChange={e => setSearch(e.target.value)}
+          onFocus={() => { if (!open) { setOpen(true); setSearch(''); } }}
+          readOnly={!open}
+        />
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
       </div>
       {open && (
         <div className="custom-select-options">
-          {options.length > 5 && (
-            <div className="custom-select-search">
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Cerca..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                onClick={e => e.stopPropagation()}
-              />
-            </div>
-          )}
           {filtered.length > 0 ? filtered.map(o => (
             <div
               key={o.value}
