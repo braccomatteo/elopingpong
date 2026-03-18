@@ -34,6 +34,14 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
           value={open ? search : (selected ? selected.label : '')}
           onChange={e => setSearch(e.target.value)}
           onFocus={() => { if (!open) { setOpen(true); setSearch(''); } }}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && open && filtered.length > 0) {
+              e.preventDefault();
+              onChange(filtered[0].value);
+              setOpen(false);
+              setSearch('');
+            }
+          }}
           readOnly={!open}
         />
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
