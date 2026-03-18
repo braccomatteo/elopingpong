@@ -3,16 +3,7 @@
   margin-top: 2rem;
 }
 
-/* Section wrapper — mirrors .stats-section */
-.gs-section {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 20px;
-  margin-bottom: 1rem;
-}
-
-.gs-section h2 {
+.global-stats h2 {
   font-size: 1rem;
   margin: 0 0 16px 0;
   color: var(--text-main);
@@ -23,7 +14,7 @@
   background: none;
 }
 
-.gs-section h2::before {
+.global-stats h2::before {
   content: "";
   width: 3px;
   height: 16px;
@@ -31,7 +22,7 @@
   border-radius: 1px;
 }
 
-/* Cards grid — mirrors .stats-cards / .stat-card */
+/* Cards grid */
 .gs-cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -39,24 +30,10 @@
 }
 
 .gs-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 14px 12px;
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  transition: border-color 0.2s;
-}
-
-.gs-card:hover {
-  border-color: var(--accent-orange);
-}
-
-.gs-card-highlight {
-  border-color: var(--accent-orange);
-  background: linear-gradient(135deg, rgba(255, 102, 0, 0.08), transparent);
 }
 
 .gs-card-label {
@@ -71,14 +48,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   font-family: "JetBrains Mono", "Fira Code", monospace;
-}
-
-.gs-val-orange {
-  color: var(--accent-orange);
-}
-
-.gs-val-green {
-  color: #22c55e;
+  color: var(--text-main);
 }
 
 .gs-card-sub {
@@ -86,57 +56,8 @@
   color: var(--text-dim);
 }
 
-/* Extremes — mirrors .stats-extremes / .extreme-card */
-.gs-extremes {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.gs-extreme {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-}
-
-.gs-extreme-up {
-  border-left: 3px solid #22c55e;
-}
-
-.gs-extreme-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.gs-extreme-title {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-.gs-extreme-detail {
-  font-size: 0.8rem;
-  color: var(--text-dim);
-}
-
-.gs-extreme-detail strong {
-  color: var(--text-main);
-  font-weight: 700;
-}
-
 @media (max-width: 700px) {
   .gs-cards {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .gs-extremes {
-    grid-template-columns: 1fr;
   }
 }
