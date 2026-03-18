@@ -33,6 +33,12 @@ const GlobalStats = () => {
             <span className="gs-card-sub">punti di scarto</span>
           </div>
 
+          <div className="gs-card">
+            <span className="gs-card-label">Partite ravvicinate</span>
+            <span className="gs-card-value gs-val-green">{stats.closeMatches}%</span>
+            <span className="gs-card-sub">decise da ≤2 punti</span>
+          </div>
+
         </div>
       </div>
 
