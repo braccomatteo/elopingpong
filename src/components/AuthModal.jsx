@@ -1,16 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './AuthModal.css';
-
-const COMPANY_BUS = {
-  'DATA': [
-    'BU1 - AIFR', 'BU2 - PFR', 'BU3 - AITE', 'BU4 - PTE',
-    'BU5 - AIBA', 'BU6 - PBA', 'BU7 - AIIN', 'BU8 - PIN',
-    'BU9 - QOA', 'BU10 - DGO'
-  ]
-};
-
-const COMPANIES = ['DATA'];
 
 const AuthModal = ({ isOpen, onClose }) => {
   const { login, register } = useAuth();
@@ -18,12 +8,22 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({ name: '', company: '', bu: '', password: '' });
   const [isNewCompany, setIsNewCompany] = useState(false);
   const [customCompany, setCustomCompany] = useState('');
+  const [companies, setCompanies] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (isOpen && !isLogin) {
+      fetch('/api/companies').then(r => r.json()).then(data => {
+        if (Array.isArray(data)) setCompanies(data);
+      }).catch(() => {});
+    }
+  }, [isOpen, isLogin]);
+
   if (!isOpen) return null;
 
-  const selectedCompanyBus = COMPANY_BUS[formData.company] || [];
+  const selectedCompany = companies.find(c => c.name === formData.company);
+  const selectedCompanyBus = selectedCompany?.bus || [];
 
   const handleCompanyChange = (value) => {
     if (value === '__new__') {
@@ -41,7 +41,7 @@ const AuthModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setError('');
 
-    const company = isNewCompany ? customCompany.trim() : formData.company;
+    const company = isNewCompany ? customCompany.trim().toUpperCase() : formData.company;
     const bu = formData.bu;
 
     if (!isLogin && !company) {
@@ -99,10 +99,9 @@ const AuthModal = ({ isOpen, onClose }) => {
                   required={!isNewCompany}
                 >
                   <option value="">Seleziona una company</option>
-                  {COMPANIES.map(c => (
-                    <option key={c} value={c}>{c}</option>
+                  {companies.map(c => (
+                    <option key={c.id} value={c.name}>{c.name}</option>
                   ))}
-                  <option value="Non-Replyer">Non-Replyer</option>
                   <option value="__new__">+ Aggiungi Company...</option>
                 </select>
               </div>

@@ -143,10 +143,11 @@ const AdminDashboard = ({ players, onUpdate }) => {
 
   const saveEdit = async (id) => {
     try {
+      const payload = { ...editForm, company: editForm.company ? editForm.company.toUpperCase() : editForm.company };
       const res = await fetch(`/api/players/${id}`, {
         method: 'PUT',
         headers: jsonHeaders(),
-        body: JSON.stringify(editForm)
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         setEditingPlayer(null);

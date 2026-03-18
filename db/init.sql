@@ -67,6 +67,20 @@ CREATE INDEX IF NOT EXISTS idx_team_matches_op2 ON team_matches(op2_id);
 -- Unique name only for active (non-deleted) players
 CREATE UNIQUE INDEX IF NOT EXISTS idx_players_name_active ON players(name) WHERE deleted_at IS NULL;
 
+-- Create Companies table
+CREATE TABLE IF NOT EXISTS companies (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    bus TEXT[] DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed default companies
+INSERT INTO companies (name, bus) VALUES
+  ('DATA', ARRAY['BU1 - AIFR','BU2 - PFR','BU3 - AITE','BU4 - PTE','BU5 - AIBA','BU6 - PBA','BU7 - AIIN','BU8 - PIN','BU9 - QOA','BU10 - DGO']),
+  ('NON-REPLYER', '{}')
+ON CONFLICT (name) DO NOTHING;
+
 -- Seed Admin only
 INSERT INTO players (name, bu, role, score_overall, score_1v1_21, score_1v1_11, score_2v2_21, score_2v2_11, password) VALUES 
 ('Admin', 'Management', 'admin', 1000, 1000, 1000, 1000, 1000, 'adminpassword')

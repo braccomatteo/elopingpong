@@ -28,7 +28,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       const body = {};
       if (name) body.name = name;
-      if (company) body.company = company;
+      if (company) body.company = company.toUpperCase();
       if (bu) body.bu = bu;
       if (password) body.password = password;
 
