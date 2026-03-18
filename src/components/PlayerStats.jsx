@@ -271,7 +271,7 @@ const PlayerStats = ({ playerId, onClose }) => {
                     <Cell fill={COLORS.win} />
                     <Cell fill={COLORS.loss} />
                   </Pie>
-                  <Tooltip formatter={(v, name) => [`${v}`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} />
+                  <Tooltip formatter={(v, name) => [`${v}`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="pie-center-label">
@@ -295,7 +295,7 @@ const PlayerStats = ({ playerId, onClose }) => {
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
                     <XAxis dataKey="category" stroke="var(--text-dim)" fontSize={11} />
                     <YAxis stroke="var(--text-dim)" fontSize={12} />
-                    <Tooltip contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} />
+                    <Tooltip contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} labelStyle={{ color: 'var(--text-color)' }} />
                     <Legend wrapperStyle={{ color: 'var(--text-color)' }} />
                     <Bar dataKey="Vittorie" fill={COLORS.win} radius={[3, 3, 0, 0]} />
                     <Bar dataKey="Sconfitte" fill={COLORS.loss} radius={[3, 3, 0, 0]} />
