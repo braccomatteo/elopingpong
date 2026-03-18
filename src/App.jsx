@@ -76,7 +76,11 @@ function App() {
   const players2v2_21 = filterAndSort('score_2v2_21', 'games_2v2_21')
   const players2v2_11 = filterAndSort('score_2v2_11', 'games_2v2_11')
 
-  const playerLabel = (p) => p.bu || p.company || ''
+  const playerLabel = (p) => {
+    if (!user) return ''
+    if (user.company === 'DATA') return p.bu || p.company || ''
+    return p.company || ''
+  }
 
   const toggleIcon = (
     <button
