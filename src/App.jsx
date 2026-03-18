@@ -76,6 +76,8 @@ function App() {
   const players2v2_21 = filterAndSort('score_2v2_21', 'games_2v2_21')
   const players2v2_11 = filterAndSort('score_2v2_11', 'games_2v2_11')
 
+  const playerLabel = (p) => p.bu || p.company || ''
+
   const toggleIcon = (
     <button
       onClick={() => setShowAllPlayers(!showAllPlayers)}
@@ -142,7 +144,7 @@ function App() {
                       <td>
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_overall} />
-                        <span className="player-bu">{p.bu}</span>
+                        <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_overall)}</td>
                     </tr>
@@ -172,7 +174,7 @@ function App() {
                       <td>
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_1v1_21} />
-                        <span className="player-bu">{p.bu}</span>
+                        <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_1v1_21)}</td>
                     </tr>
@@ -202,7 +204,7 @@ function App() {
                       <td>
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_1v1_11} />
-                        <span className="player-bu">{p.bu}</span>
+                        <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_1v1_11)}</td>
                     </tr>
@@ -232,7 +234,7 @@ function App() {
                       <td>
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_2v2_21} />
-                        <span className="player-bu">{p.bu}</span>
+                        <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_2v2_21)}</td>
                     </tr>
@@ -262,7 +264,7 @@ function App() {
                       <td>
                         <span className="player-name clickable" onClick={() => { setStatsPlayerId(p.id); setActiveTab('stats'); }}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <DeltaBadge value={p.last_delta_2v2_11} />
-                        <span className="player-bu">{p.bu}</span>
+                        <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_2v2_11)}</td>
                     </tr>

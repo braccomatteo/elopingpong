@@ -5,7 +5,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS players (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(100) NOT NULL,
-    bu VARCHAR(50) NOT NULL,
+    company VARCHAR(100) DEFAULT '',
+    bu VARCHAR(50) DEFAULT '',
     password VARCHAR(255),
     role VARCHAR(20) DEFAULT 'player',
     score_overall NUMERIC(8,2) DEFAULT 1000,

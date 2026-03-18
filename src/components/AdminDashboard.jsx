@@ -12,6 +12,8 @@ const AdminDashboard = ({ players, onUpdate }) => {
 
   /* ---- Players state ---- */
   const [playerList, setPlayerList] = useState([]);
+  const [editingPlayer, setEditingPlayer] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', company: '', bu: '' });
 
   /* ---- Singles state ---- */
   const [sCreatorId, setSCreatorId] = useState('');
@@ -128,6 +130,35 @@ const AdminDashboard = ({ players, onUpdate }) => {
     } catch (err) { console.error(err); }
   };
 
+  /* ---- Edit player ---- */
+  const startEdit = (p) => {
+    setEditingPlayer(p.id);
+    setEditForm({ name: p.name, company: p.company || '', bu: p.bu || '' });
+  };
+
+  const cancelEdit = () => {
+    setEditingPlayer(null);
+    setEditForm({ name: '', company: '', bu: '' });
+  };
+
+  const saveEdit = async (id) => {
+    try {
+      const res = await fetch(`/api/players/${id}`, {
+        method: 'PUT',
+        headers: jsonHeaders(),
+        body: JSON.stringify(editForm)
+      });
+      if (res.ok) {
+        setEditingPlayer(null);
+        fetchPlayers();
+        onUpdate();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Errore durante il salvataggio.');
+      }
+    } catch (err) { console.error(err); }
+  };
+
   /* ---- Create singles ---- */
   const handleSinglesSubmit = async (e) => {
     e.preventDefault();
@@ -212,19 +243,46 @@ const AdminDashboard = ({ players, onUpdate }) => {
           ) : (
             <table className="admin-table">
               <thead>
-                <tr><th>Nome</th><th>BU</th><th>Overall</th><th>1v1 21</th><th>1v1 11</th><th>2v2 21</th><th>2v2 11</th><th>Azioni</th></tr>
+                <tr><th>Nome</th><th>Company</th><th>BU</th><th>Overall</th><th>1v1 21</th><th>1v1 11</th><th>2v2 21</th><th>2v2 11</th><th>Azioni</th></tr>
               </thead>
               <tbody>
                 {playerList.map(p => (
                   <tr key={p.id}>
-                    <td>{p.name}</td>
-                    <td>{p.bu}</td>
-                    <td className="score">{Math.round(p.score_overall)}</td>
-                    <td className="score">{Math.round(p.score_1v1_21)}</td>
-                    <td className="score">{Math.round(p.score_1v1_11)}</td>
-                    <td className="score">{Math.round(p.score_2v2_21)}</td>
-                    <td className="score">{Math.round(p.score_2v2_11)}</td>
-                    <td><button className="delete-btn" onClick={() => deletePlayer(p.id)}>Elimina</button></td>
+                    {editingPlayer === p.id ? (
+                      <>
+                        <td><input className="edit-input" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} /></td>
+                        <td><input className="edit-input" value={editForm.company} onChange={e => setEditForm({ ...editForm, company: e.target.value })} /></td>
+                        <td><input className="edit-input" value={editForm.bu} onChange={e => setEditForm({ ...editForm, bu: e.target.value })} /></td>
+                        <td className="score">{Math.round(p.score_overall)}</td>
+                        <td className="score">{Math.round(p.score_1v1_21)}</td>
+                        <td className="score">{Math.round(p.score_1v1_11)}</td>
+                        <td className="score">{Math.round(p.score_2v2_21)}</td>
+                        <td className="score">{Math.round(p.score_2v2_11)}</td>
+                        <td>
+                          <div className="trash-actions">
+                            <button className="trash-btn restore" onClick={() => saveEdit(p.id)}>Salva</button>
+                            <button className="trash-btn perm-delete" onClick={cancelEdit}>Annulla</button>
+                          </div>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td>{p.name}</td>
+                        <td>{p.company || '\u2014'}</td>
+                        <td>{p.bu || '\u2014'}</td>
+                        <td className="score">{Math.round(p.score_overall)}</td>
+                        <td className="score">{Math.round(p.score_1v1_21)}</td>
+                        <td className="score">{Math.round(p.score_1v1_11)}</td>
+                        <td className="score">{Math.round(p.score_2v2_21)}</td>
+                        <td className="score">{Math.round(p.score_2v2_11)}</td>
+                        <td>
+                          <div className="trash-actions">
+                            <button className="edit-btn" onClick={() => startEdit(p)}>Modifica</button>
+                            <button className="delete-btn" onClick={() => deletePlayer(p.id)}>Elimina</button>
+                          </div>
+                        </td>
+                      </>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -357,13 +415,14 @@ const AdminDashboard = ({ players, onUpdate }) => {
                   <h3 style={{ marginTop: '1rem' }}>Giocatori eliminati</h3>
                   <table className="admin-table">
                     <thead>
-                      <tr><th>Nome</th><th>BU</th><th>Eliminato il</th><th>Eliminato da</th><th>Azioni</th></tr>
+                      <tr><th>Nome</th><th>Company</th><th>BU</th><th>Eliminato il</th><th>Eliminato da</th><th>Azioni</th></tr>
                     </thead>
                     <tbody>
                       {trashData.players.map(p => (
                         <tr key={p.id}>
                           <td>{p.name}</td>
-                          <td>{p.bu}</td>
+                          <td>{p.company || '\u2014'}</td>
+                          <td>{p.bu || '\u2014'}</td>
                           <td>{new Date(p.deleted_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
                           <td>{p.deleted_by_name || '—'}</td>
                           <td>

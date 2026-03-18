@@ -2,24 +2,59 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './AuthModal.css';
 
+const COMPANY_BUS = {
+  'DATA': [
+    'BU1 - AIFR', 'BU2 - PFR', 'BU3 - AITE', 'BU4 - PTE',
+    'BU5 - AIBA', 'BU6 - PBA', 'BU7 - AIIN', 'BU8 - PIN',
+    'BU9 - QOA', 'BU10 - DGO'
+  ]
+};
+
+const COMPANIES = ['DATA'];
+
 const AuthModal = ({ isOpen, onClose }) => {
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: '', bu: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', company: '', bu: '', password: '' });
+  const [isNewCompany, setIsNewCompany] = useState(false);
+  const [customCompany, setCustomCompany] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
+  const selectedCompanyBus = COMPANY_BUS[formData.company] || [];
+
+  const handleCompanyChange = (value) => {
+    if (value === '__new__') {
+      setIsNewCompany(true);
+      setCustomCompany('');
+      setFormData({ ...formData, company: '', bu: '' });
+    } else {
+      setIsNewCompany(false);
+      setCustomCompany('');
+      setFormData({ ...formData, company: value, bu: '' });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    const company = isNewCompany ? customCompany.trim() : formData.company;
+    const bu = formData.bu;
+
+    if (!isLogin && !company) {
+      setError('Seleziona o inserisci una company.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       const result = isLogin
         ? await login(formData.name, formData.password)
-        : await register(formData.name, formData.bu, formData.password);
+        : await register(formData.name, company, bu, formData.password);
 
       if (result.success) {
         onClose();
@@ -27,7 +62,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         setError(result.error);
       }
     } catch (err) {
-      setError('Qualcosa è andato storto. Riprova.');
+      setError('Qualcosa \u00e8 andato storto. Riprova.');
     } finally {
       setLoading(false);
     }
@@ -55,34 +90,58 @@ const AuthModal = ({ isOpen, onClose }) => {
           </div>
 
           {!isLogin && (
-            <div className="input-group">
-              <label>Business Unit</label>
-              <select
-                value={formData.bu}
-                onChange={e => setFormData({ ...formData, bu: e.target.value })}
-                required
-              >
-                <option value="">Seleziona una BU</option>
-                <option value="BU1 - AIFR">BU1 - AIFR</option>
-                <option value="BU2 - PFR">BU2 - PFR</option>
-                <option value="BU3 - AITE">BU3 - AITE</option>
-                <option value="BU4 - PTE">BU4 - PTE</option>
-                <option value="BU5 - AIBA">BU5 - AIBA</option>
-                <option value="BU6 - PBA">BU6 - PBA</option>
-                <option value="BU7 - AIIN">BU7 - AIIN</option>
-                <option value="BU8 - PIN">BU8 - PIN</option>
-                <option value="BU9 - QOA">BU9 - QOA</option>
-                <option value="BU10 - DGO">BU10 - DGO</option>
-                <option value="ALTRO">ALTRO</option>
-              </select>
-            </div>
+            <>
+              <div className="input-group">
+                <label>Company</label>
+                <select
+                  value={isNewCompany ? '__new__' : formData.company}
+                  onChange={e => handleCompanyChange(e.target.value)}
+                  required={!isNewCompany}
+                >
+                  <option value="">Seleziona una company</option>
+                  {COMPANIES.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                  <option value="Non-Replyer">Non-Replyer</option>
+                  <option value="__new__">+ Aggiungi Company...</option>
+                </select>
+              </div>
+
+              {isNewCompany && (
+                <div className="input-group slide-in">
+                  <label>Nome Company</label>
+                  <input
+                    type="text"
+                    placeholder="es. Acme Corp"
+                    value={customCompany}
+                    onChange={e => setCustomCompany(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
+
+              {formData.company && selectedCompanyBus.length > 0 && (
+                <div className="input-group slide-in">
+                  <label>Business Unit</label>
+                  <select
+                    value={formData.bu}
+                    onChange={e => setFormData({ ...formData, bu: e.target.value })}
+                  >
+                    <option value="">Seleziona una BU (opzionale)</option>
+                    {selectedCompanyBus.map(bu => (
+                      <option key={bu} value={bu}>{bu}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </>
           )}
 
           <div className="input-group">
             <label>Password</label>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder={"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"}
               value={formData.password}
               onChange={e => setFormData({ ...formData, password: e.target.value })}
               required
@@ -97,7 +156,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         </form>
 
         <div className="switch-auth">
-          {isLogin ? 'Non hai un account? ' : 'Hai già un account? '}
+          {isLogin ? 'Non hai un account? ' : 'Hai gi\u00e0 un account? '}
           <button onClick={() => setIsLogin(!isLogin)}>
             {isLogin ? 'Registrati' : 'Accedi'}
           </button>

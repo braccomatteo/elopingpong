@@ -139,6 +139,35 @@
   color: #fff;
 }
 
+.edit-btn {
+  background: transparent;
+  color: var(--accent-orange);
+  border: 1px solid var(--accent-orange);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  background: var(--accent-orange);
+  color: #fff;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 4px 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--accent-orange);
+  border-radius: 3px;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
 /* Trash action buttons */
 .trash-actions {
   display: flex;

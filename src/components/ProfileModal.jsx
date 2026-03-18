@@ -5,6 +5,7 @@ import './ProfileModal.css';
 const ProfileModal = ({ isOpen, onClose }) => {
   const { user, updateProfile } = useAuth();
   const [name, setName] = useState('');
+  const [company, setCompany] = useState('');
   const [bu, setBu] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +16,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name && !bu && !password) {
+    if (!name && !company && !bu && !password) {
       setError('Modifica almeno un campo.');
       return;
     }
@@ -27,6 +28,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       const body = {};
       if (name) body.name = name;
+      if (company) body.company = company;
       if (bu) body.bu = bu;
       if (password) body.password = password;
 
@@ -34,6 +36,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
       if (result.success) {
         setSuccess('Profilo aggiornato!');
         setName('');
+        setCompany('');
         setBu('');
         setPassword('');
         setTimeout(() => {
@@ -65,6 +68,16 @@ const ProfileModal = ({ isOpen, onClose }) => {
               placeholder={user.name}
               value={name}
               onChange={e => setName(e.target.value)}
+            />
+          </div>
+
+          <div className="input-group">
+            <label>Company</label>
+            <input 
+              type="text" 
+              placeholder={user.company || 'La tua company'}
+              value={company}
+              onChange={e => setCompany(e.target.value)}
             />
           </div>
 
