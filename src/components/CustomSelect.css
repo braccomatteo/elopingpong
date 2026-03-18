@@ -76,7 +76,6 @@
 
 .custom-select-option.special {
   color: var(--text-main);
-  border-top: 1px solid var(--border-color);
   font-size: 0.85rem;
 }
 
