@@ -4,6 +4,7 @@ import MatchModal from './components/MatchModal'
 import MatchHistory from './components/MatchHistory'
 import AdminDashboard from './components/AdminDashboard'
 import PlayerStats from './components/PlayerStats'
+import GlobalStats from './components/GlobalStats'
 import { useAuth } from './context/AuthContext'
 import './Rankings.css'
 
@@ -161,8 +162,9 @@ function App() {
                   )) : <tr><td colSpan="3" style={{ textAlign: 'center' }}>Nessun giocatore registrato</td></tr>}
                 </tbody>
               </table>
-              {user && <><h2 style={{ marginTop: '2rem' }}>Storico Partite</h2>
-              <MatchHistory matches={matchesAll} /></>}
+              {user && <><GlobalStats />
+              <h2 style={{ marginTop: '2rem' }}>Ultime Partite</h2>
+              <MatchHistory matches={matchesAll.slice(0, 5)} /></>}
             </section>
           )}
 
