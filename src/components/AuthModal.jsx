@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import CustomSelect from './CustomSelect';
+import './CustomSelect.css';
 import './AuthModal.css';
 
 const AuthModal = ({ isOpen, onClose }) => {
@@ -93,17 +95,15 @@ const AuthModal = ({ isOpen, onClose }) => {
             <>
               <div className="input-group">
                 <label>Company</label>
-                <select
+                <CustomSelect
                   value={isNewCompany ? '__new__' : formData.company}
-                  onChange={e => handleCompanyChange(e.target.value)}
-                  required={!isNewCompany}
-                >
-                  <option value="">Seleziona una company</option>
-                  {companies.map(c => (
-                    <option key={c.id} value={c.name}>{c.name}</option>
-                  ))}
-                  <option value="__new__">+ Aggiungi Company...</option>
-                </select>
+                  onChange={handleCompanyChange}
+                  placeholder="Seleziona una company"
+                  options={[
+                    ...companies.map(c => ({ value: c.name, label: c.name })),
+                    { value: '__new__', label: '+ Aggiungi Company...', special: true }
+                  ]}
+                />
               </div>
 
               {isNewCompany && (
@@ -122,15 +122,12 @@ const AuthModal = ({ isOpen, onClose }) => {
               {formData.company && selectedCompanyBus.length > 0 && (
                 <div className="input-group slide-in">
                   <label>Business Unit</label>
-                  <select
+                  <CustomSelect
                     value={formData.bu}
-                    onChange={e => setFormData({ ...formData, bu: e.target.value })}
-                  >
-                    <option value="">Seleziona una BU (opzionale)</option>
-                    {selectedCompanyBus.map(bu => (
-                      <option key={bu} value={bu}>{bu}</option>
-                    ))}
-                  </select>
+                    onChange={v => setFormData({ ...formData, bu: v })}
+                    placeholder="Seleziona una BU (opzionale)"
+                    options={selectedCompanyBus.map(bu => ({ value: bu, label: bu }))}
+                  />
                 </div>
               )}
             </>

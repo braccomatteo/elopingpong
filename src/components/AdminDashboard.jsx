@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from './Pagination';
+import CustomSelect from './CustomSelect';
+import './CustomSelect.css';
 import './AdminDashboard.css';
 
 const LIMIT = 50;
@@ -322,19 +324,25 @@ const AdminDashboard = ({ players, onUpdate }) => {
                       <>
                         <td><input className="edit-input" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} /></td>
                         <td>
-                          <select className="edit-input" value={editNewCompany ? '__new__' : editForm.company} onChange={e => handleEditCompanyChange(e.target.value)}>
-                            <option value="">--</option>
-                            {companies.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                            <option value="__new__">+ Nuova...</option>
-                          </select>
+                          <CustomSelect
+                            value={editNewCompany ? '__new__' : editForm.company}
+                            onChange={handleEditCompanyChange}
+                            placeholder="--"
+                            options={[
+                              ...companies.map(c => ({ value: c.name, label: c.name })),
+                              { value: '__new__', label: '+ Nuova...', special: true }
+                            ]}
+                          />
                           {editNewCompany && <input className="edit-input" style={{ marginTop: 4 }} placeholder="Nome company" value={editCustomCompany} onChange={e => setEditCustomCompany(e.target.value)} />}
                         </td>
                         <td>
                           {editBus.length > 0 ? (
-                            <select className="edit-input" value={editForm.bu} onChange={e => setEditForm({ ...editForm, bu: e.target.value })}>
-                              <option value="">--</option>
-                              {editBus.map(bu => <option key={bu} value={bu}>{bu}</option>)}
-                            </select>
+                            <CustomSelect
+                              value={editForm.bu}
+                              onChange={v => setEditForm({ ...editForm, bu: v })}
+                              placeholder="--"
+                              options={editBus.map(bu => ({ value: bu, label: bu }))}
+                            />
                           ) : (
                             <span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>{'\u2014'}</span>
                           )}
@@ -387,23 +395,14 @@ const AdminDashboard = ({ players, onUpdate }) => {
             {singlesError && <div className="error-message">{singlesError}</div>}
             <form onSubmit={handleSinglesSubmit} className="admin-match-form">
               <div className="form-row">
-                <select value={sCreatorId} onChange={e => setSCreatorId(e.target.value)} required>
-                  <option value="">Giocatore 1</option>
-                  {players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+                <CustomSelect value={sCreatorId} onChange={setSCreatorId} placeholder="Giocatore 1" options={players.map(p => ({ value: p.id, label: p.name }))} />
                 <span>VS</span>
-                <select value={sOpponentId} onChange={e => setSOpponentId(e.target.value)} required>
-                  <option value="">Giocatore 2</option>
-                  {players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+                <CustomSelect value={sOpponentId} onChange={setSOpponentId} placeholder="Giocatore 2" options={players.map(p => ({ value: p.id, label: p.name }))} />
               </div>
               <div className="form-row">
                 <input type="number" placeholder="Punti G1" value={sCreatorScore} onChange={e => setSCreatorScore(e.target.value)} min="0" required />
                 <input type="number" placeholder="Punti G2" value={sOpponentScore} onChange={e => setSOpponentScore(e.target.value)} min="0" required />
-                <select value={sPointsType} onChange={e => setSPointsType(e.target.value)} style={{ width: 'auto' }}>
-                  <option value="21">21 pt</option>
-                  <option value="11">11 pt</option>
-                </select>
+                <CustomSelect value={sPointsType} onChange={setSPointsType} placeholder="Punti" options={[{ value: '21', label: '21 pt' }, { value: '11', label: '11 pt' }]} />
               </div>
               <button type="submit" className="submit-btn">Registra Match</button>
             </form>
@@ -419,33 +418,18 @@ const AdminDashboard = ({ players, onUpdate }) => {
             {doublesError && <div className="error-message">{doublesError}</div>}
             <form onSubmit={handleDoublesSubmit} className="admin-match-form">
               <div className="form-row">
-                <select value={dP1} onChange={e => setDP1(e.target.value)} required>
-                  <option value="">Team 1 - G1</option>
-                  {players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
-                <select value={dP2} onChange={e => setDP2(e.target.value)} required>
-                  <option value="">Team 1 - G2</option>
-                  {players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+                <CustomSelect value={dP1} onChange={setDP1} placeholder="Team 1 - G1" options={players.map(p => ({ value: p.id, label: p.name }))} />
+                <CustomSelect value={dP2} onChange={setDP2} placeholder="Team 1 - G2" options={players.map(p => ({ value: p.id, label: p.name }))} />
               </div>
               <span style={{ display: 'block', textAlign: 'center', fontWeight: 'bold', margin: '0.5rem 0', color: 'var(--accent-orange)' }}>VS</span>
               <div className="form-row">
-                <select value={dP3} onChange={e => setDP3(e.target.value)} required>
-                  <option value="">Team 2 - G1</option>
-                  {players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
-                <select value={dP4} onChange={e => setDP4(e.target.value)} required>
-                  <option value="">Team 2 - G2</option>
-                  {players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+                <CustomSelect value={dP3} onChange={setDP3} placeholder="Team 2 - G1" options={players.map(p => ({ value: p.id, label: p.name }))} />
+                <CustomSelect value={dP4} onChange={setDP4} placeholder="Team 2 - G2" options={players.map(p => ({ value: p.id, label: p.name }))} />
               </div>
               <div className="form-row">
                 <input type="number" placeholder="Punti Team 1" value={dScore1} onChange={e => setDScore1(e.target.value)} min="0" required />
                 <input type="number" placeholder="Punti Team 2" value={dScore2} onChange={e => setDScore2(e.target.value)} min="0" required />
-                <select value={dPointsType} onChange={e => setDPointsType(e.target.value)} style={{ width: 'auto' }}>
-                  <option value="21">21 pt</option>
-                  <option value="11">11 pt</option>
-                </select>
+                <CustomSelect value={dPointsType} onChange={setDPointsType} placeholder="Punti" options={[{ value: '21', label: '21 pt' }, { value: '11', label: '11 pt' }]} />
               </div>
               <button type="submit" className="submit-btn">Registra Match Doppio</button>
             </form>

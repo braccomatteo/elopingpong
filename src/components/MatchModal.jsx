@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import CustomSelect from './CustomSelect';
+import './CustomSelect.css';
 import './MatchModal.css';
 
 const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
@@ -99,64 +101,62 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Tipo</label>
-            <select value={matchType} onChange={(e) => {
-              setMatchType(e.target.value);
-              // Reset dependent fields when switching modes
-              setOpponentId('');
-              setPartnerId('');
-              setOpponent2Id('');
-            }} required>
-              <option value="Singolo">Singolo</option>
-              <option value="Doppio">Doppio</option>
-            </select>
+            <CustomSelect
+              value={matchType}
+              onChange={(v) => { setMatchType(v); setOpponentId(''); setPartnerId(''); setOpponent2Id(''); }}
+              placeholder="Tipo"
+              options={[{ value: 'Singolo', label: 'Singolo' }, { value: 'Doppio', label: 'Doppio' }]}
+            />
           </div>
 
           <div className="form-group">
             <label>Punti</label>
-            <select value={pointsType} onChange={(e) => setPointsType(e.target.value)} required>
-              <option value="21">21</option>
-              <option value="11">11</option>
-            </select>
+            <CustomSelect
+              value={pointsType}
+              onChange={setPointsType}
+              placeholder="Punti"
+              options={[{ value: '21', label: '21' }, { value: '11', label: '11' }]}
+            />
           </div>
 
           {matchType === 'Singolo' ? (
             <div className="form-group">
               <label>Avversario</label>
-              <select value={opponentId} onChange={(e) => setOpponentId(e.target.value)} required>
-                <option value="">Seleziona un giocatore</option>
-                {filteredPlayers.map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
+              <CustomSelect
+                value={opponentId}
+                onChange={setOpponentId}
+                placeholder="Seleziona un giocatore"
+                options={filteredPlayers.map(p => ({ value: p.id, label: p.name }))}
+              />
             </div>
           ) : (
             <>
               <div className="form-group">
                 <label>Tuo Compagno</label>
-                <select value={partnerId} onChange={(e) => setPartnerId(e.target.value)} required>
-                  <option value="">Seleziona il tuo compagno</option>
-                  {filteredPlayers.filter(p => p.id !== opponentId && p.id !== opponent2Id).map(p => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={partnerId}
+                  onChange={setPartnerId}
+                  placeholder="Seleziona il tuo compagno"
+                  options={filteredPlayers.filter(p => p.id !== opponentId && p.id !== opponent2Id).map(p => ({ value: p.id, label: p.name }))}
+                />
               </div>
               <div className="form-group">
                 <label>Avversario 1</label>
-                <select value={opponentId} onChange={(e) => setOpponentId(e.target.value)} required>
-                  <option value="">Seleziona avversario 1</option>
-                  {filteredPlayers.filter(p => p.id !== partnerId && p.id !== opponent2Id).map(p => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={opponentId}
+                  onChange={setOpponentId}
+                  placeholder="Seleziona avversario 1"
+                  options={filteredPlayers.filter(p => p.id !== partnerId && p.id !== opponent2Id).map(p => ({ value: p.id, label: p.name }))}
+                />
               </div>
               <div className="form-group">
                 <label>Avversario 2</label>
-                <select value={opponent2Id} onChange={(e) => setOpponent2Id(e.target.value)} required>
-                  <option value="">Seleziona avversario 2</option>
-                  {filteredPlayers.filter(p => p.id !== partnerId && p.id !== opponentId).map(p => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={opponent2Id}
+                  onChange={setOpponent2Id}
+                  placeholder="Seleziona avversario 2"
+                  options={filteredPlayers.filter(p => p.id !== partnerId && p.id !== opponentId).map(p => ({ value: p.id, label: p.name }))}
+                />
               </div>
             </>
           )}
