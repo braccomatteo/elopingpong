@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
 import ProfileModal from './ProfileModal';
@@ -11,6 +11,17 @@ const Header = ({ activeTab, onTabChange, onStatsClick }) => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (user?.role !== 'admin') { setPendingCount(0); return; }
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    fetch('/api/players/pending', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setPendingCount(data.length); })
+      .catch(() => {});
+  }, [user]);
 
   return (
     <>
@@ -57,6 +68,7 @@ const Header = ({ activeTab, onTabChange, onStatsClick }) => {
               onClick={() => onTabChange('admin')}
             >
               Admin
+              {pendingCount > 0 && <span className="admin-badge">{pendingCount}</span>}
             </button>
           )}
         </div>
