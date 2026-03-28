@@ -140,11 +140,11 @@ const GlobalStatsPage = () => {
             <span className="gsp-card-sub">{stats.weeklyTop.name}</span>
           </div>
         )}
-        {stats.biggestUpset && (
+        {stats.mostConsistent && (
           <div className="gsp-card">
-            <span className="gsp-card-label">Upset più Grande</span>
-            <span className="gsp-card-value" style={{ color: '#22c55e', fontSize: '1.1rem' }}>{stats.biggestUpset.underdog}</span>
-            <span className="gsp-card-sub">ha battuto <strong style={{ color: '#ef4444' }}>{stats.biggestUpset.favorite}</strong> con {stats.biggestUpset.eloDiff} ELO di svantaggio</span>
+            <span className="gsp-card-label">Più Costante</span>
+            <span className="gsp-card-value">{stats.mostConsistent.name}</span>
+            <span className="gsp-card-sub">σ {stats.mostConsistent.stddev}</span>
           </div>
         )}
       </div>

@@ -89,7 +89,9 @@ CREATE TABLE IF NOT EXISTS global_stats (
     biggest_upset_favorite VARCHAR(100),
     biggest_upset_elo_diff INTEGER DEFAULT 0,
     weekly_top_name VARCHAR(100),
-    weekly_top_gain INTEGER DEFAULT 0
+    weekly_top_gain INTEGER DEFAULT 0,
+    consistent_name VARCHAR(100),
+    consistent_stddev INTEGER
 );
 INSERT INTO global_stats (id) VALUES (1) ON CONFLICT DO NOTHING;
 
