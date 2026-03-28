@@ -716,7 +716,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
                       <ResponsiveContainer width="100%" height={350}>
                         <LineChart data={trajData}>
                           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                          <XAxis dataKey="match" stroke="var(--text-dim)" fontSize={11} label={{ value: 'Partita #', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <XAxis dataKey="match" stroke="var(--text-dim)" fontSize={11} domain={[0, 'dataMax']} label={{ value: 'Partita #', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
                           <YAxis stroke="var(--text-dim)" fontSize={12} domain={['dataMin - 30', 'dataMax + 30']} />
                           <Tooltip {...tooltipStyle} />
                           {playerNames.map((name, i) => (
