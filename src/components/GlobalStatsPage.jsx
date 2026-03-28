@@ -110,8 +110,8 @@ const GlobalStatsPage = () => {
         {stats.biggestUpset && (
           <div className="gsp-card">
             <span className="gsp-card-label">Upset più Grande</span>
-            <span className="gsp-card-value">Δ{stats.biggestUpset.eloDiff}</span>
-            <span className="gsp-card-sub"><span style={{ color: '#22c55e' }}>{stats.biggestUpset.underdog}</span> vs <span style={{ color: '#ef4444' }}>{stats.biggestUpset.favorite}</span></span>
+            <span className="gsp-card-value" style={{ color: '#22c55e', fontSize: '1.1rem' }}>{stats.biggestUpset.underdog}</span>
+            <span className="gsp-card-sub">ha battuto <strong style={{ color: '#ef4444' }}>{stats.biggestUpset.favorite}</strong> con {stats.biggestUpset.eloDiff} ELO di svantaggio</span>
           </div>
         )}
       </div>
