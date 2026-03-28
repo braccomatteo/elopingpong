@@ -3,8 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
-  BarChart, Bar,
-  CartesianGrid, Legend
+  CartesianGrid
 } from 'recharts';
 import './PlayerStats.css';
 
@@ -90,16 +89,6 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
     ? [{ name: 'Vittorie', value: totalWins }, { name: 'Sconfitte', value: totalLosses }]
     : [{ name: 'Nessuna partita', value: 1 }];
 
-  // Per-category bar data
-  const categoryBarData = Object.entries(winLoss)
-    .filter(([, v]) => v.w + v.l > 0)
-    .map(([cat, v]) => ({
-      category: CAT_LABELS[cat],
-      Vittorie: v.w,
-      Sconfitte: v.l,
-      'Win %': v.w + v.l > 0 ? Math.round((v.w / (v.w + v.l)) * 100) : 0
-    }));
-
   // Custom tooltip for ELO chart
   const EloTooltip = ({ active, payload }) => {
     if (active && payload?.[0]) {
@@ -147,7 +136,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           <div className="stat-card comparison-card">
             <span className="stat-label">vs Te</span>
             <span className={`stat-value ${comparison.rankGap < 0 ? 'comparison-better' : comparison.rankGap > 0 ? 'comparison-worse' : ''}`}>
-              {comparison.rankGap === 0 ? 'Stesso rank' : comparison.rankGap < 0 ? `${Math.abs(comparison.rankGap)} pos. sopra` : `${comparison.rankGap} pos. sotto`}
+              {comparison.rankGap === 0 ? '=' : comparison.rankGap < 0 ? `▲${Math.abs(comparison.rankGap)}` : `▼${comparison.rankGap}`}
             </span>
             <span className={`stat-sub ${comparison.eloGap > 0 ? 'comparison-better' : comparison.eloGap < 0 ? 'comparison-worse' : ''}`}>
               {comparison.eloGap > 0 ? '+' : ''}{comparison.eloGap} ELO
@@ -322,58 +311,41 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
             </div>
           </div>
 
-          {/* Per-category Chart */}
-          {isOwnProfile ? (
-            categoryBarData.length > 0 && (
-              <div className="stats-section stats-section-half">
-                <h2>Per Categoria</h2>
-                <div className="chart-container">
-                  <ResponsiveContainer width="100%" height={220}>
-                    <BarChart data={categoryBarData} barGap={2}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                      <XAxis dataKey="category" stroke="var(--text-dim)" fontSize={11} />
-                      <YAxis stroke="var(--text-dim)" fontSize={12} />
-                      <Tooltip contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} labelStyle={{ color: 'var(--text-color)' }} />
-                      <Legend wrapperStyle={{ color: 'var(--text-color)' }} />
-                      <Bar dataKey="Vittorie" fill={COLORS.win} radius={[3, 3, 0, 0]} />
-                      <Bar dataKey="Sconfitte" fill={COLORS.loss} radius={[3, 3, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+          {/* Per-category Pie Chart */}
+          {categoryDistData.length > 0 && (
+            <div className="stats-section stats-section-half">
+              <h2>Per Categoria</h2>
+              <div className="chart-container category-pie-row">
+                <ResponsiveContainer width="60%" height={220}>
+                  <PieChart>
+                    <Pie
+                      data={categoryDistData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={85}
+                      paddingAngle={4}
+                      dataKey="value"
+                      strokeWidth={0}
+                    >
+                      {categoryDistData.map((entry, idx) => (
+                        <Cell key={idx} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(v, name) => [`${Math.round((v / categoryDistTotal) * 100)}%`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="category-pie-legend">
+                  {categoryDistData.map((entry, idx) => (
+                    <div className="category-pie-legend-item" key={idx}>
+                      <span className="legend-dot" style={{ background: entry.color }} />
+                      <span>{entry.name}</span>
+                      <span className="category-pie-pct">{Math.round((entry.value / categoryDistTotal) * 100)}%</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )
-          ) : (
-            categoryDistData.length > 0 && (
-              <div className="stats-section stats-section-half">
-                <h2>Per Categoria</h2>
-                <div className="chart-container pie-container">
-                  <ResponsiveContainer width="100%" height={220}>
-                    <PieChart>
-                      <Pie
-                        data={categoryDistData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={55}
-                        outerRadius={85}
-                        paddingAngle={4}
-                        dataKey="value"
-                        strokeWidth={0}
-                      >
-                        {categoryDistData.map((entry, idx) => (
-                          <Cell key={idx} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(v, name) => [`${Math.round((v / categoryDistTotal) * 100)}%`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="pie-legend">
-                    {categoryDistData.map((entry, idx) => (
-                      <span className="pie-legend-item" key={idx}><span className="legend-dot" style={{ background: entry.color }} />{entry.name} {Math.round((entry.value / categoryDistTotal) * 100)}%</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )
+            </div>
           )}
         </div>
       )}

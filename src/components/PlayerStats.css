@@ -602,3 +602,31 @@
 .comparison-worse {
   color: #ef4444;
 }
+
+/* Category pie with right-side legend */
+.category-pie-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.category-pie-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-color);
+}
+
+.category-pie-pct {
+  font-weight: 700;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  margin-left: auto;
+}
