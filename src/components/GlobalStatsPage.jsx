@@ -66,7 +66,7 @@ const GlobalStatsPage = () => {
 
   // ELO distribution
   const eloData = charts.eloDistribution.map(d => ({
-    range: `${d.bucket}`,
+    range: `${d.bucket}–${d.bucket + 24}`,
     count: d.count,
   }));
 
