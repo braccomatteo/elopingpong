@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
   CartesianGrid
 } from 'recharts';
@@ -257,21 +257,44 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           </div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={280}>
+              {isOwnProfile ? (
               <LineChart data={eloData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="game" stroke="var(--text-dim)" fontSize={12} tick={isOwnProfile} label={isOwnProfile ? { value: 'Partita', position: 'insideBottom', offset: -5, fill: 'var(--text-dim)' } : false} />
+                <XAxis dataKey="game" stroke="var(--text-dim)" fontSize={12} label={{ value: 'Partita', position: 'insideBottom', offset: -5, fill: 'var(--text-dim)' }} />
                 <YAxis stroke="var(--text-dim)" fontSize={12} domain={['dataMin - 20', 'dataMax + 20']} />
-                {isOwnProfile && <Tooltip content={<EloTooltip />} />}
+                <Tooltip content={<EloTooltip />} />
                 <Line
                   type="monotone"
                   dataKey="elo"
                   stroke={COLORS[eloCategory] || COLORS.overall}
                   strokeWidth={2.5}
                   strokeDasharray="6 3"
-                  dot={isOwnProfile ? { r: 4, fill: COLORS[eloCategory] || COLORS.overall, strokeWidth: 0 } : false}
-                  activeDot={isOwnProfile ? { r: 6, strokeWidth: 2, stroke: '#fff' } : false}
+                  dot={{ r: 4, fill: COLORS[eloCategory] || COLORS.overall, strokeWidth: 0 }}
+                  activeDot={{ r: 6, strokeWidth: 2, stroke: '#fff' }}
                 />
               </LineChart>
+              ) : (
+              <AreaChart data={eloData}>
+                <defs>
+                  <linearGradient id="eloGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={COLORS[eloCategory] || COLORS.overall} stopOpacity={0.3} />
+                    <stop offset="100%" stopColor={COLORS[eloCategory] || COLORS.overall} stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                <XAxis dataKey="game" hide />
+                <YAxis stroke="var(--text-dim)" fontSize={12} domain={['dataMin - 20', 'dataMax + 20']} />
+                <Area
+                  type="monotone"
+                  dataKey="elo"
+                  stroke={COLORS[eloCategory] || COLORS.overall}
+                  strokeWidth={3}
+                  fill="url(#eloGradient)"
+                  dot={false}
+                  activeDot={false}
+                />
+              </AreaChart>
+              )}
             </ResponsiveContainer>
           </div>
         </div>
