@@ -25,7 +25,7 @@ const CAT_LABELS = {
   '2v2_11': '2v2 (11)'
 };
 
-const PlayerStats = ({ playerId, onClose }) => {
+const PlayerStats = ({ playerId, players = [], onClose }) => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +48,29 @@ const PlayerStats = ({ playerId, onClose }) => {
   const totalWins = Object.values(winLoss).reduce((a, c) => a + c.w, 0);
   const totalLosses = Object.values(winLoss).reduce((a, c) => a + c.l, 0);
   const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0;
+
+  const isOwnProfile = user?.id === playerId;
+
+  // Comparison data for other players
+  let comparison = null;
+  if (!isOwnProfile && players.length > 0) {
+    const allSorted = [...players].sort((a, b) => b.score_overall - a.score_overall);
+    const viewerPlayer = players.find(p => p.id === user?.id);
+    const viewerRank = allSorted.findIndex(p => p.id === user?.id) + 1;
+    const targetRank = allSorted.findIndex(p => p.id === playerId) + 1;
+    if (viewerPlayer) {
+      comparison = {
+        rankGap: targetRank - viewerRank,
+        eloGap: Math.round(player.score_overall - viewerPlayer.score_overall),
+      };
+    }
+  }
+
+  // Category distribution pie data (for non-self view)
+  const categoryDistData = Object.entries(winLoss)
+    .map(([cat, v]) => ({ name: CAT_LABELS[cat], value: v.w + v.l, color: COLORS[cat] }))
+    .filter(d => d.value > 0);
+  const categoryDistTotal = categoryDistData.reduce((a, c) => a + c.value, 0);
 
   // ELO chart data
   const eloKey = eloCategory === 'overall' ? 'overall' : `score_${eloCategory}`;
@@ -115,10 +138,22 @@ const PlayerStats = ({ playerId, onClose }) => {
           <span className="stat-label">ELO Overall</span>
           <span className="stat-value elo-value">{Math.round(player.score_overall)}</span>
         </div>
-        <div className="stat-card">
-          <span className="stat-label">Partite</span>
-          <span className="stat-value">{totalGames}</span>
-        </div>
+        {isOwnProfile ? (
+          <div className="stat-card">
+            <span className="stat-label">Partite</span>
+            <span className="stat-value">{totalGames}</span>
+          </div>
+        ) : comparison && (
+          <div className="stat-card comparison-card">
+            <span className="stat-label">vs Te</span>
+            <span className={`stat-value ${comparison.rankGap < 0 ? 'comparison-better' : comparison.rankGap > 0 ? 'comparison-worse' : ''}`}>
+              {comparison.rankGap === 0 ? 'Stesso rank' : comparison.rankGap < 0 ? `${Math.abs(comparison.rankGap)} pos. sopra` : `${comparison.rankGap} pos. sotto`}
+            </span>
+            <span className={`stat-sub ${comparison.eloGap > 0 ? 'comparison-better' : comparison.eloGap < 0 ? 'comparison-worse' : ''}`}>
+              {comparison.eloGap > 0 ? '+' : ''}{comparison.eloGap} ELO
+            </span>
+          </div>
+        )}
         <div className="stat-card">
           <span className="stat-label">Win Rate</span>
           <span className="stat-value winrate-value">{winRate}%</span>
@@ -205,7 +240,7 @@ const PlayerStats = ({ playerId, onClose }) => {
               <span className="elo-mini-value" style={games > 0 ? { color: COLORS[key] } : undefined}>
                 {Math.round(player[`score_${key}`])}
               </span>
-              <span className="elo-mini-games">{games} partite</span>
+              {isOwnProfile && <span className="elo-mini-games">{games} partite</span>}
             </div>
           );
         })}
@@ -233,17 +268,17 @@ const PlayerStats = ({ playerId, onClose }) => {
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={eloData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="game" stroke="var(--text-dim)" fontSize={12} label={{ value: 'Partita', position: 'insideBottom', offset: -5, fill: 'var(--text-dim)' }} />
+                <XAxis dataKey="game" stroke="var(--text-dim)" fontSize={12} tick={isOwnProfile} label={isOwnProfile ? { value: 'Partita', position: 'insideBottom', offset: -5, fill: 'var(--text-dim)' } : false} />
                 <YAxis stroke="var(--text-dim)" fontSize={12} domain={['dataMin - 20', 'dataMax + 20']} />
-                <Tooltip content={<EloTooltip />} />
+                {isOwnProfile && <Tooltip content={<EloTooltip />} />}
                 <Line
                   type="monotone"
                   dataKey="elo"
                   stroke={COLORS[eloCategory] || COLORS.overall}
                   strokeWidth={2.5}
                   strokeDasharray="6 3"
-                  dot={{ r: 4, fill: COLORS[eloCategory] || COLORS.overall, strokeWidth: 0 }}
-                  activeDot={{ r: 6, strokeWidth: 2, stroke: '#fff' }}
+                  dot={isOwnProfile ? { r: 4, fill: COLORS[eloCategory] || COLORS.overall, strokeWidth: 0 } : false}
+                  activeDot={isOwnProfile ? { r: 6, strokeWidth: 2, stroke: '#fff' } : false}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -273,7 +308,7 @@ const PlayerStats = ({ playerId, onClose }) => {
                     <Cell fill={COLORS.win} />
                     <Cell fill={COLORS.loss} />
                   </Pie>
-                  <Tooltip formatter={(v, name) => [`${v}`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
+                  <Tooltip formatter={(v, name) => [isOwnProfile ? `${v}` : `${Math.round((v / totalGames) * 100)}%`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="pie-center-label">
@@ -281,30 +316,64 @@ const PlayerStats = ({ playerId, onClose }) => {
                 <span className="pie-center-text">win</span>
               </div>
               <div className="pie-legend">
-                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.win }} />{totalWins}V</span>
-                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.loss }} />{totalLosses}S</span>
+                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.win }} />{isOwnProfile ? `${totalWins}V` : `${winRate}%`}</span>
+                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.loss }} />{isOwnProfile ? `${totalLosses}S` : `${100 - winRate}%`}</span>
               </div>
             </div>
           </div>
 
-          {/* Per-category Bar Chart */}
-          {categoryBarData.length > 0 && (
-            <div className="stats-section stats-section-half">
-              <h2>Per Categoria</h2>
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={categoryBarData} barGap={2}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                    <XAxis dataKey="category" stroke="var(--text-dim)" fontSize={11} />
-                    <YAxis stroke="var(--text-dim)" fontSize={12} />
-                    <Tooltip contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} labelStyle={{ color: 'var(--text-color)' }} />
-                    <Legend wrapperStyle={{ color: 'var(--text-color)' }} />
-                    <Bar dataKey="Vittorie" fill={COLORS.win} radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Sconfitte" fill={COLORS.loss} radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+          {/* Per-category Chart */}
+          {isOwnProfile ? (
+            categoryBarData.length > 0 && (
+              <div className="stats-section stats-section-half">
+                <h2>Per Categoria</h2>
+                <div className="chart-container">
+                  <ResponsiveContainer width="100%" height={220}>
+                    <BarChart data={categoryBarData} barGap={2}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                      <XAxis dataKey="category" stroke="var(--text-dim)" fontSize={11} />
+                      <YAxis stroke="var(--text-dim)" fontSize={12} />
+                      <Tooltip contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} labelStyle={{ color: 'var(--text-color)' }} />
+                      <Legend wrapperStyle={{ color: 'var(--text-color)' }} />
+                      <Bar dataKey="Vittorie" fill={COLORS.win} radius={[3, 3, 0, 0]} />
+                      <Bar dataKey="Sconfitte" fill={COLORS.loss} radius={[3, 3, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-            </div>
+            )
+          ) : (
+            categoryDistData.length > 0 && (
+              <div className="stats-section stats-section-half">
+                <h2>Per Categoria</h2>
+                <div className="chart-container pie-container">
+                  <ResponsiveContainer width="100%" height={220}>
+                    <PieChart>
+                      <Pie
+                        data={categoryDistData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={55}
+                        outerRadius={85}
+                        paddingAngle={4}
+                        dataKey="value"
+                        strokeWidth={0}
+                      >
+                        {categoryDistData.map((entry, idx) => (
+                          <Cell key={idx} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(v, name) => [`${Math.round((v / categoryDistTotal) * 100)}%`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="pie-legend">
+                    {categoryDistData.map((entry, idx) => (
+                      <span className="pie-legend-item" key={idx}><span className="legend-dot" style={{ background: entry.color }} />{entry.name} {Math.round((entry.value / categoryDistTotal) * 100)}%</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )
           )}
         </div>
       )}
@@ -330,11 +399,13 @@ const PlayerStats = ({ playerId, onClose }) => {
                     <div className="h2h-bar h2h-bar-win" style={{ width: `${oppWinRate}%` }} />
                     <div className="h2h-bar h2h-bar-loss" style={{ width: `${100 - oppWinRate}%` }} />
                   </div>
-                  <div className="h2h-stats">
-                    <span className="h2h-w">{opp.wins}V</span>
-                    <span className="h2h-total">{opp.total} partite</span>
-                    <span className="h2h-l">{opp.losses}S</span>
-                  </div>
+                  {isOwnProfile && (
+                    <div className="h2h-stats">
+                      <span className="h2h-w">{opp.wins}V</span>
+                      <span className="h2h-total">{opp.total} partite</span>
+                      <span className="h2h-l">{opp.losses}S</span>
+                    </div>
+                  )}
                 </div>
               );
             })}

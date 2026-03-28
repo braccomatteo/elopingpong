@@ -289,7 +289,7 @@ function App() {
           )}
 
           {activeTab === 'stats' && statsPlayerId && user && (
-            <PlayerStats playerId={statsPlayerId} onClose={() => { setStatsPlayerId(null); setActiveTab('overall'); }} />
+            <PlayerStats playerId={statsPlayerId} players={players} onClose={() => { setStatsPlayerId(null); setActiveTab('overall'); }} />
           )}
 
           {activeTab === 'admin' && user?.role === 'admin' && (
