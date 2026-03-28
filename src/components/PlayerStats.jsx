@@ -349,7 +349,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                     <span className="predict-h2h-icon">{"\u{1F93C}"}</span>
                     H2H: {predictions.h2hRecord.wins}V - {predictions.h2hRecord.losses}S
                     {predictions.h2hPct !== null && (
-                      <span className="predict-h2h-blend"> (influenza {Math.round(predictions.h2hPct * 100)}%)</span>
+                      <span className="predict-h2h-blend"> (win rate {Math.round(predictions.h2hPct * 100)}%)</span>
                     )}
                   </div>
                 )}
