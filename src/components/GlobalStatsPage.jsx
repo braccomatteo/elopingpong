@@ -143,8 +143,8 @@ const GlobalStatsPage = () => {
         {stats.mostConsistent && (
           <div className="gsp-card">
             <span className="gsp-card-label">Più Costante</span>
-            <span className="gsp-card-value">{stats.mostConsistent.name}</span>
-            <span className="gsp-card-sub">σ {stats.mostConsistent.stddev}</span>
+            <span className="gsp-card-value">±{stats.mostConsistent.stddev}</span>
+            <span className="gsp-card-sub">{stats.mostConsistent.name}</span>
           </div>
         )}
       </div>
