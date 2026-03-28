@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
-  AreaChart, Area,
   CartesianGrid
 } from 'recharts';
 import './GlobalStatsPage.css';
@@ -49,22 +48,22 @@ const GlobalStatsPage = () => {
     .filter(d => d.value > 0);
   const catTotal = catPieData.reduce((a, c) => a + c.value, 0);
 
-  // Matches per week
-  const weekData = charts.matchesPerWeek.map(w => ({
-    week: new Date(w.week).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }),
-    count: w.count,
-  }));
+  // Compute percentages that sum to exactly 100 (largest remainder method)
+  const catPcts = (() => {
+    if (catTotal === 0) return catPieData.map(() => 0);
+    const raw = catPieData.map(d => (d.value / catTotal) * 100);
+    const floored = raw.map(Math.floor);
+    let remainder = 100 - floored.reduce((a, b) => a + b, 0);
+    const remainders = raw.map((v, i) => ({ i, r: v - floored[i] }));
+    remainders.sort((a, b) => b.r - a.r);
+    for (let j = 0; j < remainder; j++) floored[remainders[j].i]++;
+    return floored;
+  })();
 
   // ELO distribution
   const eloData = charts.eloDistribution.map(d => ({
     range: `${d.bucket}`,
     count: d.count,
-  }));
-
-  // Matches by hour
-  const hourData = charts.matchesByHour.map(h => ({
-    hour: `${h.hour}:00`,
-    count: h.count,
   }));
 
   const tooltipStyle = {
@@ -117,29 +116,8 @@ const GlobalStatsPage = () => {
         )}
       </div>
 
-      {/* Charts row 1: Activity + Category */}
+      {/* Charts row */}
       <div className="gsp-charts-row">
-        <div className="gsp-section">
-          <h2>Attività Settimanale</h2>
-          <div className="gsp-chart-container">
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={weekData}>
-                <defs>
-                  <linearGradient id="weekGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={COLORS.accent} stopOpacity={0.3} />
-                    <stop offset="100%" stopColor={COLORS.accent} stopOpacity={0.02} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="week" stroke="var(--text-dim)" fontSize={11} />
-                <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} />
-                <Tooltip {...tooltipStyle} />
-                <Area type="monotone" dataKey="count" stroke={COLORS.accent} strokeWidth={2.5} fill="url(#weekGradient)" name="Partite" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
         <div className="gsp-section">
           <h2>Per Categoria</h2>
           <div className="gsp-chart-container gsp-cat-row">
@@ -160,7 +138,7 @@ const GlobalStatsPage = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(v, name) => [`${v} (${Math.round((v / catTotal) * 100)}%)`, name]}
+                  formatter={(v, name, _p, idx) => [`${v} (${catPcts[idx]}%)`, name]}
                   {...tooltipStyle}
                 />
               </PieChart>
@@ -170,16 +148,13 @@ const GlobalStatsPage = () => {
                 <div className="gsp-cat-legend-item" key={idx}>
                   <span className="legend-dot" style={{ background: entry.color }} />
                   <span>{entry.name}</span>
-                  <span className="gsp-cat-pct">{Math.round((entry.value / catTotal) * 100)}%</span>
+                  <span className="gsp-cat-pct">{catPcts[idx]}%</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Charts row 2: ELO Distribution + Matches by Hour */}
-      <div className="gsp-charts-row">
         <div className="gsp-section">
           <h2>Distribuzione ELO</h2>
           <div className="gsp-chart-container">
@@ -190,21 +165,6 @@ const GlobalStatsPage = () => {
                 <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} />
                 <Tooltip {...tooltipStyle} />
                 <Bar dataKey="count" fill={COLORS.accent} radius={[3, 3, 0, 0]} name="Giocatori" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="gsp-section">
-          <h2>Orari di Gioco</h2>
-          <div className="gsp-chart-container">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={hourData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="hour" stroke="var(--text-dim)" fontSize={11} />
-                <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} />
-                <Tooltip {...tooltipStyle} />
-                <Bar dataKey="count" fill="#8b5cf6" radius={[3, 3, 0, 0]} name="Partite" />
               </BarChart>
             </ResponsiveContainer>
           </div>

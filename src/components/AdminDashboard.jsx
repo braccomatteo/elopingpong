@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  AreaChart, Area, CartesianGrid
+} from 'recharts';
 import Pagination from './Pagination';
 import CustomSelect from './CustomSelect';
 import './CustomSelect.css';
@@ -51,6 +55,10 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const [pendingPlayers, setPendingPlayers] = useState([]);
   const [pendingLoading, setPendingLoading] = useState(false);
 
+  /* ---- Stats charts state ---- */
+  const [chartData, setChartData] = useState(null);
+  const [chartLoading, setChartLoading] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   /* ---- Fetch functions ---- */
@@ -97,6 +105,16 @@ const AdminDashboard = ({ players, onUpdate }) => {
       if (Array.isArray(data)) setPendingPlayers(data);
     } catch (err) { console.error(err); }
     setPendingLoading(false);
+  };
+
+  const fetchChartData = async () => {
+    setChartLoading(true);
+    try {
+      const res = await fetch('/api/matches/global-charts');
+      const data = await res.json();
+      setChartData(data);
+    } catch (err) { console.error(err); }
+    setChartLoading(false);
   };
 
   const approvePlayer = async (id) => {
@@ -299,6 +317,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
         </button>
         <button className={`admin-tab-btn ${adminTab === 'pending' ? 'active' : ''}`} onClick={() => { setAdminTab('pending'); fetchPending(); }}>
           In Attesa {pendingPlayers.length > 0 && <span style={{ background: 'var(--accent-red)', color: '#fff', borderRadius: '50%', padding: '1px 6px', fontSize: '0.7rem', marginLeft: '4px' }}>{pendingPlayers.length}</span>}
+        </button>
+        <button className={`admin-tab-btn ${adminTab === 'stats' ? 'active' : ''}`} onClick={() => { setAdminTab('stats'); if (!chartData) fetchChartData(); }}>
+          Stats
         </button>
       </div>
 
@@ -589,6 +610,68 @@ const AdminDashboard = ({ players, onUpdate }) => {
               </tbody>
             </table>
           )}
+        </section>
+      )}
+
+      {/* ===================== TAB: STATS ===================== */}
+      {adminTab === 'stats' && (
+        <section className="ranking-card">
+          <h2>Statistiche Temporali</h2>
+          {chartLoading || !chartData ? (
+            <div className="empty-state">Caricamento...</div>
+          ) : (() => {
+            const tooltipStyle = {
+              contentStyle: { background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' },
+              itemStyle: { color: 'var(--text-color)' },
+              labelStyle: { color: 'var(--text-color)' },
+            };
+            const weekData = chartData.matchesPerWeek.map(w => ({
+              week: new Date(w.week).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }),
+              count: w.count,
+            }));
+            const hourData = chartData.matchesByHour.map(h => ({
+              hour: `${h.hour}:00`,
+              count: h.count,
+            }));
+            return (
+              <div className="gsp-charts-row" style={{ marginTop: '1rem' }}>
+                <div className="gsp-section">
+                  <h3>Attività Settimanale</h3>
+                  <div className="gsp-chart-container">
+                    <ResponsiveContainer width="100%" height={250}>
+                      <AreaChart data={weekData}>
+                        <defs>
+                          <linearGradient id="adminWeekGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#FF6600" stopOpacity={0.3} />
+                            <stop offset="100%" stopColor="#FF6600" stopOpacity={0.02} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                        <XAxis dataKey="week" stroke="var(--text-dim)" fontSize={11} />
+                        <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} />
+                        <Tooltip {...tooltipStyle} />
+                        <Area type="monotone" dataKey="count" stroke="#FF6600" strokeWidth={2.5} fill="url(#adminWeekGrad)" name="Partite" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                <div className="gsp-section">
+                  <h3>Orari di Gioco</h3>
+                  <div className="gsp-chart-container">
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={hourData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                        <XAxis dataKey="hour" stroke="var(--text-dim)" fontSize={11} />
+                        <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} />
+                        <Tooltip {...tooltipStyle} />
+                        <Bar dataKey="count" fill="#8b5cf6" radius={[3, 3, 0, 0]} name="Partite" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </section>
       )}
     </div>
