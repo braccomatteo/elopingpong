@@ -67,12 +67,6 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
     }
   }
 
-  // Category distribution pie data (for non-self view)
-  const categoryDistData = Object.entries(winLoss)
-    .map(([cat, v]) => ({ name: CAT_LABELS[cat], value: v.w + v.l, color: COLORS[cat] }))
-    .filter(d => d.value > 0);
-  const categoryDistTotal = categoryDistData.reduce((a, c) => a + c.value, 0);
-
   // ELO chart data
   const eloKey = eloCategory === 'overall' ? 'overall' : `score_${eloCategory}`;
   const eloRaw = eloHistory[eloKey] || [];
@@ -90,6 +84,12 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const pieData = totalGames > 0
     ? [{ name: 'Vittorie', value: totalWins }, { name: 'Sconfitte', value: totalLosses }]
     : [{ name: 'Nessuna partita', value: 1 }];
+
+  // Per-category distribution data
+  const categoryDistData = Object.entries(winLoss)
+    .map(([cat, v]) => ({ name: CAT_LABELS[cat], value: v.w + v.l, color: COLORS[cat] }))
+    .filter(d => d.value > 0);
+  const categoryDistTotal = categoryDistData.reduce((a, c) => a + c.value, 0);
 
   // Custom tooltip for ELO chart
   const EloTooltip = ({ active, payload }) => {
@@ -313,19 +313,20 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
             </div>
           </div>
 
-          {/* Per-category Pie Chart */}
+          {/* Per-category Donut Chart */}
           {categoryDistData.length > 0 && (
             <div className="stats-section stats-section-half">
               <h2>Per Categoria</h2>
               <div className="chart-container category-pie-row">
-                <ResponsiveContainer width="60%" height={220}>
+                <ResponsiveContainer width="55%" height={220}>
                   <PieChart>
                     <Pie
                       data={categoryDistData}
                       cx="50%"
                       cy="50%"
+                      innerRadius={50}
                       outerRadius={85}
-                      paddingAngle={2}
+                      paddingAngle={3}
                       dataKey="value"
                       strokeWidth={0}
                     >
