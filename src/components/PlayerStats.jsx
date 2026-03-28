@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
-  CartesianGrid
+  CartesianGrid, ReferenceLine
 } from 'recharts';
 import './PlayerStats.css';
 
@@ -284,6 +284,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
                 <XAxis dataKey="game" hide />
                 <YAxis stroke="var(--text-dim)" fontSize={12} domain={['dataMin - 20', 'dataMax + 20']} />
+                <ReferenceLine y={1000} stroke="var(--text-dim)" strokeDasharray="4 4" strokeOpacity={0.5} />
                 <Area
                   type="monotone"
                   dataKey="elo"
