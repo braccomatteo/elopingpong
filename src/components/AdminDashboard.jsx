@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  AreaChart, Area, CartesianGrid
+  AreaChart, Area, CartesianGrid, LineChart, Line
 } from 'recharts';
 import Pagination from './Pagination';
 import CustomSelect from './CustomSelect';
@@ -634,6 +634,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
               count: h.count,
             }));
             return (
+              <>
               <div className="gsp-charts-row" style={{ marginTop: '1rem' }}>
                 <div className="gsp-section">
                   <h3>Attività Settimanale</h3>
@@ -670,7 +671,32 @@ const AdminDashboard = ({ players, onUpdate }) => {
                   </div>
                 </div>
               </div>
-            );
+
+              {/* Avg ELO over time */}
+              {chartData.avgEloByDay && chartData.avgEloByDay.length > 0 && (() => {
+                const eloData = chartData.avgEloByDay.map(d => ({
+                  date: new Date(d.date).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }),
+                  avg: d.avg,
+                }));
+                return (
+                  <div className="gsp-section" style={{ marginTop: '1rem' }}>
+                    <h3>Elo Medio nel Tempo</h3>
+                    <div className="gsp-chart-container">
+                      <ResponsiveContainer width="100%" height={250}>
+                        <LineChart data={eloData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                          <XAxis dataKey="date" stroke="var(--text-dim)" fontSize={11} />
+                          <YAxis stroke="var(--text-dim)" fontSize={12} domain={['dataMin - 20', 'dataMax + 20']} />
+                          <Tooltip {...tooltipStyle} />
+                          <Line type="monotone" dataKey="avg" stroke="#22c55e" strokeWidth={2} dot={{ r: 3, fill: '#22c55e' }} name="Elo Medio" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                );
+              })()}
+            </>
+          );
           })()}
         </section>
       )}
