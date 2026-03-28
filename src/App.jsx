@@ -72,20 +72,25 @@ function App() {
   }
 
   // Compute rank position changes by comparing current vs previous (score - delta) rankings
+  // Only considers active players (with games > 0) to avoid phantom changes from inactive ties
   const computeRankChanges = (currentList, scoreKey, deltaKey, gamesKey) => {
-    // Build previous scores, sort them, compare positions
-    const withPrev = currentList.map(p => ({
+    // Filter to only active players for rank computation
+    const activeList = currentList.filter(p => gamesKey ? (p[gamesKey] || 0) > 0 : totalGames(p) > 0)
+    const withPrev = activeList.map(p => ({
       id: p.id,
       currentScore: p[scoreKey],
-      prevScore: p[scoreKey] - (p[deltaKey] || 0)
+      prevScore: p[scoreKey] - (p[deltaKey] || 0),
+      delta: p[deltaKey] || 0
     }))
     const prevSorted = [...withPrev].sort((a, b) => b.prevScore - a.prevScore)
     const prevRankMap = {}
     prevSorted.forEach((p, i) => { prevRankMap[p.id] = i + 1 })
     const currRankMap = {}
-    currentList.forEach((p, i) => { currRankMap[p.id] = i + 1 })
+    activeList.forEach((p, i) => { currRankMap[p.id] = i + 1 })
     const changes = {}
-    currentList.forEach(p => {
+    withPrev.forEach(p => {
+      // Only show rank change if the player actually had an ELO change
+      if (p.delta === 0) return
       const prev = prevRankMap[p.id] || currRankMap[p.id]
       const curr = currRankMap[p.id]
       changes[p.id] = prev - curr // positive = climbed
