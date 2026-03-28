@@ -637,24 +637,6 @@
   margin-bottom: 16px;
 }
 
-.predict-select {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-  background: var(--input-bg);
-  color: var(--text-color);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.predict-select:focus {
-  outline: none;
-  border-color: var(--accent-orange);
-}
-
 .predict-result {
   display: flex;
   flex-direction: column;

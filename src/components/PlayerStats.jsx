@@ -5,6 +5,8 @@ import {
   PieChart, Pie, Cell,
   CartesianGrid, ReferenceLine
 } from 'recharts';
+import CustomSelect from './CustomSelect';
+import './CustomSelect.css';
 import './PlayerStats.css';
 
 const COLORS = {
@@ -290,16 +292,12 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           <div className="stats-section predict-section">
             <h2>Predizione Vittoria</h2>
             <div className="predict-select-row">
-              <select
-                className="predict-select"
+              <CustomSelect
                 value={predictOpponent || ''}
-                onChange={e => setPredictOpponent(e.target.value || null)}
-              >
-                <option value="">Scegli avversario...</option>
-                {opponents.map(o => (
-                  <option key={o.id} value={o.id}>{o.name}</option>
-                ))}
-              </select>
+                onChange={v => setPredictOpponent(v || null)}
+                placeholder="Scegli avversario..."
+                options={opponents.map(o => ({ value: o.id, label: o.name }))}
+              />
             </div>
 
             {predictions && (
