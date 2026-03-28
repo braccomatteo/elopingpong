@@ -53,10 +53,12 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   // Comparison data for other players
   let comparison = null;
   if (!isOwnProfile && players.length > 0) {
-    const allSorted = [...players].sort((a, b) => b.score_overall - a.score_overall);
+    const activeSorted = [...players]
+      .filter(p => (p.games_1v1_21 || 0) + (p.games_1v1_11 || 0) + (p.games_2v2_21 || 0) + (p.games_2v2_11 || 0) > 0)
+      .sort((a, b) => b.score_overall - a.score_overall);
     const viewerPlayer = players.find(p => p.id === user?.id);
-    const viewerRank = allSorted.findIndex(p => p.id === user?.id) + 1;
-    const targetRank = allSorted.findIndex(p => p.id === playerId) + 1;
+    const viewerRank = activeSorted.findIndex(p => p.id === user?.id) + 1;
+    const targetRank = activeSorted.findIndex(p => p.id === playerId) + 1;
     if (viewerPlayer) {
       comparison = {
         rankGap: targetRank - viewerRank,

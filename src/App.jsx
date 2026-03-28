@@ -71,11 +71,60 @@ function App() {
     )
   }
 
+  // Compute rank position changes by comparing current vs previous (score - delta) rankings
+  const computeRankChanges = (currentList, scoreKey, deltaKey, gamesKey) => {
+    // Build previous scores, sort them, compare positions
+    const withPrev = currentList.map(p => ({
+      id: p.id,
+      currentScore: p[scoreKey],
+      prevScore: p[scoreKey] - (p[deltaKey] || 0)
+    }))
+    const prevSorted = [...withPrev].sort((a, b) => b.prevScore - a.prevScore)
+    const prevRankMap = {}
+    prevSorted.forEach((p, i) => { prevRankMap[p.id] = i + 1 })
+    const currRankMap = {}
+    currentList.forEach((p, i) => { currRankMap[p.id] = i + 1 })
+    const changes = {}
+    currentList.forEach(p => {
+      const prev = prevRankMap[p.id] || currRankMap[p.id]
+      const curr = currRankMap[p.id]
+      changes[p.id] = prev - curr // positive = climbed
+    })
+    return changes
+  }
+
+  const RankDeltaBadge = ({ value }) => {
+    if (!value || value === 0) return null
+    const isPositive = value > 0
+    return (
+      <span className={`delta-badge ${isPositive ? 'delta-up' : 'delta-down'}`}>
+        {isPositive ? '▲' : '▼'}{Math.abs(value)}
+      </span>
+    )
+  }
+
+  const EloDeltaBadge = ({ value }) => {
+    if (!value || Math.round(value) === 0) return null
+    const rounded = Math.round(value)
+    const isPositive = rounded > 0
+    return (
+      <span className="delta-badge delta-elo">
+        {isPositive ? '▲' : '▼'}{isPositive ? '+' : ''}{rounded}
+      </span>
+    )
+  }
+
   const playersOverall = filterAndSort('score_overall', null)
   const players1v1_21 = filterAndSort('score_1v1_21', 'games_1v1_21')
   const players1v1_11 = filterAndSort('score_1v1_11', 'games_1v1_11')
   const players2v2_21 = filterAndSort('score_2v2_21', 'games_2v2_21')
   const players2v2_11 = filterAndSort('score_2v2_11', 'games_2v2_11')
+
+  const rankChangesOverall = computeRankChanges(playersOverall, 'score_overall', 'last_delta_overall', null)
+  const rankChanges1v1_21 = computeRankChanges(players1v1_21, 'score_1v1_21', 'last_delta_1v1_21', 'games_1v1_21')
+  const rankChanges1v1_11 = computeRankChanges(players1v1_11, 'score_1v1_11', 'last_delta_1v1_11', 'games_1v1_11')
+  const rankChanges2v2_21 = computeRankChanges(players2v2_21, 'score_2v2_21', 'last_delta_2v2_21', 'games_2v2_21')
+  const rankChanges2v2_11 = computeRankChanges(players2v2_11, 'score_2v2_11', 'last_delta_2v2_11', 'games_2v2_11')
 
   const playerLabel = (p) => {
     if (!user) return ''
@@ -154,7 +203,8 @@ function App() {
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
-                        <DeltaBadge value={p.last_delta_overall} />
+                        <RankDeltaBadge value={rankChangesOverall[p.id]} />
+                        <EloDeltaBadge value={p.last_delta_overall} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_overall)}</td>
@@ -185,7 +235,8 @@ function App() {
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
-                        <DeltaBadge value={p.last_delta_1v1_21} />
+                        <RankDeltaBadge value={rankChanges1v1_21[p.id]} />
+                        <EloDeltaBadge value={p.last_delta_1v1_21} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_1v1_21)}</td>
@@ -215,7 +266,8 @@ function App() {
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
-                        <DeltaBadge value={p.last_delta_1v1_11} />
+                        <RankDeltaBadge value={rankChanges1v1_11[p.id]} />
+                        <EloDeltaBadge value={p.last_delta_1v1_11} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_1v1_11)}</td>
@@ -245,7 +297,8 @@ function App() {
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
-                        <DeltaBadge value={p.last_delta_2v2_21} />
+                        <RankDeltaBadge value={rankChanges2v2_21[p.id]} />
+                        <EloDeltaBadge value={p.last_delta_2v2_21} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_2v2_21)}</td>
@@ -275,7 +328,8 @@ function App() {
                       <td><span className="rank-pill">{i + 1}</span></td>
                       <td>
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
-                        <DeltaBadge value={p.last_delta_2v2_11} />
+                        <RankDeltaBadge value={rankChanges2v2_11[p.id]} />
+                        <EloDeltaBadge value={p.last_delta_2v2_11} />
                         <span className="player-bu">{playerLabel(p)}</span>
                       </td>
                       <td className="score">{Math.round(p.score_2v2_11)}</td>

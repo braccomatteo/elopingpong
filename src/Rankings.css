@@ -154,6 +154,10 @@ td {
   color: #ef4444;
 }
 
+.delta-elo {
+  color: #3b82f6;
+}
+
 .rank-pill {
   width: 26px;
   height: 26px;
