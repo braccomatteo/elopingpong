@@ -322,9 +322,8 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                       data={categoryDistData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={55}
                       outerRadius={85}
-                      paddingAngle={4}
+                      paddingAngle={2}
                       dataKey="value"
                       strokeWidth={0}
                     >
