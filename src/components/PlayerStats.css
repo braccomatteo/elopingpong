@@ -627,3 +627,173 @@
   font-family: "JetBrains Mono", "Fira Code", monospace;
   margin-left: auto;
 }
+
+/* ===== WIN PREDICTION ===== */
+.predict-section {
+  margin-bottom: 1rem;
+}
+
+.predict-select-row {
+  margin-bottom: 16px;
+}
+
+.predict-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.predict-select:focus {
+  outline: none;
+  border-color: var(--accent-orange);
+}
+
+.predict-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Gauge */
+.predict-gauge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.predict-gauge {
+  position: relative;
+  width: 180px;
+  height: 100px;
+}
+
+.predict-gauge-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.predict-gauge-label {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.predict-gauge-pct {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  line-height: 1;
+}
+
+.predict-gauge-text {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.predict-vs-names {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.predict-vs-you {
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.predict-vs-sep {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.predict-vs-opp {
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+/* Per-category bars */
+.predict-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.predict-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.predict-cat-row.predict-cat-unplayed {
+  opacity: 0.35;
+}
+
+.predict-cat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  width: 60px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.predict-cat-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.predict-cat-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.predict-cat-pct {
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  width: 36px;
+  text-align: right;
+  color: var(--text-color);
+}
+
+/* H2H note */
+.predict-h2h-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  background: var(--input-bg);
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.predict-h2h-icon {
+  font-size: 1rem;
+}
+
+.predict-h2h-blend {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}

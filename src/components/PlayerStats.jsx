@@ -24,11 +24,17 @@ const CAT_LABELS = {
   '2v2_11': '2v2 (11)'
 };
 
+// Elo expected win probability (same formula as backend)
+function computeExpected(e1, e2) {
+  return 1 / (1 + Math.pow(10, (e2 - e1) / 400));
+}
+
 const PlayerStats = ({ playerId, players = [], onClose }) => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [eloCategory, setEloCategory] = useState('overall');
+  const [predictOpponent, setPredictOpponent] = useState(null);
 
   useEffect(() => {
     if (!playerId) return;
@@ -236,6 +242,122 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           );
         })}
       </div>
+
+      {/* Win Prediction */}
+      {isOwnProfile && totalGames > 0 && (() => {
+        const opponents = players.filter(p =>
+          p.id !== playerId &&
+          ((p.games_1v1_21 || 0) + (p.games_1v1_11 || 0) + (p.games_2v2_21 || 0) + (p.games_2v2_11 || 0)) > 0
+        ).sort((a, b) => a.name.localeCompare(b.name));
+
+        if (opponents.length === 0) return null;
+
+        const opp = predictOpponent ? opponents.find(o => o.id === predictOpponent) : null;
+        const h2hRecord = opp ? h2h.find(o => o.name === opp.name) : null;
+
+        // Compute per-category predictions
+        const categories = ['1v1_21', '1v1_11', '2v2_21', '2v2_11'];
+        let predictions = null;
+        if (opp) {
+          const catPreds = categories.map(cat => {
+            const myElo = player[`score_${cat}`];
+            const oppElo = opp[`score_${cat}`];
+            const myGames = player[`games_${cat}`] || 0;
+            const oppGames = opp[`games_${cat}`] || 0;
+            const eloPct = computeExpected(myElo, oppElo);
+            const played = myGames > 0 && oppGames > 0;
+            return { cat, eloPct, played, label: CAT_LABELS[cat] };
+          });
+
+          // Overall: weighted the same as the ELO system
+          const weights = { '1v1_21': 0.4, '1v1_11': 0.3, '2v2_21': 0.2, '2v2_11': 0.1 };
+          const overallElo = categories.reduce((sum, cat) => sum + weights[cat] * catPreds.find(c => c.cat === cat).eloPct, 0);
+
+          // Blend with h2h if >= 3 matches played
+          let overallPct = overallElo;
+          let h2hPct = null;
+          if (h2hRecord && h2hRecord.total >= 3) {
+            h2hPct = h2hRecord.wins / h2hRecord.total;
+            overallPct = 0.6 * overallElo + 0.4 * h2hPct;
+          }
+
+          predictions = { overall: overallPct, categories: catPreds, h2hPct, h2hRecord };
+        }
+
+        return (
+          <div className="stats-section predict-section">
+            <h2>Predizione Vittoria</h2>
+            <div className="predict-select-row">
+              <select
+                className="predict-select"
+                value={predictOpponent || ''}
+                onChange={e => setPredictOpponent(e.target.value || null)}
+              >
+                <option value="">Scegli avversario...</option>
+                {opponents.map(o => (
+                  <option key={o.id} value={o.id}>{o.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {predictions && (
+              <div className="predict-result">
+                {/* Main gauge */}
+                <div className="predict-gauge-wrap">
+                  <div className="predict-gauge">
+                    <svg viewBox="0 0 120 70" className="predict-gauge-svg">
+                      <path d="M10 65 A50 50 0 0 1 110 65" fill="none" stroke="var(--border-color)" strokeWidth="8" strokeLinecap="round" />
+                      <path d="M10 65 A50 50 0 0 1 110 65" fill="none"
+                        stroke={predictions.overall >= 0.5 ? '#22c55e' : '#ef4444'}
+                        strokeWidth="8" strokeLinecap="round"
+                        strokeDasharray={`${predictions.overall * 157} 157`}
+                      />
+                    </svg>
+                    <div className="predict-gauge-label">
+                      <span className="predict-gauge-pct" style={{ color: predictions.overall >= 0.5 ? '#22c55e' : '#ef4444' }}>
+                        {Math.round(predictions.overall * 100)}%
+                      </span>
+                      <span className="predict-gauge-text">prob. vittoria</span>
+                    </div>
+                  </div>
+                  <div className="predict-vs-names">
+                    <span className="predict-vs-you">{player.name}</span>
+                    <span className="predict-vs-sep">vs</span>
+                    <span className="predict-vs-opp">{opp.name}</span>
+                  </div>
+                </div>
+
+                {/* Per-category bars */}
+                <div className="predict-cats">
+                  {predictions.categories.map(({ cat, eloPct, played, label }) => (
+                    <div className={`predict-cat-row${!played ? ' predict-cat-unplayed' : ''}`} key={cat}>
+                      <span className="predict-cat-label">{label}</span>
+                      <div className="predict-cat-bar-bg">
+                        <div className="predict-cat-bar" style={{
+                          width: `${Math.round(eloPct * 100)}%`,
+                          background: COLORS[cat]
+                        }} />
+                      </div>
+                      <span className="predict-cat-pct">{Math.round(eloPct * 100)}%</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* H2H bonus info */}
+                {predictions.h2hRecord && (
+                  <div className="predict-h2h-note">
+                    <span className="predict-h2h-icon">{"\u{1F93C}"}</span>
+                    H2H: {predictions.h2hRecord.wins}V - {predictions.h2hRecord.losses}S
+                    {predictions.h2hPct !== null && (
+                      <span className="predict-h2h-blend"> (influenza {Math.round(predictions.h2hPct * 100)}%)</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ELO Progression Chart */}
       {totalGames > 0 && (
