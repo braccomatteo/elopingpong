@@ -85,7 +85,7 @@ const GlobalStatsPage = () => {
   })();
 
   // BU pie (Data only)
-  const isDataCompany = user?.company === 'Data';
+  const isDataCompany = user?.company?.toUpperCase() === 'DATA';
   const buData = isDataCompany ? (charts.buDistribution || []).filter(d => d.count > 0) : [];
   const buTotal = buData.reduce((a, c) => a + c.count, 0);
   const buPcts = (() => {
