@@ -591,9 +591,6 @@
 }
 
 /* Comparison card (other player view) */
-.comparison-card .stat-value {
-  font-size: 1.1rem;
-}
 
 .comparison-better {
   color: #22c55e;
