@@ -273,15 +273,17 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           const weights = { '1v1_21': 0.4, '1v1_11': 0.3, '2v2_21': 0.2, '2v2_11': 0.1 };
           const overallElo = categories.reduce((sum, cat) => sum + weights[cat] * catPreds.find(c => c.cat === cat).eloPct, 0);
 
-          // Blend with h2h if >= 3 matches played
+          // Blend with h2h — gradual ramp: 10% weight per match, max 40%
           let overallPct = overallElo;
           let h2hPct = null;
-          if (h2hRecord && h2hRecord.total >= 3) {
+          let h2hWeight = 0;
+          if (h2hRecord) {
             h2hPct = h2hRecord.wins / h2hRecord.total;
-            overallPct = 0.6 * overallElo + 0.4 * h2hPct;
+            h2hWeight = Math.min(0.4, h2hRecord.total * 0.1);
+            overallPct = (1 - h2hWeight) * overallElo + h2hWeight * h2hPct;
           }
 
-          predictions = { overall: overallPct, categories: catPreds, h2hPct, h2hRecord };
+          predictions = { overall: overallPct, categories: catPreds, h2hPct, h2hRecord, h2hWeight };
         }
 
         return (
@@ -347,10 +349,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                 {predictions.h2hRecord && (
                   <div className="predict-h2h-note">
                     <span className="predict-h2h-icon">{"\u{1F93C}"}</span>
-                    H2H: {predictions.h2hRecord.wins}V - {predictions.h2hRecord.losses}S
-                    {predictions.h2hPct !== null && (
-                      <span className="predict-h2h-blend"> (win rate {Math.round(predictions.h2hPct * 100)}%)</span>
-                    )}
+                    H2H: {predictions.h2hRecord.wins}V - {predictions.h2hRecord.losses}S (win rate {Math.round(predictions.h2hPct * 100)}%)
                   </div>
                 )}
               </div>
