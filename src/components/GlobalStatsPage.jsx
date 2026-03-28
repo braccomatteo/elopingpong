@@ -142,8 +142,8 @@ const GlobalStatsPage = () => {
         )}
         {stats.mostConsistent && (
           <div className="gsp-card">
-            <span className="gsp-card-label">Più Costante</span>
-            <span className="gsp-card-value">±{stats.mostConsistent.stddev}</span>
+            <span className="gsp-card-label">Elo più Costante</span>
+            <span className="gsp-card-value">σ {stats.mostConsistent.stddev}</span>
             <span className="gsp-card-sub">{stats.mostConsistent.name}</span>
           </div>
         )}
@@ -171,7 +171,10 @@ const GlobalStatsPage = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(v, name, _p, idx) => [`${v} (${catPcts[idx]}%)`, name]}
+                  formatter={(v, name, props) => {
+                    const i = catPieData.findIndex(d => d.name === name);
+                    return [`${v} (${catPcts[i] ?? 0}%)`, name];
+                  }}
                   {...tooltipStyle}
                 />
               </PieChart>
@@ -223,7 +226,10 @@ const GlobalStatsPage = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(v, name, _p, idx) => [`${v} (${companyPcts[idx]}%)`, name]}
+                    formatter={(v, name) => {
+                      const i = companyData.findIndex(d => d.company === name);
+                      return [`${v} (${companyPcts[i] ?? 0}%)`, name];
+                    }}
                     {...tooltipStyle}
                   />
                 </PieChart>
@@ -258,7 +264,10 @@ const GlobalStatsPage = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(v, name, _p, idx) => [`${v} (${buPcts[idx]}%)`, name]}
+                    formatter={(v, name) => {
+                      const i = buData.findIndex(d => d.bu === name);
+                      return [`${v} (${buPcts[i] ?? 0}%)`, name];
+                    }}
                     {...tooltipStyle}
                   />
                 </PieChart>
