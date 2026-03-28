@@ -695,6 +695,39 @@ const AdminDashboard = ({ players, onUpdate }) => {
                   </div>
                 );
               })()}
+
+              {/* ELO Trajectories per player */}
+              {chartData.eloTrajectories && chartData.eloTrajectories.length > 0 && (() => {
+                const TRAJ_COLORS = ['#FF6600','#8b5cf6','#22c55e','#ef4444','#3b82f6','#f59e0b','#ec4899','#14b8a6','#a855f7','#6366f1','#f97316','#06b6d4','#e11d48','#84cc16','#0ea5e9','#d946ef','#fb923c','#2dd4bf','#c084fc','#fbbf24'];
+                // Build unified data: array of { match, [playerName]: elo }
+                const matchMap = {};
+                chartData.eloTrajectories.forEach(p => {
+                  p.data.forEach(d => {
+                    if (!matchMap[d.match]) matchMap[d.match] = { match: d.match };
+                    matchMap[d.match][p.name] = d.elo;
+                  });
+                });
+                const trajData = Object.values(matchMap).sort((a, b) => a.match - b.match);
+                const playerNames = chartData.eloTrajectories.map(p => p.name);
+                return (
+                  <div className="gsp-section" style={{ marginTop: '1rem' }}>
+                    <h3>Traiettorie Elo</h3>
+                    <div className="gsp-chart-container">
+                      <ResponsiveContainer width="100%" height={350}>
+                        <LineChart data={trajData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                          <XAxis dataKey="match" stroke="var(--text-dim)" fontSize={11} label={{ value: 'Partita #', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <YAxis stroke="var(--text-dim)" fontSize={12} domain={['dataMin - 30', 'dataMax + 30']} />
+                          <Tooltip {...tooltipStyle} />
+                          {playerNames.map((name, i) => (
+                            <Line key={name} type="monotone" dataKey={name} stroke={TRAJ_COLORS[i % TRAJ_COLORS.length]} strokeWidth={1.5} dot={false} connectNulls />
+                          ))}
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                );
+              })()}
             </>
           );
           })()}
