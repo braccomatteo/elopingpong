@@ -1,0 +1,145 @@
+/* ===== GLOBAL STATS PAGE ===== */
+.gsp-page {
+  max-width: 900px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.gsp-title {
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.gsp-loading {
+  text-align: center;
+  padding: 4rem;
+  color: var(--text-dim);
+  font-size: 1rem;
+}
+
+/* Summary cards */
+.gsp-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.gsp-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 14px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.2s;
+}
+
+.gsp-card:hover {
+  border-color: var(--accent-orange);
+}
+
+.gsp-card-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.gsp-card-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  color: var(--accent-orange);
+}
+
+.gsp-card-sub {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+/* Charts */
+.gsp-charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+}
+
+.gsp-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.gsp-section h2 {
+  font-size: 1rem;
+  margin: 0 0 12px 0;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-text-fill-color: var(--text-main);
+  background: none;
+}
+
+.gsp-section h2::before {
+  content: "";
+  width: 3px;
+  height: 16px;
+  background: var(--accent-orange);
+  border-radius: 1px;
+}
+
+.gsp-chart-container {
+  width: 100%;
+}
+
+/* Category pie layout */
+.gsp-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gsp-cat-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.gsp-cat-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-color);
+}
+
+.gsp-cat-pct {
+  font-weight: 700;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  margin-left: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gsp-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gsp-charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .gsp-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}

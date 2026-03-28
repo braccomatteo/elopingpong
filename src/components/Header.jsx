@@ -62,6 +62,15 @@ const Header = ({ activeTab, onTabChange, onStatsClick }) => {
             2v2 (11)
           </button>
 
+          {user && (
+            <button
+              className={`tab-btn ${activeTab === 'global-stats' ? 'active' : ''}`}
+              onClick={() => onTabChange('global-stats')}
+            >
+              Stats
+            </button>
+          )}
+
           {user?.role === 'admin' && (
             <button
               className={`tab-btn admin-link ${activeTab === 'admin' ? 'active' : ''}`}

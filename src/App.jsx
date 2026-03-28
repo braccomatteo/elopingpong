@@ -5,6 +5,7 @@ import MatchHistory from './components/MatchHistory'
 import AdminDashboard from './components/AdminDashboard'
 import PlayerStats from './components/PlayerStats'
 import GlobalStats from './components/GlobalStats'
+import GlobalStatsPage from './components/GlobalStatsPage'
 import { useAuth } from './context/AuthContext'
 import './Rankings.css'
 
@@ -349,6 +350,10 @@ function App() {
 
           {activeTab === 'stats' && statsPlayerId && user && (
             <PlayerStats playerId={statsPlayerId} players={players} onClose={() => { setStatsPlayerId(null); setActiveTab('overall'); }} />
+          )}
+
+          {activeTab === 'global-stats' && user && (
+            <GlobalStatsPage />
           )}
 
           {activeTab === 'admin' && user?.role === 'admin' && (
