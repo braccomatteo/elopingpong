@@ -100,11 +100,11 @@ const GlobalStatsPage = () => {
             <span className="gsp-card-sub">{stats.longestStreak.name}</span>
           </div>
         )}
-        {stats.mostImproved && (
+        {stats.weeklyTop && (
           <div className="gsp-card">
-            <span className="gsp-card-label">Più Migliorato</span>
-            <span className="gsp-card-value">+{stats.mostImproved.gain}</span>
-            <span className="gsp-card-sub">{stats.mostImproved.name}</span>
+            <span className="gsp-card-label">Top della Settimana</span>
+            <span className="gsp-card-value">+{stats.weeklyTop.gain}</span>
+            <span className="gsp-card-sub">{stats.weeklyTop.name}</span>
           </div>
         )}
         {stats.biggestUpset && (
