@@ -103,15 +103,15 @@ const GlobalStatsPage = () => {
         {stats.weeklyTop && (
           <div className="gsp-card">
             <span className="gsp-card-label">Top della Settimana</span>
-            <span className="gsp-card-value">+{stats.weeklyTop.gain}</span>
+            <span className="gsp-card-value" style={{ color: '#22c55e' }}>▲{stats.weeklyTop.gain}</span>
             <span className="gsp-card-sub">{stats.weeklyTop.name}</span>
           </div>
         )}
         {stats.biggestUpset && (
           <div className="gsp-card">
             <span className="gsp-card-label">Upset più Grande</span>
-            <span className="gsp-card-value">{stats.biggestUpset.eloDiff} pts</span>
-            <span className="gsp-card-sub">{stats.biggestUpset.underdog} vs {stats.biggestUpset.favorite}</span>
+            <span className="gsp-card-value">Δ{stats.biggestUpset.eloDiff}</span>
+            <span className="gsp-card-sub"><span style={{ color: '#22c55e' }}>{stats.biggestUpset.underdog}</span> vs <span style={{ color: '#ef4444' }}>{stats.biggestUpset.favorite}</span></span>
           </div>
         )}
       </div>
