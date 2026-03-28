@@ -208,7 +208,7 @@ const GlobalStatsPage = () => {
       <div className="gsp-charts-row">
         {companyData.length > 0 && (
           <div className="gsp-section">
-            <h2>Top 5 Company</h2>
+            <h2>Top 5 per Azienda</h2>
             <div className="gsp-chart-container gsp-cat-row">
               <ResponsiveContainer width="55%" height={250}>
                 <PieChart>
