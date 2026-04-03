@@ -4,7 +4,7 @@ import CustomSelect from './CustomSelect';
 import './CustomSelect.css';
 import './MatchModal.css';
 
-const emptyMatch = () => ({ opponentId: '', partnerId: '', opponent2Id: '', creatorScore: '', opponentScore: '' });
+const emptyMatch = () => ({ creatorScore: '', opponentScore: '' });
 
 const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
   const { user } = useAuth();
@@ -58,18 +58,22 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
         }
       }
     } else {
+      if (isDoubles) {
+        if (!opponentId || !partnerId || !opponent2Id) {
+          setError('Inserisci tutti i giocatori.');
+          return;
+        }
+      } else {
+        if (!opponentId) {
+          setError('Seleziona un avversario.');
+          return;
+        }
+      }
       for (let i = 0; i < bulkMatches.length; i++) {
         const m = bulkMatches[i];
-        if (isDoubles) {
-          if (!m.opponentId || !m.partnerId || !m.opponent2Id || m.creatorScore === '' || m.opponentScore === '') {
-            setError(`Inserisci tutti i dati per il match #${i + 1}.`);
-            return;
-          }
-        } else {
-          if (!m.opponentId || m.creatorScore === '' || m.opponentScore === '') {
-            setError(`Inserisci tutti i dati per il match #${i + 1}.`);
-            return;
-          }
+        if (m.creatorScore === '' || m.opponentScore === '') {
+          setError(`Inserisci il punteggio per il match #${i + 1}.`);
+          return;
         }
       }
     }
@@ -80,20 +84,20 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
     try {
       const matches = showBulk
         ? bulkMatches
-        : [{ opponentId, partnerId, opponent2Id, creatorScore, opponentScore }];
+        : [{ creatorScore, opponentScore }];
 
       for (let i = 0; i < matches.length; i++) {
         const m = matches[i];
         const payload = isDoubles ? {
           p1_id: user.id,
-          p2_id: m.partnerId,
-          op1_id: m.opponentId,
-          op2_id: m.opponent2Id,
+          p2_id: partnerId,
+          op1_id: opponentId,
+          op2_id: opponent2Id,
           team_score: parseInt(m.creatorScore),
           opponent_score: parseInt(m.opponentScore),
           points_type: parseInt(pointsType)
         } : {
-          opponent_id: m.opponentId,
+          opponent_id: opponentId,
           creator_score: parseInt(m.creatorScore),
           opponent_score: parseInt(m.opponentScore),
           points_type: parseInt(pointsType)
@@ -261,51 +265,53 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
                   onChange={(e) => handleMatchCountChange(parseInt(e.target.value))}
                 />
               </div>
+
+              {matchType === 'Singolo' ? (
+                <div className="form-group">
+                  <label>Avversario</label>
+                  <CustomSelect
+                    value={opponentId}
+                    onChange={setOpponentId}
+                    placeholder="Seleziona un giocatore"
+                    options={filteredPlayers.map(p => ({ value: p.id, label: p.name }))}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="form-group">
+                    <label>Tuo Compagno</label>
+                    <CustomSelect
+                      value={partnerId}
+                      onChange={setPartnerId}
+                      placeholder="Seleziona il tuo compagno"
+                      options={filteredPlayers.filter(p => p.id !== opponentId && p.id !== opponent2Id).map(p => ({ value: p.id, label: p.name }))}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Avversario 1</label>
+                    <CustomSelect
+                      value={opponentId}
+                      onChange={setOpponentId}
+                      placeholder="Seleziona avversario 1"
+                      options={filteredPlayers.filter(p => p.id !== partnerId && p.id !== opponent2Id).map(p => ({ value: p.id, label: p.name }))}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Avversario 2</label>
+                    <CustomSelect
+                      value={opponent2Id}
+                      onChange={setOpponent2Id}
+                      placeholder="Seleziona avversario 2"
+                      options={filteredPlayers.filter(p => p.id !== partnerId && p.id !== opponentId).map(p => ({ value: p.id, label: p.name }))}
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="bulk-matches-list">
                 {bulkMatches.map((m, i) => (
                   <div key={i} className="bulk-match-card">
                     <div className="bulk-match-num">#{i + 1}</div>
-                    {matchType === 'Singolo' ? (
-                      <div className="form-group">
-                        <label>Avversario</label>
-                        <CustomSelect
-                          value={m.opponentId}
-                          onChange={(v) => updateBulkMatch(i, 'opponentId', v)}
-                          placeholder="Seleziona un giocatore"
-                          options={filteredPlayers.map(p => ({ value: p.id, label: p.name }))}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <div className="form-group">
-                          <label>Tuo Compagno</label>
-                          <CustomSelect
-                            value={m.partnerId}
-                            onChange={(v) => updateBulkMatch(i, 'partnerId', v)}
-                            placeholder="Seleziona il tuo compagno"
-                            options={filteredPlayers.filter(p => p.id !== m.opponentId && p.id !== m.opponent2Id).map(p => ({ value: p.id, label: p.name }))}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Avversario 1</label>
-                          <CustomSelect
-                            value={m.opponentId}
-                            onChange={(v) => updateBulkMatch(i, 'opponentId', v)}
-                            placeholder="Seleziona avversario 1"
-                            options={filteredPlayers.filter(p => p.id !== m.partnerId && p.id !== m.opponent2Id).map(p => ({ value: p.id, label: p.name }))}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Avversario 2</label>
-                          <CustomSelect
-                            value={m.opponent2Id}
-                            onChange={(v) => updateBulkMatch(i, 'opponent2Id', v)}
-                            placeholder="Seleziona avversario 2"
-                            options={filteredPlayers.filter(p => p.id !== m.partnerId && p.id !== m.opponentId).map(p => ({ value: p.id, label: p.name }))}
-                          />
-                        </div>
-                      </>
-                    )}
                     <div className="form-group">
                       <label>Punteggio</label>
                       <div className="score-inputs">
