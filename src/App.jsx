@@ -38,15 +38,19 @@ function App() {
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
-  // Switch to stats tab and fetch notifications when user freshly logs in
+  // Switch to stats tab when user freshly logs in
   useEffect(() => {
     if (justLoggedIn && user) {
       setStatsPlayerId(user.id)
       setActiveTab('stats')
       setJustLoggedIn(false)
-      fetchNotifications()
     }
   }, [justLoggedIn, user])
+
+  // Fetch notifications whenever user becomes available (login or auto-auth from token)
+  useEffect(() => {
+    if (user) fetchNotifications()
+  }, [user?.id])
 
   const fetchData = async () => {
     try {

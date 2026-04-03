@@ -26,6 +26,53 @@
   box-shadow: 0 12px 40px var(--shadow);
   color: var(--text-main);
   animation: slideUp 0.3s ease-out;
+  position: relative;
+}
+
+.duplicate-warning {
+  position: absolute;
+  inset: 0;
+  background: var(--card-bg);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 2rem;
+  z-index: 10;
+  text-align: center;
+}
+
+.duplicate-warning p {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.duplicate-warning-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.duplicate-warning-actions .btn-confirm {
+  background: var(--accent-orange);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.duplicate-warning-actions .btn-cancel {
+  background: none;
+  color: var(--text-dim);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .match-modal .modal-header {

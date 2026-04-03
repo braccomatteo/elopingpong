@@ -19,6 +19,7 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
   const [pointsType, setPointsType] = useState('21');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [duplicatePending, setDuplicatePending] = useState(null); // payload to retry with force
   // Bulk
   const [showBulk, setShowBulk] = useState(false);
   const [matchCount, setMatchCount] = useState(2);
@@ -129,6 +130,11 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
         });
 
         const data = await response.json();
+        if (response.status === 409 && data.duplicate) {
+          setDuplicatePending({ endpoint, payload, index: i, total: matches.length });
+          setLoading(false);
+          return;
+        }
         if (!response.ok) {
           throw new Error(data.error || `Errore al match #${i + 1}`);
         }
@@ -153,11 +159,42 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
     }
   };
 
+  const handleForceSubmit = async () => {
+    if (!duplicatePending) return;
+    const { endpoint, payload } = duplicatePending;
+    setDuplicatePending(null);
+    setLoading(true);
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        body: JSON.stringify({ ...payload, force: true })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      onMatchAdded();
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredPlayers = players.filter(p => p.id !== user?.id);
 
   return (
     <div className="match-overlay">
       <div className="match-modal">
+        {duplicatePending && (
+          <div className="duplicate-warning">
+            <p>⚠️ Questo match sembra già esistere oggi. Registrarlo comunque?</p>
+            <div className="duplicate-warning-actions">
+              <button className="btn-confirm" onClick={handleForceSubmit}>Sì, registra</button>
+              <button className="btn-cancel" onClick={() => setDuplicatePending(null)}>Annulla</button>
+            </div>
+          </div>
+        )}
         <div className="modal-header">
           <h2>Aggiungi Match</h2>
           <div className="modal-header-actions">
