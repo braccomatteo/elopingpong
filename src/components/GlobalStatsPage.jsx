@@ -349,12 +349,13 @@ const GlobalStatsPage = () => {
                 <BarChart data={companyEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
                   <XAxis type="number" stroke="var(--text-dim)" fontSize={11} domain={companyEloData.length > 0 ? [800, 'dataMax + 30'] : [800, 1200]} />
-                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={90} />
+                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={90} axisLine={{ stroke: 'var(--text-dim)' }} tickLine={false} />
                   <Tooltip
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
+                    cursor={{ fill: 'transparent' }}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill={companyEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill={companyEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" background={{ fill: 'transparent' }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -383,12 +384,13 @@ const GlobalStatsPage = () => {
                 <BarChart data={buEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
                   <XAxis type="number" stroke="var(--text-dim)" fontSize={11} domain={buEloData.length > 0 ? [800, 'dataMax + 30'] : [800, 1200]} />
-                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={60} />
+                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={60} axisLine={{ stroke: 'var(--text-dim)' }} tickLine={false} />
                   <Tooltip
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
+                    cursor={{ fill: 'transparent' }}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill={buEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill={buEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" background={{ fill: 'transparent' }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
