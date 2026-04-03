@@ -15,6 +15,8 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
   const [pointsType, setPointsType] = useState('21');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
+  const [matchCount, setMatchCount] = useState(1);
 
   if (!isOpen) return null;
 
@@ -54,19 +56,23 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
         points_type: parseInt(pointsType)
       };
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(payload)
-      });
+      const count = showBulk ? Math.max(1, Math.min(matchCount, 50)) : 1;
 
-      const data = await response.json();
+      for (let i = 0; i < count; i++) {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(payload)
+        });
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Errore durante il salvataggio');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || `Errore al match ${i + 1} di ${count}`);
+        }
       }
 
       onMatchAdded();
@@ -79,6 +85,8 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
       setOpponentScore('');
       setMatchType('Singolo');
       setPointsType('21');
+      setShowBulk(false);
+      setMatchCount(1);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -93,8 +101,34 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
       <div className="match-modal">
         <div className="modal-header">
           <h2>Aggiungi Match</h2>
-          <button className="close-btn" onClick={onClose}>&times;</button>
+          <div className="modal-header-actions">
+            <button
+              type="button"
+              className={`bulk-toggle-btn${showBulk ? ' active' : ''}`}
+              title="Aggiungi più match"
+              onClick={() => { setShowBulk(v => !v); setMatchCount(1); }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="2" width="10" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" fill="none"/>
+                <rect x="5" y="6" width="10" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" fill="none"/>
+              </svg>
+            </button>
+            <button className="close-btn" onClick={onClose}>&times;</button>
+          </div>
         </div>
+
+        {showBulk && (
+          <div className="bulk-input-row">
+            <label>Numero match</label>
+            <input
+              type="number"
+              min="1"
+              max="50"
+              value={matchCount}
+              onChange={(e) => setMatchCount(parseInt(e.target.value) || 1)}
+            />
+          </div>
+        )}
 
         {error && <div className="error-message">{error}</div>}
 
@@ -185,7 +219,7 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
           </div>
 
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Salvataggio...' : 'Salva Match'}
+            {loading ? 'Salvataggio...' : showBulk && matchCount > 1 ? `Salva ${matchCount} Match` : 'Salva Match'}
           </button>
         </form>
       </div>
