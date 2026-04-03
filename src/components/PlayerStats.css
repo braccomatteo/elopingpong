@@ -581,6 +581,41 @@
   white-space: nowrap;
 }
 
+/* Storico matches table */
+.storico-section {
+  margin-top: 2rem;
+}
+
+.storico-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.storico-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-dim);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.storico-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.05));
+  color: var(--text);
+}
+
+.storico-table tr:hover td {
+  background: var(--surface-hover, rgba(255,255,255,0.03));
+}
+
+.storico-table td.score {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 /* Empty state */
 .stats-empty {
   text-align: center;

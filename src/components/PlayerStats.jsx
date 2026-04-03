@@ -6,6 +6,7 @@ import {
   CartesianGrid, ReferenceLine
 } from 'recharts';
 import CustomSelect from './CustomSelect';
+import Pagination from './Pagination';
 import './CustomSelect.css';
 import './PlayerStats.css';
 
@@ -39,6 +40,16 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [winLossCategory, setWinLossCategory] = useState('overall');
   const [openPopup, setOpenPopup] = useState(null);
   const [predictOpponent, setPredictOpponent] = useState(null);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [history, setHistory] = useState({ matches: [], total: 0 });
+
+  useEffect(() => {
+    if (!playerId) return;
+    fetch(`/api/matches/history/player/${playerId}?page=${historyPage}&limit=10`)
+      .then(r => r.json())
+      .then(data => setHistory(data))
+      .catch(() => {});
+  }, [playerId, historyPage]);
 
   useEffect(() => {
     if (!playerId) return;
@@ -571,6 +582,42 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
               );
             })}
           </div>
+        </div>
+      )}
+
+      {history.total > 0 && (
+        <div className="stats-section storico-section">
+          <h2>Storico Partite</h2>
+          <table className="storico-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Sfida</th>
+                <th>Risultato</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.matches.map(m => {
+                const isDouble = m.match_type === 'doubles';
+                const leftSide = isDouble ? `${m.p1_name} & ${m.p2_name}` : m.p1_name;
+                const rightSide = isDouble ? `${m.op1_name} & ${m.op2_name}` : m.op1_name;
+                return (
+                  <tr key={`${m.match_type}-${m.id}`}>
+                    <td>{new Date(m.created_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                    <td>{isDouble ? '2v2' : '1v1'} {m.points_type}pt</td>
+                    <td>{leftSide} <span style={{ color: 'var(--accent-orange)' }}>vs</span> {rightSide}</td>
+                    <td className="score">{m.t1_score} - {m.t2_score}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <Pagination
+            page={historyPage}
+            totalPages={Math.ceil(history.total / 10)}
+            onPageChange={setHistoryPage}
+          />
         </div>
       )}
 
