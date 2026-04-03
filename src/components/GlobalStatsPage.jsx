@@ -327,7 +327,7 @@ const GlobalStatsPage = () => {
 
       {/* Avg ELO by Company + BU */}
       <div className="gsp-charts-row">
-        {companyEloData.length > 0 && (
+        {(charts.avgEloByCompany || []).length > 0 && (
           <div className="gsp-section">
             <div className="gsp-section-header">
               <h2>ELO Medio per Azienda</h2>
@@ -345,6 +345,7 @@ const GlobalStatsPage = () => {
               </div>
             </div>
             <div className="gsp-chart-container">
+              {companyEloData.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={companyEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
@@ -357,11 +358,12 @@ const GlobalStatsPage = () => {
                   <Bar dataKey="elo" fill={companyEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
+              ) : <div className="gsp-no-data">Nessun giocatore in questa categoria</div>}
             </div>
           </div>
         )}
 
-        {isDataCompany && buEloData.length > 0 && (
+        {isDataCompany && (charts.avgEloByBu || []).length > 0 && (
           <div className="gsp-section">
             <div className="gsp-section-header">
               <h2>ELO Medio per BU</h2>
@@ -379,6 +381,7 @@ const GlobalStatsPage = () => {
               </div>
             </div>
             <div className="gsp-chart-container">
+              {buEloData.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={buEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
@@ -391,6 +394,7 @@ const GlobalStatsPage = () => {
                   <Bar dataKey="elo" fill={buEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
+              ) : <div className="gsp-no-data">Nessun giocatore in questa categoria</div>}
             </div>
           </div>
         )}
