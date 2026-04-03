@@ -240,7 +240,7 @@ const GlobalStatsPage = () => {
               <BarChart data={eloData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
                 <XAxis dataKey="range" stroke="var(--text-dim)" fontSize={11} />
-                <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} domain={eloFiltered.length > 0 ? ['auto', 'auto'] : [0, 10]} />
+                <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} domain={eloFiltered.length > 0 ? [0, 'auto'] : [0, 10]} />
                 <Tooltip cursor={{ fill: 'transparent' }} {...tooltipStyle} />
                 <Bar dataKey="count" fill={eloColor} radius={[3, 3, 0, 0]} name="Giocatori" background={{ fill: 'transparent' }} />
               </BarChart>
