@@ -137,7 +137,7 @@
 
 .extreme-card {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   padding: 10px 14px;
   border-radius: 8px;
@@ -155,7 +155,6 @@
 
 .extreme-icon {
   font-size: 1.3rem;
-  margin-top: 1px;
   flex-shrink: 0;
 }
 
@@ -192,6 +191,45 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-main);
+}
+
+.extreme-popup-trigger {
+  position: relative;
+  cursor: default;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+.extreme-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 20;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.extreme-popup-trigger:hover .extreme-popup {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.extreme-popup-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+  display: block;
 }
 
 /* Custom tooltip for extreme cards */
@@ -672,6 +710,12 @@
   font-weight: 700;
   font-family: "JetBrains Mono", "Fira Code", monospace;
   margin-left: auto;
+}
+
+/* Pie category dropdown */
+.pie-cat-select {
+  width: 120px;
+  flex-shrink: 0;
 }
 
 /* ===== WIN PREDICTION ===== */

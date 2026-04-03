@@ -36,6 +36,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [eloCategory, setEloCategory] = useState('overall');
+  const [winLossCategory, setWinLossCategory] = useState('overall');
   const [predictOpponent, setPredictOpponent] = useState(null);
 
   useEffect(() => {
@@ -89,8 +90,16 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   ];
 
   // Win/Loss pie data
-  const pieData = totalGames > 0
-    ? [{ name: 'Vittorie', value: totalWins }, { name: 'Sconfitte', value: totalLosses }]
+  const pieWins = winLossCategory === 'overall'
+    ? totalWins
+    : (winLoss[winLossCategory]?.w || 0);
+  const pieLosses = winLossCategory === 'overall'
+    ? totalLosses
+    : (winLoss[winLossCategory]?.l || 0);
+  const pieTotal = pieWins + pieLosses;
+  const pieWinRate = pieTotal > 0 ? Math.round((pieWins / pieTotal) * 100) : 0;
+  const pieData = pieTotal > 0
+    ? [{ name: 'Vittorie', value: pieWins }, { name: 'Sconfitte', value: pieLosses }]
     : [{ name: 'Nessuna partita', value: 1 }];
 
   // Per-category distribution data
@@ -212,9 +221,12 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
               <span className="extreme-icon">{"\u{1F43A}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Incubo di</span>
-                <div className="extreme-names-list">
-                  {predaList.map(o => <span key={o.name} className="extreme-name-item">{o.name}</span>)}
-                </div>
+                <span className="extreme-detail extreme-popup-trigger">
+                  {predaList.length} giocator{predaList.length === 1 ? 'e' : 'i'}
+                  <div className="extreme-popup">
+                    {predaList.map(o => <span key={o.name} className="extreme-popup-name">{o.name}</span>)}
+                  </div>
+                </span>
               </div>
             </div>
           )}
@@ -223,9 +235,12 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
               <span className="extreme-icon">{"\u{1F407}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Preda di</span>
-                <div className="extreme-names-list">
-                  {incuboList.map(o => <span key={o.name} className="extreme-name-item">{o.name}</span>)}
-                </div>
+                <span className="extreme-detail extreme-popup-trigger">
+                  {incuboList.length} giocator{incuboList.length === 1 ? 'e' : 'i'}
+                  <div className="extreme-popup">
+                    {incuboList.map(o => <span key={o.name} className="extreme-popup-name">{o.name}</span>)}
+                  </div>
+                </span>
               </div>
             </div>
           )}
@@ -429,7 +444,20 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
         <div className="stats-charts-row">
           {/* Pie Chart */}
           <div className="stats-section stats-section-half">
-            <h2>Vittorie / Sconfitte</h2>
+            <div className="stats-section-header">
+              <h2>Vittorie / Sconfitte</h2>
+              <div className="pie-cat-select">
+                <CustomSelect
+                  value={winLossCategory}
+                  onChange={setWinLossCategory}
+                  placeholder="Overall"
+                  options={[
+                    { value: 'overall', label: 'Overall' },
+                    ...Object.entries(CAT_LABELS).map(([k, v]) => ({ value: k, label: v }))
+                  ]}
+                />
+              </div>
+            </div>
             <div className="chart-container pie-container">
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
@@ -446,16 +474,16 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                     <Cell fill={COLORS.win} />
                     <Cell fill={COLORS.loss} />
                   </Pie>
-                  <Tooltip formatter={(v, name) => [isOwnProfile ? `${v}` : `${Math.round((v / totalGames) * 100)}%`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
+                  <Tooltip formatter={(v, name) => [isOwnProfile ? `${v}` : `${Math.round((v / pieTotal) * 100)}%`, name]} contentStyle={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' }} itemStyle={{ color: 'var(--text-color)' }} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="pie-center-label">
-                <span className="pie-center-value">{winRate}%</span>
+                <span className="pie-center-value">{pieWinRate}%</span>
                 <span className="pie-center-text">win</span>
               </div>
               <div className="pie-legend">
-                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.win }} />{isOwnProfile ? `${totalWins}V` : `${winRate}%`}</span>
-                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.loss }} />{isOwnProfile ? `${totalLosses}S` : `${100 - winRate}%`}</span>
+                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.win }} />{isOwnProfile ? `${pieWins}V` : `${pieWinRate}%`}</span>
+                <span className="pie-legend-item"><span className="legend-dot" style={{ background: COLORS.loss }} />{isOwnProfile ? `${pieLosses}S` : `${100 - pieWinRate}%`}</span>
               </div>
             </div>
           </div>
