@@ -32,7 +32,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
           className="custom-select-input"
           placeholder={placeholder}
           value={open ? search : (selected ? selected.label : '')}
-          onChange={e => setSearch(e.target.value)}
+          onChange={e => { setSearch(e.target.value); if (!open) { setOpen(true); } }}
           onFocus={() => { if (!open) { setOpen(true); setSearch(''); } }}
           onKeyDown={e => {
             if (e.key === 'Enter' && open && filtered.length > 0) {
@@ -42,7 +42,6 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
               setSearch('');
             }
           }}
-          readOnly={!open}
         />
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
       </div>

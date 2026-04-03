@@ -152,8 +152,12 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
               onClick={() => setShowBulk(v => !v)}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="1" y="2" width="10" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" fill="none"/>
-                <rect x="5" y="6" width="10" height="8" rx="1" stroke="currentColor" strokeWidth="1.3" fill="none"/>
+                <text x="1" y="5.5" fontSize="4.5" fontWeight="700" fill="currentColor" fontFamily="monospace">1</text>
+                <line x1="5.5" y1="4" x2="15" y2="4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                <text x="1" y="9.5" fontSize="4.5" fontWeight="700" fill="currentColor" fontFamily="monospace">2</text>
+                <line x1="5.5" y1="8" x2="15" y2="8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                <text x="1" y="13.5" fontSize="4.5" fontWeight="700" fill="currentColor" fontFamily="monospace">3</text>
+                <line x1="5.5" y1="12" x2="15" y2="12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
             </button>
             <button className="close-btn" onClick={onClose}>&times;</button>
