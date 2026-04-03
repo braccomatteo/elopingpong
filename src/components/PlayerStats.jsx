@@ -37,6 +37,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [loading, setLoading] = useState(true);
   const [eloCategory, setEloCategory] = useState('overall');
   const [winLossCategory, setWinLossCategory] = useState('overall');
+  const [openPopup, setOpenPopup] = useState(null);
   const [predictOpponent, setPredictOpponent] = useState(null);
 
   useEffect(() => {
@@ -221,11 +222,16 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
               <span className="extreme-icon">{"\u{1F43A}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Incubo di</span>
-                <span className="extreme-detail extreme-popup-trigger">
+                <span
+                  className="extreme-detail extreme-popup-trigger"
+                  onClick={() => setOpenPopup(openPopup === 'preda' ? null : 'preda')}
+                >
                   {predaList.length} giocator{predaList.length === 1 ? 'e' : 'i'}
-                  <div className="extreme-popup">
-                    {predaList.map(o => <span key={o.name} className="extreme-popup-name">{o.name}</span>)}
-                  </div>
+                  {openPopup === 'preda' && (
+                    <div className="extreme-popup">
+                      {predaList.map(o => <span key={o.name} className="extreme-popup-name">{o.name}</span>)}
+                    </div>
+                  )}
                 </span>
               </div>
             </div>
@@ -235,11 +241,16 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
               <span className="extreme-icon">{"\u{1F407}"}</span>
               <div className="extreme-info">
                 <span className="extreme-title">Preda di</span>
-                <span className="extreme-detail extreme-popup-trigger">
+                <span
+                  className="extreme-detail extreme-popup-trigger"
+                  onClick={() => setOpenPopup(openPopup === 'incubo' ? null : 'incubo')}
+                >
                   {incuboList.length} giocator{incuboList.length === 1 ? 'e' : 'i'}
-                  <div className="extreme-popup">
-                    {incuboList.map(o => <span key={o.name} className="extreme-popup-name">{o.name}</span>)}
-                  </div>
+                  {openPopup === 'incubo' && (
+                    <div className="extreme-popup">
+                      {incuboList.map(o => <span key={o.name} className="extreme-popup-name">{o.name}</span>)}
+                    </div>
+                  )}
                 </span>
               </div>
             </div>

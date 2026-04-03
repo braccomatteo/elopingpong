@@ -195,7 +195,7 @@
 
 .extreme-popup-trigger {
   position: relative;
-  cursor: default;
+  cursor: pointer;
   text-decoration: underline dotted;
   text-underline-offset: 3px;
 }
@@ -211,18 +211,11 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   z-index: 20;
   min-width: 120px;
   white-space: nowrap;
-}
-
-.extreme-popup-trigger:hover .extreme-popup {
-  opacity: 1;
-  pointer-events: auto;
+  animation: fadeIn 0.15s ease-out;
 }
 
 .extreme-popup-name {
@@ -714,7 +707,7 @@
 
 /* Pie category dropdown */
 .pie-cat-select {
-  width: 120px;
+  width: 90px;
   flex-shrink: 0;
 }
 
