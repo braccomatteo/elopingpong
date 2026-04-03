@@ -71,10 +71,11 @@ const GlobalStatsPage = () => {
   const eloRaw = eloCategory === 'overall'
     ? charts.eloDistribution
     : (charts.eloDistributionByCategory?.[eloCategory] || []);
-  const eloData = eloRaw.map(d => ({
+  const eloFiltered = eloRaw.map(d => ({
     range: `${d.bucket}–${d.bucket + 24}`,
     count: d.count,
   }));
+  const eloData = eloFiltered.length > 0 ? eloFiltered : [{ range: '', count: 0 }];
   const eloColor = eloCategory === 'overall' ? COLORS.accent : (COLORS[eloCategory] || COLORS.accent);
 
   // Company pie (top 5)
@@ -239,9 +240,9 @@ const GlobalStatsPage = () => {
               <BarChart data={eloData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
                 <XAxis dataKey="range" stroke="var(--text-dim)" fontSize={11} />
-                <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} />
-                <Tooltip {...tooltipStyle} />
-                <Bar dataKey="count" fill={eloColor} radius={[3, 3, 0, 0]} name="Giocatori" />
+                <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} domain={eloFiltered.length > 0 ? ['auto', 'auto'] : [0, 10]} />
+                <Tooltip cursor={{ fill: 'transparent' }} {...tooltipStyle} />
+                <Bar dataKey="count" fill={eloColor} radius={[3, 3, 0, 0]} name="Giocatori" background={{ fill: 'transparent' }} />
               </BarChart>
             </ResponsiveContainer>
           </div>
