@@ -104,6 +104,20 @@ const GlobalStatsPage = () => {
     return floored;
   })();
 
+  // Company avg ELO data
+  const companyEloData = (charts.avgEloByCompany || []).map(d => ({
+    name: d.company,
+    elo: d.avgElo,
+    players: d.playerCount,
+  }));
+
+  // BU avg ELO data
+  const buEloData = (charts.avgEloByBu || []).map(d => ({
+    name: d.bu,
+    elo: d.avgElo,
+    players: d.playerCount,
+  }));
+
   const tooltipStyle = {
     contentStyle: { background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' },
     itemStyle: { color: 'var(--text-color)' },
@@ -300,6 +314,49 @@ const GlobalStatsPage = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Avg ELO by Company + BU */}
+      <div className="gsp-charts-row">
+        {companyEloData.length > 0 && (
+          <div className="gsp-section">
+            <h2>ELO Medio per Azienda</h2>
+            <div className="gsp-chart-container">
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={companyEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
+                  <XAxis type="number" stroke="var(--text-dim)" fontSize={11} domain={[800, 'dataMax + 30']} />
+                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={60} />
+                  <Tooltip
+                    formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
+                    {...tooltipStyle}
+                  />
+                  <Bar dataKey="elo" fill={COLORS.accent} radius={[0, 3, 3, 0]} name="ELO Medio" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {isDataCompany && buEloData.length > 0 && (
+          <div className="gsp-section">
+            <h2>ELO Medio per BU</h2>
+            <div className="gsp-chart-container">
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={buEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
+                  <XAxis type="number" stroke="var(--text-dim)" fontSize={11} domain={[800, 'dataMax + 30']} />
+                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={60} />
+                  <Tooltip
+                    formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
+                    {...tooltipStyle}
+                  />
+                  <Bar dataKey="elo" fill={COLORS['2v2_21']} radius={[0, 3, 3, 0]} name="ELO Medio" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         )}

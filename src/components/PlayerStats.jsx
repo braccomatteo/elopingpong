@@ -52,7 +52,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   if (loading) return <div className="stats-loading">Caricamento statistiche...</div>;
   if (!stats) return <div className="stats-loading">Errore nel caricamento.</div>;
 
-  const { player, rank, totalPlayers, eloHistory, winLoss, streak, h2h, extremes } = stats;
+  const { player, rank, totalPlayers, companyRank, companyTotal, buRank, buTotal, eloHistory, winLoss, streak, h2h, extremes } = stats;
   const totalGames = Object.values(winLoss).reduce((a, c) => a + c.w + c.l, 0);
   const totalWins = Object.values(winLoss).reduce((a, c) => a + c.w, 0);
   const totalLosses = Object.values(winLoss).reduce((a, c) => a + c.l, 0);
@@ -173,6 +173,20 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
             {streak.count > 0 ? `${streak.count}${streak.type}` : '—'}
           </span>
         </div>
+        {companyRank && companyTotal && (
+          <div className="stat-card">
+            <span className="stat-label">In {player.company}</span>
+            <span className="stat-value rank-value">#{companyRank}</span>
+            <span className="stat-sub">su {companyTotal}</span>
+          </div>
+        )}
+        {buRank && buTotal && (
+          <div className="stat-card">
+            <span className="stat-label">In {player.bu}</span>
+            <span className="stat-value rank-value">#{buRank}</span>
+            <span className="stat-sub">su {buTotal}</span>
+          </div>
+        )}
       </div>
 
       {/* Extremes */}
