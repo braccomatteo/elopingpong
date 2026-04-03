@@ -334,7 +334,7 @@ const GlobalStatsPage = () => {
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill={COLORS.accent} radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill="#06b6d4" radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -354,7 +354,7 @@ const GlobalStatsPage = () => {
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill={COLORS['2v2_21']} radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill="#22c55e" radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
