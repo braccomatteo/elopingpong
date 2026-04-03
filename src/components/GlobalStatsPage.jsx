@@ -30,6 +30,8 @@ const GlobalStatsPage = () => {
   const [charts, setCharts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [eloCategory, setEloCategory] = useState('overall');
+  const [companyEloCategory, setCompanyEloCategory] = useState('overall');
+  const [buEloCategory, setBuEloCategory] = useState('overall');
 
   useEffect(() => {
     Promise.all([
@@ -105,18 +107,18 @@ const GlobalStatsPage = () => {
   })();
 
   // Company avg ELO data
-  const companyEloData = (charts.avgEloByCompany || []).map(d => ({
-    name: d.company,
-    elo: d.avgElo,
-    players: d.playerCount,
-  }));
+  const companyEloKey = companyEloCategory === 'overall' ? 'avgElo' : `avgElo_${companyEloCategory}`;
+  const companyEloColor = companyEloCategory === 'overall' ? '#22c55e' : (COLORS[companyEloCategory] || '#22c55e');
+  const companyEloData = (charts.avgEloByCompany || [])
+    .map(d => ({ name: d.company, elo: d[companyEloKey] || 0, players: d.playerCount }))
+    .sort((a, b) => b.elo - a.elo);
 
   // BU avg ELO data
-  const buEloData = (charts.avgEloByBu || []).map(d => ({
-    name: d.bu,
-    elo: d.avgElo,
-    players: d.playerCount,
-  }));
+  const buEloKey = buEloCategory === 'overall' ? 'avgElo' : `avgElo_${buEloCategory}`;
+  const buEloColor = buEloCategory === 'overall' ? '#06b6d4' : (COLORS[buEloCategory] || '#06b6d4');
+  const buEloData = (charts.avgEloByBu || [])
+    .map(d => ({ name: d.bu, elo: d[buEloKey] || 0, players: d.playerCount }))
+    .sort((a, b) => b.elo - a.elo);
 
   const tooltipStyle = {
     contentStyle: { background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '6px' },
@@ -323,18 +325,32 @@ const GlobalStatsPage = () => {
       <div className="gsp-charts-row">
         {companyEloData.length > 0 && (
           <div className="gsp-section">
-            <h2>ELO Medio per Azienda</h2>
+            <div className="gsp-section-header">
+              <h2>ELO Medio per Azienda</h2>
+              <div className="gsp-elo-tabs">
+                {['overall', '1v1_21', '1v1_11', '2v2_21', '2v2_11'].map(cat => (
+                  <button
+                    key={cat}
+                    className={`gsp-elo-tab${companyEloCategory === cat ? ' active' : ''}`}
+                    style={companyEloCategory === cat ? { background: cat === 'overall' ? '#22c55e' : COLORS[cat] } : {}}
+                    onClick={() => setCompanyEloCategory(cat)}
+                  >
+                    {cat === 'overall' ? 'Overall' : CAT_LABELS[cat]}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="gsp-chart-container">
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={companyEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
                   <XAxis type="number" stroke="var(--text-dim)" fontSize={11} domain={[800, 'dataMax + 30']} />
-                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={120} />
+                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={90} />
                   <Tooltip
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill="#22c55e" radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill={companyEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -343,7 +359,21 @@ const GlobalStatsPage = () => {
 
         {isDataCompany && buEloData.length > 0 && (
           <div className="gsp-section">
-            <h2>ELO Medio per BU</h2>
+            <div className="gsp-section-header">
+              <h2>ELO Medio per BU</h2>
+              <div className="gsp-elo-tabs">
+                {['overall', '1v1_21', '1v1_11', '2v2_21', '2v2_11'].map(cat => (
+                  <button
+                    key={cat}
+                    className={`gsp-elo-tab${buEloCategory === cat ? ' active' : ''}`}
+                    style={buEloCategory === cat ? { background: cat === 'overall' ? '#06b6d4' : COLORS[cat] } : {}}
+                    onClick={() => setBuEloCategory(cat)}
+                  >
+                    {cat === 'overall' ? 'Overall' : CAT_LABELS[cat]}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="gsp-chart-container">
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={buEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
@@ -354,7 +384,7 @@ const GlobalStatsPage = () => {
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill="#06b6d4" radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill={buEloColor} radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
