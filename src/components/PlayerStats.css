@@ -107,6 +107,13 @@
   color: var(--text-dim);
 }
 
+.stat-rank-context {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  opacity: 0.75;
+  margin-top: 1px;
+}
+
 .rank-value {
   color: var(--accent-orange);
 }
@@ -196,8 +203,8 @@
 .extreme-popup-trigger {
   position: relative;
   cursor: pointer;
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
+  overflow: visible;
+  text-decoration: none;
 }
 
 .extreme-popup {

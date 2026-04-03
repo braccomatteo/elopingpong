@@ -142,6 +142,12 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           <span className="stat-label">Rank</span>
           <span className="stat-value rank-value">#{rank}</span>
           <span className="stat-sub">su {totalPlayers}</span>
+          {companyRank && companyTotal && (
+            <span className="stat-rank-context">#{companyRank} in {player.company}</span>
+          )}
+          {buRank && buTotal && (
+            <span className="stat-rank-context">#{buRank} in {player.bu}</span>
+          )}
         </div>
         <div className="stat-card">
           <span className="stat-label">ELO Overall</span>
@@ -173,20 +179,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
             {streak.count > 0 ? `${streak.count}${streak.type}` : '—'}
           </span>
         </div>
-        {companyRank && companyTotal && (
-          <div className="stat-card">
-            <span className="stat-label">In {player.company}</span>
-            <span className="stat-value rank-value">#{companyRank}</span>
-            <span className="stat-sub">su {companyTotal}</span>
-          </div>
-        )}
-        {buRank && buTotal && (
-          <div className="stat-card">
-            <span className="stat-label">In {player.bu}</span>
-            <span className="stat-value rank-value">#{buRank}</span>
-            <span className="stat-sub">su {buTotal}</span>
-          </div>
-        )}
+
       </div>
 
       {/* Extremes */}
