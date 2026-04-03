@@ -108,16 +108,20 @@ const GlobalStatsPage = () => {
 
   // Company avg ELO data
   const companyEloKey = companyEloCategory === 'overall' ? 'avgElo' : `avgElo_${companyEloCategory}`;
+  const companyCountKey = companyEloCategory === 'overall' ? 'playerCount' : `playerCount_${companyEloCategory}`;
   const companyEloColor = companyEloCategory === 'overall' ? '#22c55e' : (COLORS[companyEloCategory] || '#22c55e');
   const companyEloData = (charts.avgEloByCompany || [])
-    .map(d => ({ name: d.company, elo: d[companyEloKey] || 0, players: d.playerCount }))
+    .filter(d => d[companyEloKey] != null && d[companyEloKey] > 0)
+    .map(d => ({ name: d.company, elo: d[companyEloKey], players: d[companyCountKey] }))
     .sort((a, b) => b.elo - a.elo);
 
   // BU avg ELO data
   const buEloKey = buEloCategory === 'overall' ? 'avgElo' : `avgElo_${buEloCategory}`;
+  const buCountKey = buEloCategory === 'overall' ? 'playerCount' : `playerCount_${buEloCategory}`;
   const buEloColor = buEloCategory === 'overall' ? '#06b6d4' : (COLORS[buEloCategory] || '#06b6d4');
   const buEloData = (charts.avgEloByBu || [])
-    .map(d => ({ name: d.bu, elo: d[buEloKey] || 0, players: d.playerCount }))
+    .filter(d => d[buEloKey] != null && d[buEloKey] > 0)
+    .map(d => ({ name: d.bu, elo: d[buEloKey], players: d[buCountKey] }))
     .sort((a, b) => b.elo - a.elo);
 
   const tooltipStyle = {
