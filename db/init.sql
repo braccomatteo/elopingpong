@@ -65,6 +65,17 @@ CREATE INDEX IF NOT EXISTS idx_team_matches_p2 ON team_matches(p2_id);
 CREATE INDEX IF NOT EXISTS idx_team_matches_op1 ON team_matches(op1_id);
 CREATE INDEX IF NOT EXISTS idx_team_matches_op2 ON team_matches(op2_id);
 
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    player_id UUID NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+    match_id UUID,
+    message TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_notifications_player ON notifications(player_id);
+
 -- Unique name only for active (non-deleted) players
 CREATE UNIQUE INDEX IF NOT EXISTS idx_players_name_active ON players(name) WHERE deleted_at IS NULL;
 

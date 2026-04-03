@@ -6,6 +6,7 @@ import AdminDashboard from './components/AdminDashboard'
 import PlayerStats from './components/PlayerStats'
 import GlobalStats from './components/GlobalStats'
 import GlobalStatsPage from './components/GlobalStatsPage'
+import NotificationBanner from './components/NotificationBanner'
 import { useAuth } from './context/AuthContext'
 import './Rankings.css'
 
@@ -17,14 +18,33 @@ function App() {
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
   const [showAllPlayers, setShowAllPlayers] = useState(false)
   const [statsPlayerId, setStatsPlayerId] = useState(null)
+  const [notifications, setNotifications] = useState([])
   const { user, justLoggedIn, setJustLoggedIn } = useAuth()
 
-  // Switch to stats tab when user freshly logs in
+  const fetchNotifications = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    try {
+      const res = await fetch('/api/notifications', { headers: { Authorization: `Bearer ${token}` } })
+      if (res.ok) setNotifications(await res.json())
+    } catch {}
+  }
+
+  const dismissNotification = async (id) => {
+    const token = localStorage.getItem('token')
+    try {
+      await fetch(`/api/notifications/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+    } catch {}
+    setNotifications(prev => prev.filter(n => n.id !== id))
+  }
+
+  // Switch to stats tab and fetch notifications when user freshly logs in
   useEffect(() => {
     if (justLoggedIn && user) {
       setStatsPlayerId(user.id)
       setActiveTab('stats')
       setJustLoggedIn(false)
+      fetchNotifications()
     }
   }, [justLoggedIn, user])
 
@@ -172,6 +192,8 @@ function App() {
             {"\u23F3"} Il tuo account è in attesa di approvazione da parte di un admin. Puoi inserire fino a 5 partite. Il tuo nome non apparirà in classifica fino all'approvazione.
           </div>
         )}
+
+        <NotificationBanner notifications={notifications} onDismiss={dismissNotification} />
 
         {user && activeTab !== 'admin' && (
           <div className="actions-header" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center', justifyContent: 'space-between' }}>
