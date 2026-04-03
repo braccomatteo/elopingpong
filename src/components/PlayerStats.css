@@ -107,12 +107,7 @@
   color: var(--text-dim);
 }
 
-.stat-rank-context {
-  font-size: 0.65rem;
-  color: var(--text-dim);
-  opacity: 0.75;
-  margin-top: 1px;
-}
+
 
 .rank-value {
   color: var(--accent-orange);

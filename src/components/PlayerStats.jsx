@@ -142,12 +142,6 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           <span className="stat-label">Rank</span>
           <span className="stat-value rank-value">#{rank}</span>
           <span className="stat-sub">su {totalPlayers}</span>
-          {companyRank && companyTotal && (
-            <span className="stat-rank-context">#{companyRank} in {player.company}</span>
-          )}
-          {buRank && buTotal && (
-            <span className="stat-rank-context">#{buRank} in {player.bu}</span>
-          )}
         </div>
         <div className="stat-card">
           <span className="stat-label">ELO Overall</span>
