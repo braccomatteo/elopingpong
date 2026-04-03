@@ -204,8 +204,9 @@
 
 .extreme-popup {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  left: calc(100% + 8px);
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 6px;
