@@ -308,3 +308,40 @@ tr.inactive-player .score {
   color: var(--text-dim);
   font-size: 0.85rem;
 }
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .ranking-card {
+    padding: 16px 12px;
+  }
+
+  th {
+    font-size: 0.7rem;
+    padding-bottom: 8px;
+  }
+
+  td {
+    padding: 8px 0;
+    font-size: 0.85rem;
+  }
+
+  .rank-pill {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+    margin-right: 4px;
+  }
+
+  .delta-badge {
+    font-size: 0.6rem;
+    margin-left: 3px;
+  }
+
+  .score {
+    font-size: 0.95rem;
+  }
+}

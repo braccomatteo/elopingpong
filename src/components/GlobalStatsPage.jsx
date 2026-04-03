@@ -29,6 +29,7 @@ const GlobalStatsPage = () => {
   const [stats, setStats] = useState(null);
   const [charts, setCharts] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [eloCategory, setEloCategory] = useState('overall');
 
   useEffect(() => {
     Promise.all([
@@ -65,10 +66,14 @@ const GlobalStatsPage = () => {
   })();
 
   // ELO distribution
-  const eloData = charts.eloDistribution.map(d => ({
+  const eloRaw = eloCategory === 'overall'
+    ? charts.eloDistribution
+    : (charts.eloDistributionByCategory?.[eloCategory] || []);
+  const eloData = eloRaw.map(d => ({
     range: `${d.bucket}–${d.bucket + 24}`,
     count: d.count,
   }));
+  const eloColor = eloCategory === 'overall' ? COLORS.accent : (COLORS[eloCategory] || COLORS.accent);
 
   // Company pie (top 5)
   const companyData = (charts.top5Company || []).filter(d => d.count > 0);
@@ -192,7 +197,21 @@ const GlobalStatsPage = () => {
         </div>
 
         <div className="gsp-section">
-          <h2>Distribuzione ELO</h2>
+          <div className="gsp-section-header">
+            <h2>Distribuzione ELO</h2>
+            <div className="gsp-elo-tabs">
+              {['overall', '1v1_21', '1v1_11', '2v2_21', '2v2_11'].map(cat => (
+                <button
+                  key={cat}
+                  className={`gsp-elo-tab${eloCategory === cat ? ' active' : ''}`}
+                  style={eloCategory === cat ? { background: cat === 'overall' ? COLORS.accent : COLORS[cat] } : {}}
+                  onClick={() => setEloCategory(cat)}
+                >
+                  {cat === 'overall' ? 'Overall' : CAT_LABELS[cat]}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="gsp-chart-container">
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={eloData}>
@@ -200,7 +219,7 @@ const GlobalStatsPage = () => {
                 <XAxis dataKey="range" stroke="var(--text-dim)" fontSize={11} />
                 <YAxis stroke="var(--text-dim)" fontSize={12} allowDecimals={false} />
                 <Tooltip {...tooltipStyle} />
-                <Bar dataKey="count" fill={COLORS.accent} radius={[3, 3, 0, 0]} name="Giocatori" />
+                <Bar dataKey="count" fill={eloColor} radius={[3, 3, 0, 0]} name="Giocatori" />
               </BarChart>
             </ResponsiveContainer>
           </div>

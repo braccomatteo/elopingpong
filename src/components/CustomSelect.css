@@ -68,16 +68,13 @@
 }
 
 .custom-select-options {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
+  position: fixed;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   max-height: 200px;
   overflow-y: auto;
-  z-index: 100;
+  z-index: 9999;
   box-shadow: 0 8px 24px var(--shadow);
   animation: dropdownFade 0.15s ease-out;
 }

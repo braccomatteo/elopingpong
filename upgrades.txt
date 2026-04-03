@@ -1,0 +1,2 @@
+-all graphs showing only for 'overall' should have a little dropdown on the top right with the possibility to switch view to each other category. the dropdown should follow the same schema of other dropdowns in the doc
+-i want to build a system of temporary notifications: if i register a match against you, next time you log in, you should receive a notification informing me. then this notification will be deleted (in case of more than one match, against one or different people, send a notification for each) 

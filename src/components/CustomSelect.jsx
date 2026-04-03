@@ -3,7 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 const CustomSelect = ({ value, onChange, options, placeholder }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [dropdownStyle, setDropdownStyle] = useState({});
   const ref = useRef(null);
+  const triggerRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -18,6 +20,19 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
     if (open && inputRef.current) inputRef.current.focus();
   }, [open]);
 
+  const openDropdown = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      });
+    }
+    setOpen(true);
+    setSearch('');
+  };
+
   const selected = options.find(o => o.value === value);
   const filtered = search
     ? options.filter(o => o.label.toLowerCase().includes(search.toLowerCase()))
@@ -25,15 +40,19 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
 
   return (
     <div className="custom-select" ref={ref}>
-      <div className={`custom-select-trigger${open ? ' open' : ''}`} onClick={() => { if (!open) { setOpen(true); setSearch(''); } }}>
+      <div
+        ref={triggerRef}
+        className={`custom-select-trigger${open ? ' open' : ''}`}
+        onClick={() => { if (!open) openDropdown(); }}
+      >
         <input
           ref={inputRef}
           type="text"
           className="custom-select-input"
           placeholder={placeholder}
           value={open ? search : (selected ? selected.label : '')}
-          onChange={e => { setSearch(e.target.value); if (!open) { setOpen(true); } }}
-          onFocus={() => { if (!open) { setOpen(true); setSearch(''); } }}
+          onChange={e => { setSearch(e.target.value); if (!open) openDropdown(); }}
+          onFocus={() => { if (!open) openDropdown(); }}
           onKeyDown={e => {
             if (e.key === 'Enter' && open && filtered.length > 0) {
               e.preventDefault();
@@ -46,7 +65,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
       </div>
       {open && (
-        <div className="custom-select-options">
+        <div className="custom-select-options" style={dropdownStyle}>
           {filtered.length > 0 ? filtered.map(o => (
             <div
               key={o.value}

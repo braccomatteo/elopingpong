@@ -61,6 +61,45 @@
   color: var(--text-dim);
 }
 
+.gsp-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.gsp-section-header h2 {
+  margin-bottom: 0 !important;
+}
+
+.gsp-elo-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.gsp-elo-tab {
+  background: var(--input-bg);
+  border: none;
+  color: var(--text-dim);
+  padding: 3px 9px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gsp-elo-tab.active {
+  color: #fff;
+}
+
+.gsp-elo-tab:hover:not(.active) {
+  color: var(--text-main);
+}
+
 /* Charts */
 .gsp-charts-row {
   display: grid;
