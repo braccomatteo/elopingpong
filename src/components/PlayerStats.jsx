@@ -585,7 +585,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
         </div>
       )}
 
-      {history.total > 0 && (
+      {isOwnProfile && history.total > 0 && (
         <div className="stats-section storico-section">
           <h2>Storico Partite</h2>
           <table className="storico-table">
