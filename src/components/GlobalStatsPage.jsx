@@ -329,12 +329,12 @@ const GlobalStatsPage = () => {
                 <BarChart data={companyEloData} layout="vertical" margin={{ left: 8, right: 24 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
                   <XAxis type="number" stroke="var(--text-dim)" fontSize={11} domain={[800, 'dataMax + 30']} />
-                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={60} />
+                  <YAxis type="category" dataKey="name" stroke="var(--text-dim)" fontSize={12} width={120} />
                   <Tooltip
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill="#06b6d4" radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill="#22c55e" radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -354,7 +354,7 @@ const GlobalStatsPage = () => {
                     formatter={(v, name, props) => [`${v} ELO (${props.payload.players} giocatori)`, 'Media']}
                     {...tooltipStyle}
                   />
-                  <Bar dataKey="elo" fill="#22c55e" radius={[0, 3, 3, 0]} name="ELO Medio" />
+                  <Bar dataKey="elo" fill="#06b6d4" radius={[0, 3, 3, 0]} name="ELO Medio" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
