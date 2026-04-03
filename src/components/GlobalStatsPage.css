@@ -17,12 +17,6 @@
   font-size: 1rem;
 }
 
-.gsp-no-data {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-dim);
-  font-size: 0.9rem;
-}
 
 /* Summary cards */
 .gsp-cards {
