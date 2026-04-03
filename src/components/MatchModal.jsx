@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import CustomSelect from './CustomSelect';
 import './CustomSelect.css';
@@ -23,6 +23,22 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
   const [showBulk, setShowBulk] = useState(false);
   const [matchCount, setMatchCount] = useState(2);
   const [bulkMatches, setBulkMatches] = useState([emptyMatch(), emptyMatch()]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setOpponentId('');
+      setPartnerId('');
+      setOpponent2Id('');
+      setCreatorScore('');
+      setOpponentScore('');
+      setMatchType('Singolo');
+      setPointsType('21');
+      setError('');
+      setShowBulk(false);
+      setMatchCount(2);
+      setBulkMatches([emptyMatch(), emptyMatch()]);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
