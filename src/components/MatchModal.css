@@ -124,14 +124,17 @@
 .bulk-match-card {
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  padding: 12px 12px 4px 12px;
+  padding: 6px 10px;
   background: var(--input-bg);
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   animation: fadeIn 0.2s ease-out;
 }
 
-.bulk-match-card .form-group:last-child {
-  margin-bottom: 8px;
+.bulk-match-card .form-group {
+  margin-bottom: 0;
+  flex: 1;
 }
 
 .bulk-match-num {

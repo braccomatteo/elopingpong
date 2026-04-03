@@ -313,7 +313,6 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
                   <div key={i} className="bulk-match-card">
                     <div className="bulk-match-num">#{i + 1}</div>
                     <div className="form-group">
-                      <label>Punteggio</label>
                       <div className="score-inputs">
                         <input
                           type="number"
