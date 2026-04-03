@@ -273,7 +273,7 @@ function App() {
                 </tbody>
               </table>
               {user && <><h2 style={{ marginTop: '2rem' }}>Storico 1v1 (21)</h2>
-              <MatchHistory matches={matches1v1_21} /></>}
+              <MatchHistory matches={matches1v1_21.slice(0, 5)} /></>}
             </section>
           )}
 
@@ -304,7 +304,7 @@ function App() {
                 </tbody>
               </table>
               {user && <><h2 style={{ marginTop: '2rem' }}>Storico 1v1 (11)</h2>
-              <MatchHistory matches={matches1v1_11} /></>}
+              <MatchHistory matches={matches1v1_11.slice(0, 5)} /></>}
             </section>
           )}
 
@@ -335,7 +335,7 @@ function App() {
                 </tbody>
               </table>
               {user && <><h2 style={{ marginTop: '2rem' }}>Storico 2v2 (21)</h2>
-              <MatchHistory matches={matches2v2_21} /></>}
+              <MatchHistory matches={matches2v2_21.slice(0, 5)} /></>}
             </section>
           )}
 
@@ -366,7 +366,7 @@ function App() {
                 </tbody>
               </table>
               {user && <><h2 style={{ marginTop: '2rem' }}>Storico 2v2 (11)</h2>
-              <MatchHistory matches={matches2v2_11} /></>}
+              <MatchHistory matches={matches2v2_11.slice(0, 5)} /></>}
             </section>
           )}
 
@@ -379,7 +379,7 @@ function App() {
           )}
 
           {activeTab === 'admin' && user?.role === 'admin' && (
-            <AdminDashboard players={players} onUpdate={fetchData} />
+            <AdminDashboard players={players} onUpdate={() => { fetchData(); fetchNotifications(); }} />
           )}
         </div>
       </div>
@@ -388,7 +388,7 @@ function App() {
         isOpen={isMatchModalOpen}
         onClose={() => setIsMatchModalOpen(false)}
         players={players}
-        onMatchAdded={fetchData}
+        onMatchAdded={() => { fetchData(); fetchNotifications(); }}
       />
     </div>
   )
