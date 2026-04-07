@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
+  PieChart, Pie, Cell, Sector,
   CartesianGrid, ReferenceLine
 } from 'recharts';
 import CustomSelect from './CustomSelect';
@@ -493,6 +493,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                     paddingAngle={4}
                     dataKey="value"
                     strokeWidth={0}
+                    activeShape={(props) => <Sector {...props} outerRadius={props.outerRadius} />}
                   >
                     <Cell fill={COLORS.win} />
                     <Cell fill={COLORS.loss} />
@@ -527,6 +528,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                       paddingAngle={3}
                       dataKey="value"
                       strokeWidth={0}
+                      activeShape={(props) => <Sector {...props} outerRadius={props.outerRadius} />}
                     >
                       {categoryDistData.map((entry, idx) => (
                         <Cell key={idx} fill={entry.color} />
