@@ -161,10 +161,11 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
 
   const handleForceSubmit = async () => {
     if (!duplicatePending) return;
-    const { endpoint, payload } = duplicatePending;
+    const { endpoint, payload, index, total } = duplicatePending;
     setDuplicatePending(null);
     setLoading(true);
     try {
+      // Submit the duplicate match with force flag
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
@@ -172,6 +173,90 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+
+      // Continue submitting remaining matches after the duplicate
+      const matches = showBulk ? bulkMatches : [{ creatorScore, opponentScore }];
+      const isDoubles = matchType === 'Doppio';
+      for (let i = index + 1; i < total; i++) {
+        const m = matches[i];
+        const nextPayload = isDoubles ? {
+          p1_id: user.id,
+          p2_id: partnerId,
+          op1_id: opponentId,
+          op2_id: opponent2Id,
+          team_score: parseInt(m.creatorScore),
+          opponent_score: parseInt(m.opponentScore),
+          points_type: parseInt(pointsType)
+        } : {
+          opponent_id: opponentId,
+          creator_score: parseInt(m.creatorScore),
+          opponent_score: parseInt(m.opponentScore),
+          points_type: parseInt(pointsType)
+        };
+
+        const nextRes = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(nextPayload)
+        });
+        const nextData = await nextRes.json();
+        if (nextRes.status === 409 && nextData.duplicate) {
+          setDuplicatePending({ endpoint, payload: nextPayload, index: i, total });
+          setLoading(false);
+          return;
+        }
+        if (!nextRes.ok) throw new Error(nextData.error || `Errore al match #${i + 1}`);
+      }
+
+      onMatchAdded();
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSkipDuplicate = async () => {
+    if (!duplicatePending) return;
+    const { endpoint, index, total } = duplicatePending;
+    setDuplicatePending(null);
+    setLoading(true);
+    try {
+      const matches = showBulk ? bulkMatches : [{ creatorScore, opponentScore }];
+      const isDoubles = matchType === 'Doppio';
+      for (let i = index + 1; i < total; i++) {
+        const m = matches[i];
+        const nextPayload = isDoubles ? {
+          p1_id: user.id,
+          p2_id: partnerId,
+          op1_id: opponentId,
+          op2_id: opponent2Id,
+          team_score: parseInt(m.creatorScore),
+          opponent_score: parseInt(m.opponentScore),
+          points_type: parseInt(pointsType)
+        } : {
+          opponent_id: opponentId,
+          creator_score: parseInt(m.creatorScore),
+          opponent_score: parseInt(m.opponentScore),
+          points_type: parseInt(pointsType)
+        };
+        const nextRes = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify(nextPayload)
+        });
+        const nextData = await nextRes.json();
+        if (nextRes.status === 409 && nextData.duplicate) {
+          setDuplicatePending({ endpoint, payload: nextPayload, index: i, total });
+          setLoading(false);
+          return;
+        }
+        if (!nextRes.ok) throw new Error(nextData.error || `Errore al match #${i + 1}`);
+      }
       onMatchAdded();
       onClose();
     } catch (err) {
@@ -191,7 +276,7 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
             <p>⚠️ Questo match sembra già esistere oggi. Registrarlo comunque?</p>
             <div className="duplicate-warning-actions">
               <button className="btn-confirm" onClick={handleForceSubmit}>Sì, registra</button>
-              <button className="btn-cancel" onClick={() => setDuplicatePending(null)}>Annulla</button>
+              <button className="btn-cancel" onClick={handleSkipDuplicate}>Salta</button>
             </div>
           </div>
         )}
