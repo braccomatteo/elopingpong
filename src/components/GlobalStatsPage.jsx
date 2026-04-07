@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
+  PieChart, Pie, Cell, Sector,
   CartesianGrid
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
@@ -194,6 +194,7 @@ const GlobalStatsPage = () => {
                   paddingAngle={3}
                   dataKey="value"
                   strokeWidth={0}
+                  activeShape={(props) => <Sector {...props} outerRadius={props.outerRadius} />}
                 >
                   {catPieData.map((entry, idx) => (
                     <Cell key={idx} fill={entry.color} />
@@ -264,6 +265,7 @@ const GlobalStatsPage = () => {
                     cx="50%" cy="50%"
                     innerRadius={50} outerRadius={90}
                     paddingAngle={3} dataKey="count" nameKey="company" strokeWidth={0}
+                    activeShape={(props) => <Sector {...props} outerRadius={props.outerRadius} />}
                   >
                     {companyData.map((_, idx) => (
                       <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
@@ -305,6 +307,7 @@ const GlobalStatsPage = () => {
                     cx="50%" cy="50%"
                     innerRadius={50} outerRadius={90}
                     paddingAngle={3} dataKey="count" nameKey="bu" strokeWidth={0}
+                    activeShape={(props) => <Sector {...props} outerRadius={props.outerRadius} />}
                   >
                     {buData.map((_, idx) => (
                       <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
