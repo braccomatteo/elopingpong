@@ -215,7 +215,6 @@ function App() {
             <button
               onClick={() => setIsMatchModalOpen(true)}
               className="submit-btn"
-              style={{ width: 'auto' }}
             >
               + Aggiungi Match
             </button>
