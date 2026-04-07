@@ -210,15 +210,15 @@ function App() {
         )}
 
         {user && activeTab !== 'admin' && (
-          <div className="actions-header" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <h1 style={{ margin: 0 }}>Classifica</h1>
+          <div className="actions-header" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h1 style={{ position: 'absolute', left: 0, margin: 0 }}>Classifica</h1>
             <button
               onClick={() => setIsMatchModalOpen(true)}
               className="submit-btn"
+              style={{ maxWidth: '420px', width: '100%' }}
             >
               + Aggiungi Match
             </button>
-            <div />
           </div>
         )}
 
