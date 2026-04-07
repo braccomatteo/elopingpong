@@ -26,7 +26,17 @@ function App() {
     if (!token) return
     try {
       const res = await fetch('/api/notifications', { headers: { Authorization: `Bearer ${token}` } })
-      if (res.ok) setNotifications(await res.json())
+      if (res.ok) {
+        const fresh = await res.json()
+        setNotifications(prev => {
+          const prevIds = new Set(prev.map(n => n.id))
+          const freshIds = new Set(fresh.map(n => n.id))
+          // keep prev entries still on server, add new ones
+          const merged = prev.filter(n => freshIds.has(n.id))
+          fresh.forEach(n => { if (!prevIds.has(n.id)) merged.push(n) })
+          return merged
+        })
+      }
     } catch {}
   }
 
@@ -184,6 +194,8 @@ function App() {
     <div className="app-wrapper">
       <Header activeTab={activeTab} onTabChange={setActiveTab} onStatsClick={(id) => { setStatsPlayerId(id); setActiveTab('stats'); }} />
 
+      <NotificationBanner notifications={notifications} onDismiss={dismissNotification} />
+
       <div className="container">
         {!user && (
           <div className="welcome-banner">
@@ -197,14 +209,13 @@ function App() {
           </div>
         )}
 
-        <NotificationBanner notifications={notifications} onDismiss={dismissNotification} />
-
         {user && activeTab !== 'admin' && (
           <div className="actions-header" style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center', justifyContent: 'space-between' }}>
             <h1 style={{ margin: 0 }}>Classifica</h1>
             <button
               onClick={() => setIsMatchModalOpen(true)}
               className="submit-btn"
+              style={{ width: 'auto' }}
             >
               + Aggiungi Match
             </button>
