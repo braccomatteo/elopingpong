@@ -194,7 +194,7 @@ const GlobalStatsPage = () => {
                   paddingAngle={3}
                   dataKey="value"
                   strokeWidth={0}
-                  activeShape={(props) => <Sector {...props} outerRadius={90} innerRadius={50} />}
+                  activeShape={(props) => <Sector {...props} outerRadius={90} innerRadius={50} strokeWidth={0} />}
                 >
                   {catPieData.map((entry, idx) => (
                     <Cell key={idx} fill={entry.color} />
@@ -265,7 +265,7 @@ const GlobalStatsPage = () => {
                     cx="50%" cy="50%"
                     innerRadius={50} outerRadius={90}
                     paddingAngle={3} dataKey="count" nameKey="company" strokeWidth={0}
-                    activeShape={(props) => <Sector {...props} outerRadius={90} innerRadius={50} />}
+                    activeShape={(props) => <Sector {...props} outerRadius={90} innerRadius={50} strokeWidth={0} />}
                   >
                     {companyData.map((_, idx) => (
                       <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
@@ -307,7 +307,7 @@ const GlobalStatsPage = () => {
                     cx="50%" cy="50%"
                     innerRadius={50} outerRadius={90}
                     paddingAngle={3} dataKey="count" nameKey="bu" strokeWidth={0}
-                    activeShape={(props) => <Sector {...props} outerRadius={90} innerRadius={50} />}
+                    activeShape={(props) => <Sector {...props} outerRadius={90} innerRadius={50} strokeWidth={0} />}
                   >
                     {buData.map((_, idx) => (
                       <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />

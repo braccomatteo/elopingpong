@@ -493,7 +493,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                     paddingAngle={4}
                     dataKey="value"
                     strokeWidth={0}
-                    activeShape={(props) => <Sector {...props} outerRadius={85} />}
+                    activeShape={(props) => <Sector {...props} outerRadius={85} strokeWidth={0} />}
                   >
                     <Cell fill={COLORS.win} />
                     <Cell fill={COLORS.loss} />
@@ -528,7 +528,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                       paddingAngle={3}
                       dataKey="value"
                       strokeWidth={0}
-                      activeShape={(props) => <Sector {...props} outerRadius={85} />}
+                      activeShape={(props) => <Sector {...props} outerRadius={85} strokeWidth={0} />}
                     >
                       {categoryDistData.map((entry, idx) => (
                         <Cell key={idx} fill={entry.color} />
