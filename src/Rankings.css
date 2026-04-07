@@ -53,6 +53,14 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
+/* Remove SVG focus ring that Recharts shows on pie chart click */
+.recharts-wrapper svg:focus,
+.recharts-surface:focus,
+.recharts-pie-sector:focus,
+.recharts-pie-sector path:focus {
+  outline: none;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
