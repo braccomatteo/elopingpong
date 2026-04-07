@@ -309,8 +309,39 @@ tr.inactive-player .score {
   font-size: 0.85rem;
 }
 
+.actions-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-left: 160px;
+  padding-right: 160px;
+}
+
+.actions-title {
+  position: absolute;
+  left: 0;
+  margin: 0;
+}
+
 /* ===== MOBILE ===== */
 @media (max-width: 600px) {
+  .actions-header {
+    position: static;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+  }
+
+  .actions-header .submit-btn {
+    width: auto;
+  }
+
+  .actions-title {
+    position: static !important;
+  }
   .container {
     padding: 16px 12px;
   }
