@@ -152,6 +152,10 @@
   position: relative;
 }
 
+.admin-link.active {
+  color: #fff !important;
+}
+
 .admin-badge {
   background: #ef4444;
   color: #fff;
