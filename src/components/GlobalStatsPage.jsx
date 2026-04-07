@@ -204,6 +204,7 @@ const GlobalStatsPage = () => {
                     const i = catPieData.findIndex(d => d.name === name);
                     return [`${v} (${catPcts[i] ?? 0}%)`, name];
                   }}
+                  cursor={false}
                   {...tooltipStyle}
                 />
               </PieChart>
@@ -273,6 +274,7 @@ const GlobalStatsPage = () => {
                       const i = companyData.findIndex(d => d.company === name);
                       return [`${v} (${companyPcts[i] ?? 0}%)`, name];
                     }}
+                    cursor={false}
                     {...tooltipStyle}
                   />
                 </PieChart>
@@ -313,6 +315,7 @@ const GlobalStatsPage = () => {
                       const i = buData.findIndex(d => d.bu === name);
                       return [`${v} (${buPcts[i] ?? 0}%)`, name];
                     }}
+                    cursor={false}
                     {...tooltipStyle}
                   />
                 </PieChart>
