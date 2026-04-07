@@ -31,7 +31,7 @@ const StatsPie = ({
         paddingAngle={3}
         dataKey="value"
         strokeWidth={0}
-        activeShape={() => <g />}
+        activeShape={(props) => <Sector {...props} outerRadius={outerRadius} />}
       >
         {data.map((_, idx) => (
           <Cell key={idx} fill={colors[idx % colors.length]} />
