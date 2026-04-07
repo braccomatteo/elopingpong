@@ -666,6 +666,19 @@
     justify-content: center;
     margin-top: 8px;
   }
+
+  .storico-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .storico-table {
+    min-width: 420px;
+  }
+
+  .stats-page {
+    overflow-x: hidden;
+  }
 }
 
 @media (max-width: 480px) {

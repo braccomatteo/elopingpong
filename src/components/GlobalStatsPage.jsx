@@ -182,7 +182,8 @@ const GlobalStatsPage = () => {
         <div className="gsp-section">
           <h2>Per Categoria</h2>
           <div className="gsp-chart-container gsp-cat-row">
-            <ResponsiveContainer width="55%" height={250}>
+            <div className="gsp-pie-wrap">
+            <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
                   data={catPieData}
@@ -206,8 +207,7 @@ const GlobalStatsPage = () => {
                   {...tooltipStyle}
                 />
               </PieChart>
-            </ResponsiveContainer>
-            <div className="gsp-cat-legend">
+            </ResponsiveContainer>            </div>            <div className="gsp-cat-legend">
               {catPieData.map((entry, idx) => (
                 <div className="gsp-cat-legend-item" key={idx}>
                   <span className="legend-dot" style={{ background: entry.color }} />
@@ -255,7 +255,8 @@ const GlobalStatsPage = () => {
           <div className="gsp-section">
             <h2>Top 5 per Azienda</h2>
             <div className="gsp-chart-container gsp-cat-row">
-              <ResponsiveContainer width="55%" height={250}>
+              <div className="gsp-pie-wrap">
+              <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
                     data={companyData}
@@ -276,6 +277,7 @@ const GlobalStatsPage = () => {
                   />
                 </PieChart>
               </ResponsiveContainer>
+              </div>
               <div className="gsp-cat-legend">
                 {companyData.map((entry, idx) => (
                   <div className="gsp-cat-legend-item" key={idx}>
@@ -293,7 +295,8 @@ const GlobalStatsPage = () => {
           <div className="gsp-section">
             <h2>Divisione per BU</h2>
             <div className="gsp-chart-container gsp-cat-row">
-              <ResponsiveContainer width="55%" height={250}>
+              <div className="gsp-pie-wrap">
+              <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie
                     data={buData}
@@ -314,6 +317,7 @@ const GlobalStatsPage = () => {
                   />
                 </PieChart>
               </ResponsiveContainer>
+              </div>
               <div className="gsp-cat-legend">
                 {buData.map((entry, idx) => (
                   <div className="gsp-cat-legend-item" key={idx}>

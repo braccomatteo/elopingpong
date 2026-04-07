@@ -153,6 +153,10 @@
   flex-shrink: 0;
 }
 
+.gsp-pie-wrap {
+  flex: 0 0 55%;
+}
+
 .gsp-cat-legend-item {
   display: flex;
   align-items: center;
@@ -181,5 +185,34 @@
 @media (max-width: 480px) {
   .gsp-cards {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .gsp-cat-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .gsp-pie-wrap {
+    flex: 0 0 auto;
+    width: 80%;
+    max-width: 240px;
+  }
+
+  .gsp-cat-legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    justify-content: center;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .gsp-cat-legend-item {
+    font-size: 0.75rem;
+    white-space: normal;
+  }
+
+  .gsp-elo-tabs {
+    flex-wrap: wrap;
   }
 }
