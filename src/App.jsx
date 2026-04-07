@@ -210,7 +210,7 @@ function App() {
         )}
 
         {user && activeTab !== 'admin' && (
-          <div className="actions-header" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <div className="actions-header" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', paddingLeft: '160px', paddingRight: '160px' }}>
             <h1 style={{ position: 'absolute', left: 0, margin: 0 }}>Classifica</h1>
             <button
               onClick={() => setIsMatchModalOpen(true)}
