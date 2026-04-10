@@ -46,6 +46,8 @@ const AdminDashboard = ({ players, onUpdate }) => {
   const [historyMatches, setHistoryMatches] = useState([]);
   const [historyPage, setHistoryPage] = useState(1);
   const [historyTotalPages, setHistoryTotalPages] = useState(1);
+  const [editingMatch, setEditingMatch] = useState(null); // { id, isDouble, form }
+  const [matchEditError, setMatchEditError] = useState('');
 
   /* ---- Trash state ---- */
   const [trashData, setTrashData] = useState({ players: [], matches: [], teamMatches: [] });
@@ -127,6 +129,44 @@ const AdminDashboard = ({ players, onUpdate }) => {
   useEffect(() => {
     Promise.all([fetchPlayers(), fetchHistory(), fetchCompanies(), fetchPending()]).finally(() => setLoading(false));
   }, []);
+
+  /* ---- Match edit handlers ---- */
+  const startEditMatch = (m) => {
+    const isDouble = m.match_type === 'doubles';
+    setMatchEditError('');
+    if (isDouble) {
+      setEditingMatch({ id: m.id, isDouble: true, form: {
+        p1_id: m.p1_id, p2_id: m.p2_id, op1_id: m.op1_id, op2_id: m.op2_id,
+        team_score: String(m.t1_score), opponent_score: String(m.t2_score),
+        points_type: String(m.points_type)
+      }});
+    } else {
+      setEditingMatch({ id: m.id, isDouble: false, form: {
+        creator_id: m.p1_id, opponent_id: m.op1_id,
+        creator_score: String(m.t1_score), opponent_score: String(m.t2_score),
+        points_type: String(m.points_type)
+      }});
+    }
+  };
+
+  const saveEditMatch = async () => {
+    if (!editingMatch) return;
+    setMatchEditError('');
+    const { id, isDouble, form } = editingMatch;
+    const endpoint = isDouble ? `/api/team-matches/${id}` : `/api/matches/${id}`;
+    try {
+      const res = await fetch(endpoint, {
+        method: 'PUT',
+        headers: jsonHeaders(),
+        body: JSON.stringify(form)
+      });
+      const data = await res.json();
+      if (!res.ok) { setMatchEditError(data.error || 'Errore'); return; }
+      setEditingMatch(null);
+      fetchHistory(historyPage);
+      onUpdate();
+    } catch (err) { setMatchEditError(err.message); }
+  };
 
   /* ---- Delete handlers ---- */
   const deletePlayer = async (id) => {
@@ -473,6 +513,67 @@ const AdminDashboard = ({ players, onUpdate }) => {
                 <tbody>
                   {historyMatches.map(m => {
                     const isDouble = m.match_type === 'doubles';
+                    const isEditing = editingMatch?.id === m.id;
+                    const pOpts = playerList.map(p => ({ value: p.id, label: p.name }));
+
+                    if (isEditing) {
+                      const f = editingMatch.form;
+                      return (
+                        <tr key={m.id} className="match-edit-row">
+                          <td colSpan={5}>
+                            <div className="match-edit-form">
+                              {isDouble ? (
+                                <>
+                                  <div className="match-edit-group">
+                                    <label>Team 1</label>
+                                    <CustomSelect value={f.p1_id} onChange={v => setEditingMatch(e => ({ ...e, form: { ...e.form, p1_id: v } }))} options={pOpts} placeholder="Giocatore 1" />
+                                    <CustomSelect value={f.p2_id} onChange={v => setEditingMatch(e => ({ ...e, form: { ...e.form, p2_id: v } }))} options={pOpts} placeholder="Giocatore 2" />
+                                  </div>
+                                  <div className="match-edit-group">
+                                    <label>Team 2</label>
+                                    <CustomSelect value={f.op1_id} onChange={v => setEditingMatch(e => ({ ...e, form: { ...e.form, op1_id: v } }))} options={pOpts} placeholder="Giocatore 3" />
+                                    <CustomSelect value={f.op2_id} onChange={v => setEditingMatch(e => ({ ...e, form: { ...e.form, op2_id: v } }))} options={pOpts} placeholder="Giocatore 4" />
+                                  </div>
+                                  <div className="match-edit-group">
+                                    <label>Risultato</label>
+                                    <input className="edit-input match-score-input" type="number" min="0" value={f.team_score} onChange={e => setEditingMatch(em => ({ ...em, form: { ...em.form, team_score: e.target.value } }))} />
+                                    <span style={{ color: 'var(--text-dim)' }}>-</span>
+                                    <input className="edit-input match-score-input" type="number" min="0" value={f.opponent_score} onChange={e => setEditingMatch(em => ({ ...em, form: { ...em.form, opponent_score: e.target.value } }))} />
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="match-edit-group">
+                                    <label>Giocatori</label>
+                                    <CustomSelect value={f.creator_id} onChange={v => setEditingMatch(e => ({ ...e, form: { ...e.form, creator_id: v } }))} options={pOpts} placeholder="Giocatore 1" />
+                                    <CustomSelect value={f.opponent_id} onChange={v => setEditingMatch(e => ({ ...e, form: { ...e.form, opponent_id: v } }))} options={pOpts} placeholder="Giocatore 2" />
+                                  </div>
+                                  <div className="match-edit-group">
+                                    <label>Risultato</label>
+                                    <input className="edit-input match-score-input" type="number" min="0" value={f.creator_score} onChange={e => setEditingMatch(em => ({ ...em, form: { ...em.form, creator_score: e.target.value } }))} />
+                                    <span style={{ color: 'var(--text-dim)' }}>-</span>
+                                    <input className="edit-input match-score-input" type="number" min="0" value={f.opponent_score} onChange={e => setEditingMatch(em => ({ ...em, form: { ...em.form, opponent_score: e.target.value } }))} />
+                                  </div>
+                                </>
+                              )}
+                              <div className="match-edit-group">
+                                <label>Punti</label>
+                                <select className="edit-input" value={f.points_type} onChange={e => setEditingMatch(em => ({ ...em, form: { ...em.form, points_type: e.target.value } }))}>
+                                  <option value="21">21</option>
+                                  <option value="11">11</option>
+                                </select>
+                              </div>
+                              {matchEditError && <span className="match-edit-error">{matchEditError}</span>}
+                              <div className="match-edit-actions">
+                                <button className="trash-btn restore" onClick={saveEditMatch}>Salva</button>
+                                <button className="trash-btn perm-delete" onClick={() => { setEditingMatch(null); setMatchEditError(''); }}>Annulla</button>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    }
+
                     const leftSide = isDouble ? `${m.p1_name} & ${m.p2_name}` : m.p1_name;
                     const rightSide = isDouble ? `${m.op1_name} & ${m.op2_name}` : m.op1_name;
                     return (
@@ -481,7 +582,12 @@ const AdminDashboard = ({ players, onUpdate }) => {
                         <td>{m.points_type} pt</td>
                         <td>{leftSide} <span style={{ color: 'var(--accent-orange)' }}>vs</span> {rightSide}</td>
                         <td className="score">{m.t1_score} - {m.t2_score}</td>
-                        <td><button className="delete-btn" onClick={() => deleteMatch(m.id, isDouble)}>Elimina</button></td>
+                        <td>
+                          <div className="trash-actions">
+                            <button className="edit-btn" onClick={() => startEditMatch(m)}>Modifica</button>
+                            <button className="delete-btn" onClick={() => deleteMatch(m.id, isDouble)}>Elimina</button>
+                          </div>
+                        </td>
                       </tr>
                     );
                   })}

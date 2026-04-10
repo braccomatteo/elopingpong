@@ -20,6 +20,7 @@ Breve descrizione di cosa fa e dove è stata implementata (file coinvolti).
 ```
 
 ### 2. Aggiungi una notifica per tutti i giocatori
+Esegui questo passaggio, solo se la funzionalità non riguarda le pagine visibili solo all'admin.
 Inserisci nella tabella `notifications` del database una riga per ogni giocatore attivo e non attivo (non eliminato). Usa questo pattern SQL:
 
 ```sql

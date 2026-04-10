@@ -222,6 +222,58 @@
   color: #fff;
 }
 
+/* Match inline edit */
+.match-edit-row td {
+  padding: 0 !important;
+}
+
+.match-edit-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--accent-orange);
+}
+
+.match-edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.match-edit-group label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.match-edit-group .custom-select,
+.match-edit-group .edit-input {
+  min-width: 130px;
+}
+
+.match-score-input {
+  width: 56px !important;
+  min-width: 56px !important;
+  text-align: center;
+}
+
+.match-edit-actions {
+  display: flex;
+  gap: 8px;
+  align-self: flex-end;
+}
+
+.match-edit-error {
+  width: 100%;
+  font-size: 0.8rem;
+  color: var(--accent-red);
+}
+
 .admin-link {
   color: var(--accent-orange) !important;
   font-weight: bold;
