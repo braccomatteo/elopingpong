@@ -46,14 +46,24 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [h2hSortDir, setH2hSortDir] = useState('desc');
   const [historyPage, setHistoryPage] = useState(1);
   const [history, setHistory] = useState({ matches: [], total: 0 });
+  const [historyFilter, setHistoryFilter] = useState({ name: '', company: '', bu: '' });
+
+  const handleHistoryFilter = (updates) => {
+    setHistoryPage(1);
+    setHistoryFilter(prev => ({ ...prev, ...updates }));
+  };
 
   useEffect(() => {
     if (!playerId) return;
-    fetch(`/api/matches/history/player/${playerId}?page=${historyPage}&limit=10`)
+    const params = new URLSearchParams({ page: historyPage, limit: 10 });
+    if (historyFilter.name) params.set('name', historyFilter.name);
+    if (historyFilter.company) params.set('company', historyFilter.company);
+    if (historyFilter.bu) params.set('bu', historyFilter.bu);
+    fetch(`/api/matches/history/player/${playerId}?${params}`)
       .then(r => r.json())
       .then(data => setHistory(data))
       .catch(() => {});
-  }, [playerId, historyPage]);
+  }, [playerId, historyPage, historyFilter]);
 
   useEffect(() => {
     if (!playerId) return;
@@ -85,6 +95,13 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0;
 
   const isOwnProfile = user?.id === playerId;
+
+  // Unique companies and BUs for history filters
+  const historyCompanies = [...new Set(players.map(p => p.company).filter(Boolean))].sort();
+  const historyBUs = [...new Set(
+    (historyFilter.company ? players.filter(p => p.company === historyFilter.company) : players)
+      .map(p => p.bu).filter(Boolean)
+  )].sort();
 
   // Shared blended win probability — used by both "Avversari Consigliati" and "Predizione Vittoria"
   const CAT_WEIGHTS = { '1v1_21': 0.4, '1v1_11': 0.3, '2v2_21': 0.2, '2v2_11': 0.1 };
@@ -740,9 +757,35 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
         </div>
       )}
 
-      {isOwnProfile && history.total > 0 && (
+      {isOwnProfile && totalGames > 0 && (
         <div className="stats-section storico-section">
           <h2>Storico Partite</h2>
+          <div className="storico-filters">
+            <input
+              type="text"
+              className="storico-filter-input"
+              placeholder="Cerca avversario..."
+              value={historyFilter.name}
+              onChange={e => handleHistoryFilter({ name: e.target.value })}
+            />
+            <CustomSelect
+              value={historyFilter.company || ''}
+              onChange={v => handleHistoryFilter({ company: v || '', bu: '' })}
+              placeholder="Azienda"
+              options={historyCompanies.map(c => ({ value: c, label: c }))}
+            />
+            <CustomSelect
+              value={historyFilter.bu || ''}
+              onChange={v => handleHistoryFilter({ bu: v || '' })}
+              placeholder="BU"
+              options={historyBUs.map(b => ({ value: b, label: b }))}
+            />
+            {(historyFilter.name || historyFilter.company || historyFilter.bu) && (
+              <button className="elo-tab" onClick={() => handleHistoryFilter({ name: '', company: '', bu: '' })}>
+                Azzera
+              </button>
+            )}
+          </div>
           <table className="storico-table">
             <thead>
               <tr>

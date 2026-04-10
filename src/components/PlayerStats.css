@@ -586,6 +586,26 @@
   margin-top: 2rem;
 }
 
+.storico-filters {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.storico-filter-input {
+  background: var(--input-bg);
+  border: none;
+  color: var(--text-dim);
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  outline: none;
+  min-width: 160px;
+}
+
 .storico-table {
   width: 100%;
   border-collapse: collapse;
