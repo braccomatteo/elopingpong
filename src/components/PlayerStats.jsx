@@ -42,7 +42,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [predictOpponent, setPredictOpponent] = useState(null);
   const [compareOppHistory, setCompareOppHistory] = useState(null);
   const [compareOppName, setCompareOppName] = useState('');
-  const [h2hSort, setH2hSort] = useState('total');
+  const [h2hSort, setH2hSort] = useState('recent');
   const [h2hSortDir, setH2hSortDir] = useState('desc');
   const [historyPage, setHistoryPage] = useState(1);
   const [history, setHistory] = useState({ matches: [], total: 0 });
@@ -688,7 +688,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <h2 style={{ margin: 0 }}>Head to Head</h2>
             <div className="elo-chart-tabs">
-              {[['total', 'Più giocate'], ['winrate', 'Win%'], ['recent', 'Recenti']].map(([key, label]) => (
+              {[['recent', 'Recenti'], ['winrate', 'Win%'], ['total', 'Più giocate']].map(([key, label]) => (
               <button
                 key={key}
                 className={`elo-tab${h2hSort === key ? ' active' : ''}`}
