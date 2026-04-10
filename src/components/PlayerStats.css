@@ -836,6 +836,31 @@
   font-weight: 600;
 }
 
+.recommend-alternatives {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.recommend-alt-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.recommend-alt-name {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
 /* ===== WIN PREDICTION ===== */
 .predict-section {
   margin-bottom: 1rem;

@@ -323,20 +323,22 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           { key: 'normale',   label: 'Normale',   color: '#FF6600', sort: (a, b) => b.expectedGain - a.expectedGain },
           { key: 'difficile', label: 'Difficile', color: '#8b5cf6', sort: (a, b) => b.pointsIfWin - a.pointsIfWin },
         ];
-        const usedIds = new Set();
+        const usedPrimaryIds = new Set();
         const picks = modes.map(mode => {
           const sorted = [...candidates].sort(mode.sort);
-          const pick = sorted.find(c => !usedIds.has(c.opp.id));
+          const pick = sorted.find(c => !usedPrimaryIds.has(c.opp.id));
           if (!pick) return null;
-          usedIds.add(pick.opp.id);
-          return { ...pick, mode };
+          usedPrimaryIds.add(pick.opp.id);
+          // Alternatives: next 2 in this mode's ranking, excluding the primary pick
+          const alternatives = sorted.filter(c => c.opp.id !== pick.opp.id).slice(0, 2);
+          return { ...pick, mode, alternatives };
         }).filter(Boolean);
 
         return (
           <div className="stats-section">
             <h2>Avversari Consigliati</h2>
             <div className="recommend-grid">
-              {picks.map(({ opp, winProb, pointsIfWin, mode }) => {
+              {picks.map(({ opp, winProb, pointsIfWin, mode, alternatives }) => {
                 const pct = Math.round(winProb * 100);
                 const pts = Math.round(pointsIfWin);
                 const ringDeg = pct * 3.6;
@@ -353,6 +355,14 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                     </div>
                     <span className="recommend-name">{opp.name}</span>
                     <span className="recommend-pts">+{pts} pts</span>
+                    {alternatives.length > 0 && (
+                      <div className="recommend-alternatives">
+                        <span className="recommend-alt-label">in alternativa</span>
+                        {alternatives.map(a => (
+                          <span key={a.opp.id} className="recommend-alt-name">{a.opp.name}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}
