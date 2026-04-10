@@ -329,16 +329,20 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
           const pick = sorted.find(c => !usedPrimaryIds.has(c.opp.id));
           if (!pick) return null;
           usedPrimaryIds.add(pick.opp.id);
-          // Alternatives: next 2 in this mode's ranking, excluding the primary pick
-          const alternatives = sorted.filter(c => c.opp.id !== pick.opp.id).slice(0, 2);
-          return { ...pick, mode, alternatives };
+          return { ...pick, mode, sorted };
         }).filter(Boolean);
+
+        // Now compute alternatives, excluding ALL primary picks
+        const finalPicks = picks.map(({ sorted, ...pick }) => {
+          const alternatives = sorted.filter(c => !usedPrimaryIds.has(c.opp.id)).slice(0, 2);
+          return { ...pick, alternatives };
+        });
 
         return (
           <div className="stats-section">
             <h2>Avversari Consigliati</h2>
             <div className="recommend-grid">
-              {picks.map(({ opp, winProb, pointsIfWin, mode, alternatives }) => {
+              {finalPicks.map(({ opp, winProb, pointsIfWin, mode, alternatives }) => {
                 const pct = Math.round(winProb * 100);
                 const pts = Math.round(pointsIfWin);
                 const ringDeg = pct * 3.6;
@@ -357,7 +361,6 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                     <span className="recommend-pts">+{pts} pts</span>
                     {alternatives.length > 0 && (
                       <div className="recommend-alternatives">
-                        <span className="recommend-alt-label">in alternativa</span>
                         {alternatives.map(a => (
                           <span key={a.opp.id} className="recommend-alt-name">{a.opp.name}</span>
                         ))}

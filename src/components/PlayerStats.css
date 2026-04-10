@@ -847,14 +847,6 @@
   width: 100%;
 }
 
-.recommend-alt-label {
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-dim);
-  margin-bottom: 2px;
-}
-
 .recommend-alt-name {
   font-size: 0.72rem;
   color: var(--text-dim);
