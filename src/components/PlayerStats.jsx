@@ -692,13 +692,13 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
               <button
                 key={key}
                 className={`elo-tab${h2hSort === key ? ' active' : ''}`}
-                style={h2hSort === key ? { background: '#FF6600' } : {}}
+                style={h2hSort === key ? { background: '#FF6600', display: 'inline-flex', alignItems: 'center', gap: '2px' } : { display: 'inline-flex', alignItems: 'center', gap: '2px' }}
                 onClick={() => {
                   if (h2hSort === key) setH2hSortDir(d => d === 'desc' ? 'asc' : 'desc');
                   else { setH2hSort(key); setH2hSortDir('desc'); }
                 }}
               >
-                {label}{h2hSort === key ? (h2hSortDir === 'desc' ? ' ↓' : ' ↑') : ''}
+                {label}{h2hSort === key ? <span style={{ lineHeight: 1, marginTop: '-1px' }}>{h2hSortDir === 'desc' ? '↓' : '↑'}</span> : ''}
               </button>
             ))}
             </div>
