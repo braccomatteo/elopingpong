@@ -43,6 +43,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [compareOppHistory, setCompareOppHistory] = useState(null);
   const [compareOppName, setCompareOppName] = useState('');
   const [h2hSort, setH2hSort] = useState('total');
+  const [h2hSortDir, setH2hSortDir] = useState('desc');
   const [historyPage, setHistoryPage] = useState(1);
   const [history, setHistory] = useState({ matches: [], total: 0 });
 
@@ -684,17 +685,31 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
       {/* Head to Head */}
       {h2h.length > 0 && (
         <div className="stats-section">
-          <h2>Head to Head</h2>
-          <div className="h2h-sort-tabs">
-            <button className={`h2h-sort-btn${h2hSort === 'total' ? ' active' : ''}`} onClick={() => setH2hSort('total')}>Più giocate</button>
-            <button className={`h2h-sort-btn${h2hSort === 'winrate' ? ' active' : ''}`} onClick={() => setH2hSort('winrate')}>Win%</button>
-            <button className={`h2h-sort-btn${h2hSort === 'recent' ? ' active' : ''}`} onClick={() => setH2hSort('recent')}>Recenti</button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <h2 style={{ margin: 0 }}>Head to Head</h2>
+            <div className="elo-chart-tabs">
+              {[['total', 'Più giocate'], ['winrate', 'Win%'], ['recent', 'Recenti']].map(([key, label]) => (
+              <button
+                key={key}
+                className={`elo-tab${h2hSort === key ? ' active' : ''}`}
+                style={h2hSort === key ? { background: '#FF6600' } : {}}
+                onClick={() => {
+                  if (h2hSort === key) setH2hSortDir(d => d === 'desc' ? 'asc' : 'desc');
+                  else { setH2hSort(key); setH2hSortDir('desc'); }
+                }}
+              >
+                {label}{h2hSort === key ? (h2hSortDir === 'desc' ? ' ↓' : ' ↑') : ''}
+              </button>
+            ))}
+            </div>
           </div>
           <div className="h2h-grid">
             {[...h2h].sort((a, b) => {
-              if (h2hSort === 'winrate') return (b.wins / b.total) - (a.wins / a.total);
-              if (h2hSort === 'recent') return new Date(b.lastPlayed || 0) - new Date(a.lastPlayed || 0);
-              return b.total - a.total;
+              let diff;
+              if (h2hSort === 'winrate') diff = (b.wins / b.total) - (a.wins / a.total);
+              else if (h2hSort === 'recent') diff = new Date(b.lastPlayed || 0) - new Date(a.lastPlayed || 0);
+              else diff = b.total - a.total;
+              return h2hSortDir === 'asc' ? -diff : diff;
             }).map((opp, i) => {
               const oppWinRate = Math.round((opp.wins / opp.total) * 100);
               const isPreda = (opp.wins - opp.losses) >= 2 && opp.wins / opp.total >= 0.7;
