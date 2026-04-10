@@ -10,10 +10,29 @@ const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
 
-const pool = new Pool({ connectionString: process.env.POSTGRES_URL, ssl: { rejectUnauthorized: false } });
+// Use direct (non-pooler) connection for migrations — avoids Neon control plane issues
+const connString = (process.env.POSTGRES_URL || '').replace('-pooler.', '.');
+const pool = new Pool({
+  connectionString: connString,
+  ssl: { rejectUnauthorized: false },
+  connectionTimeoutMillis: 10000,
+});
+
+async function connectWithRetry(retries = 5, delayMs = 3000) {
+  for (let i = 1; i <= retries; i++) {
+    try {
+      const client = await pool.connect();
+      return client;
+    } catch (err) {
+      console.log(`[migrate] Tentativo ${i}/${retries} fallito: ${err.message}`);
+      if (i === retries) throw err;
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+}
 
 async function run() {
-  const client = await pool.connect();
+  const client = await connectWithRetry();
   try {
     // Crea tabella di tracking se non esiste
     await client.query(`
