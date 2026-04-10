@@ -247,7 +247,7 @@ function App() {
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <RankDeltaBadge value={rankChangesOverall[p.id]} />
                         <EloDeltaBadge value={p.last_delta_overall} />
-                        <span className="player-bu">{playerLabel(p)}</span>
+                        {playerLabel(p) && <span className="player-bu">{playerLabel(p)}</span>}
                       </td>
                       <td className="score">{Math.round(p.score_overall)}</td>
                     </tr>
@@ -279,7 +279,7 @@ function App() {
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <RankDeltaBadge value={rankChanges1v1_21[p.id]} />
                         <EloDeltaBadge value={p.last_delta_1v1_21} />
-                        <span className="player-bu">{playerLabel(p)}</span>
+                        {playerLabel(p) && <span className="player-bu">{playerLabel(p)}</span>}
                       </td>
                       <td className="score">{Math.round(p.score_1v1_21)}</td>
                     </tr>
@@ -310,7 +310,7 @@ function App() {
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <RankDeltaBadge value={rankChanges1v1_11[p.id]} />
                         <EloDeltaBadge value={p.last_delta_1v1_11} />
-                        <span className="player-bu">{playerLabel(p)}</span>
+                        {playerLabel(p) && <span className="player-bu">{playerLabel(p)}</span>}
                       </td>
                       <td className="score">{Math.round(p.score_1v1_11)}</td>
                     </tr>
@@ -341,7 +341,7 @@ function App() {
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <RankDeltaBadge value={rankChanges2v2_21[p.id]} />
                         <EloDeltaBadge value={p.last_delta_2v2_21} />
-                        <span className="player-bu">{playerLabel(p)}</span>
+                        {playerLabel(p) && <span className="player-bu">{playerLabel(p)}</span>}
                       </td>
                       <td className="score">{Math.round(p.score_2v2_21)}</td>
                     </tr>
@@ -372,7 +372,7 @@ function App() {
                         <span className={`player-name${user ? ' clickable' : ''}`} onClick={user ? () => { setStatsPlayerId(p.id); setActiveTab('stats'); } : undefined}>{p.name} {p.id === user?.id && <span style={{ fontSize: '0.7rem', background: 'var(--accent-orange)', color: '#fff', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>TU</span>}</span>
                         <RankDeltaBadge value={rankChanges2v2_11[p.id]} />
                         <EloDeltaBadge value={p.last_delta_2v2_11} />
-                        <span className="player-bu">{playerLabel(p)}</span>
+                        {playerLabel(p) && <span className="player-bu">{playerLabel(p)}</span>}
                       </td>
                       <td className="score">{Math.round(p.score_2v2_11)}</td>
                     </tr>
