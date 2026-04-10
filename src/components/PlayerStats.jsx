@@ -287,6 +287,55 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
         })}
       </div>
 
+      {/* Top 3 Recommended Opponents */}
+      {isOwnProfile && totalGames > 0 && (() => {
+        const myK = Math.max(32 - totalGames, 16);
+        const top3 = players
+          .filter(p =>
+            p.id !== playerId &&
+            ((p.games_1v1_21 || 0) + (p.games_1v1_11 || 0) + (p.games_2v2_21 || 0) + (p.games_2v2_11 || 0)) > 0
+          )
+          .map(opp => {
+            const winProb = computeExpected(player.score_overall, opp.score_overall);
+            const pointsIfWin = myK * (1 - winProb);
+            const expectedGain = winProb * pointsIfWin;
+            return { opp, winProb, pointsIfWin, expectedGain };
+          })
+          .sort((a, b) => b.expectedGain - a.expectedGain)
+          .slice(0, 3);
+
+        if (top3.length === 0) return null;
+
+        return (
+          <div className="stats-section">
+            <h2>Avversari Consigliati</h2>
+            <p className="recommend-subtitle">Bilanciamento tra probabilità di vittoria e punti in palio.</p>
+            <div className="recommend-grid">
+              {top3.map(({ opp, winProb, pointsIfWin }, i) => {
+                const pct = Math.round(winProb * 100);
+                const pts = Math.round(pointsIfWin);
+                const barColor = pct >= 60 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
+                return (
+                  <div className="recommend-card" key={opp.id}>
+                    <span className="recommend-rank">#{i + 1}</span>
+                    <div className="recommend-info">
+                      <span className="recommend-name">{opp.name}</span>
+                      <div className="recommend-bar-bg">
+                        <div className="recommend-bar" style={{ width: `${pct}%`, background: barColor }} />
+                      </div>
+                      <div className="recommend-meta">
+                        <span style={{ color: barColor, fontWeight: 700 }}>{pct}% vittoria</span>
+                        <span className="recommend-pts">+{pts} pts se vinci</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Win Prediction */}
       {isOwnProfile && totalGames > 0 && (() => {
         const opponents = players.filter(p =>

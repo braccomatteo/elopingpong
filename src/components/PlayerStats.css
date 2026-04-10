@@ -762,6 +762,79 @@
   flex-shrink: 0;
 }
 
+/* ===== RECOMMENDED OPPONENTS ===== */
+.recommend-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin: -8px 0 14px;
+}
+
+.recommend-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recommend-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--input-bg);
+  border-radius: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+}
+
+.recommend-rank {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-dim);
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.recommend-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.recommend-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recommend-bar-bg {
+  height: 5px;
+  background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.recommend-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.recommend-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+}
+
+.recommend-pts {
+  color: var(--text-dim);
+}
+
 /* ===== WIN PREDICTION ===== */
 .predict-section {
   margin-bottom: 1rem;
