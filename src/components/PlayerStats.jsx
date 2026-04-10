@@ -514,7 +514,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                           <YAxis stroke="var(--text-dim)" fontSize={11} domain={['dataMin - 20', 'dataMax + 20']} width={40} />
                           <Tooltip content={<CompareTooltip />} />
                           <Line type="monotone" dataKey="me" name={player.name} stroke={COLORS.overall} strokeWidth={2} dot={false} connectNulls />
-                          <Line type="monotone" dataKey="opp" name={compareOppName} stroke="#8b5cf6" strokeWidth={2} dot={false} connectNulls strokeDasharray="5 3" />
+                          <Line type="monotone" dataKey="opp" name={compareOppName} stroke="#8b5cf6" strokeWidth={2} dot={false} connectNulls />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
