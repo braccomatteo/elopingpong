@@ -42,6 +42,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [predictOpponent, setPredictOpponent] = useState(null);
   const [compareOppHistory, setCompareOppHistory] = useState(null);
   const [compareOppName, setCompareOppName] = useState('');
+  const [h2hSort, setH2hSort] = useState('total');
   const [historyPage, setHistoryPage] = useState(1);
   const [history, setHistory] = useState({ matches: [], total: 0 });
 
@@ -684,8 +685,17 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
       {h2h.length > 0 && (
         <div className="stats-section">
           <h2>Head to Head</h2>
+          <div className="h2h-sort-tabs">
+            <button className={`h2h-sort-btn${h2hSort === 'total' ? ' active' : ''}`} onClick={() => setH2hSort('total')}>Più giocate</button>
+            <button className={`h2h-sort-btn${h2hSort === 'winrate' ? ' active' : ''}`} onClick={() => setH2hSort('winrate')}>Win%</button>
+            <button className={`h2h-sort-btn${h2hSort === 'recent' ? ' active' : ''}`} onClick={() => setH2hSort('recent')}>Recenti</button>
+          </div>
           <div className="h2h-grid">
-            {h2h.map((opp, i) => {
+            {[...h2h].sort((a, b) => {
+              if (h2hSort === 'winrate') return (b.wins / b.total) - (a.wins / a.total);
+              if (h2hSort === 'recent') return new Date(b.lastPlayed || 0) - new Date(a.lastPlayed || 0);
+              return b.total - a.total;
+            }).map((opp, i) => {
               const oppWinRate = Math.round((opp.wins / opp.total) * 100);
               const isPreda = (opp.wins - opp.losses) >= 2 && opp.wins / opp.total >= 0.7;
               const isIncubo = (opp.losses - opp.wins) >= 2 && opp.losses / opp.total >= 0.7;

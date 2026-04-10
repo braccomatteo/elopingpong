@@ -4,6 +4,9 @@ Cronologia delle funzionalità aggiunte al progetto.
 
 ---
 
+## [2026-04-10] Ordinamento Head to Head
+Aggiunta la possibilità di ordinare le card Head to Head in tre modalità: "Più giocate" (default), "Win%" e "Recenti" (per data ultima partita). Il backend ora traccia `lastPlayed` per ogni avversario. File coinvolti: `lib/controllers/playerController.js`, `src/components/PlayerStats.jsx`, `src/components/PlayerStats.css`.
+
 ## [2026-04-10] Confronto ELO nella Predizione Vittoria
 Selezionando un avversario in "Predizione Vittoria", appare ora un line graph che mostra l'andamento ELO overall di entrambi i giocatori sovrapposti sullo stesso grafico. L'asse X mostra il progresso percentuale di carriera (nascondendo il numero esatto di partite). File coinvolti: `src/components/PlayerStats.jsx`, `src/components/PlayerStats.css`.
 
