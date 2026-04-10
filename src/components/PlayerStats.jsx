@@ -40,6 +40,8 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
   const [winLossCategory, setWinLossCategory] = useState('overall');
   const [openPopup, setOpenPopup] = useState(null);
   const [predictOpponent, setPredictOpponent] = useState(null);
+  const [compareOppHistory, setCompareOppHistory] = useState(null);
+  const [compareOppName, setCompareOppName] = useState('');
   const [historyPage, setHistoryPage] = useState(1);
   const [history, setHistory] = useState({ matches: [], total: 0 });
 
@@ -59,6 +61,17 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
       .then(data => { setStats(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [playerId]);
+
+  useEffect(() => {
+    if (!predictOpponent) { setCompareOppHistory(null); setCompareOppName(''); return; }
+    fetch(`/api/players/stats/${predictOpponent}`)
+      .then(r => r.json())
+      .then(data => {
+        setCompareOppHistory(data.eloHistory?.overall || []);
+        setCompareOppName(data.player?.name || '');
+      })
+      .catch(() => { setCompareOppHistory(null); });
+  }, [predictOpponent]);
 
   if (loading) return <div className="stats-loading">Caricamento statistiche...</div>;
   if (!stats) return <div className="stats-loading">Errore nel caricamento.</div>;
@@ -321,7 +334,7 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
         const modes = [
           { key: 'facile',    label: 'Facile',    color: '#22c55e', sort: (a, b) => b.winProb - a.winProb },
           { key: 'normale',   label: 'Normale',   color: '#FF6600', sort: (a, b) => b.expectedGain - a.expectedGain },
-          { key: 'difficile', label: 'Difficile', color: '#8b5cf6', sort: (a, b) => b.pointsIfWin - a.pointsIfWin },
+          { key: 'difficile', label: 'Difficile', color: '#ef4444', sort: (a, b) => b.pointsIfWin - a.pointsIfWin },
         ];
         const usedPrimaryIds = new Set();
         const picks = modes.map(mode => {
@@ -465,6 +478,48 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
                     H2H: {predictions.h2hRecord.wins}V - {predictions.h2hRecord.losses}S (win rate {Math.round(predictions.h2hPct * 100)}%)
                   </div>
                 )}
+
+                {/* ELO comparison chart */}
+                {compareOppHistory && compareOppHistory.length > 0 && (() => {
+                  const myRaw = [{ pct: 0, elo: 1000 }, ...(eloHistory.overall || []).map((p, i) => ({ pct: Math.round(((i + 1) / (eloHistory.overall.length)) * 100), elo: p.elo }))];
+                  const oppRaw = [{ pct: 0, elo: 1000 }, ...compareOppHistory.map((p, i) => ({ pct: Math.round(((i + 1) / compareOppHistory.length) * 100), elo: p.elo }))];
+                  // Merge into a single dataset by pct index 0-100
+                  const merged = Array.from({ length: 101 }, (_, pct) => {
+                    const me = [...myRaw].reverse().find(p => p.pct <= pct);
+                    const op = [...oppRaw].reverse().find(p => p.pct <= pct);
+                    return { pct, me: me?.elo, opp: op?.elo };
+                  }).filter((_, i) => i % 2 === 0); // ogni 2% per alleggerire
+
+                  const CompareTooltip = ({ active, payload, label }) => {
+                    if (!active || !payload?.length) return null;
+                    return (
+                      <div className="stats-tooltip">
+                        {payload.map(p => (
+                          <span key={p.dataKey} style={{ color: p.color }}>{p.name}: {p.value}</span>
+                        ))}
+                      </div>
+                    );
+                  };
+
+                  return (
+                    <div className="predict-compare-chart">
+                      <div className="predict-compare-legend">
+                        <span style={{ color: COLORS.overall }}>— {player.name}</span>
+                        <span style={{ color: '#8b5cf6' }}>— {compareOppName}</span>
+                      </div>
+                      <ResponsiveContainer width="100%" height={200}>
+                        <LineChart data={merged}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                          <XAxis dataKey="pct" hide />
+                          <YAxis stroke="var(--text-dim)" fontSize={11} domain={['dataMin - 20', 'dataMax + 20']} width={40} />
+                          <Tooltip content={<CompareTooltip />} />
+                          <Line type="monotone" dataKey="me" name={player.name} stroke={COLORS.overall} strokeWidth={2} dot={false} connectNulls />
+                          <Line type="monotone" dataKey="opp" name={compareOppName} stroke="#8b5cf6" strokeWidth={2} dot={false} connectNulls strokeDasharray="5 3" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  );
+                })()}
               </div>
             )}
           </div>

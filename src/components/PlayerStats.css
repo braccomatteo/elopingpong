@@ -1000,6 +1000,20 @@
   font-size: 1rem;
 }
 
+.predict-compare-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.predict-compare-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  justify-content: center;
+}
+
 .predict-h2h-blend {
   color: var(--text-dim);
   font-size: 0.75rem;
