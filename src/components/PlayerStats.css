@@ -774,7 +774,7 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 16px 10px 14px;
+  padding: 14px 10px 14px;
   background: var(--input-bg);
   border-radius: 10px;
   border: 1px solid var(--border-color);
@@ -783,14 +783,17 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.recommend-mode-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--rc-color, var(--accent-orange));
+}
+
 .recommend-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-}
-
-.recommend-medal {
-  font-size: 1.3rem;
-  line-height: 1;
 }
 
 .recommend-ring {

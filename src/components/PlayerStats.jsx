@@ -71,6 +71,20 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
 
   const isOwnProfile = user?.id === playerId;
 
+  // Shared blended win probability — used by both "Avversari Consigliati" and "Predizione Vittoria"
+  const CAT_WEIGHTS = { '1v1_21': 0.4, '1v1_11': 0.3, '2v2_21': 0.2, '2v2_11': 0.1 };
+  const computeBlendedProb = (opp) => {
+    const eloProb = Object.entries(CAT_WEIGHTS).reduce((sum, [cat, w]) =>
+      sum + w * computeExpected(player[`score_${cat}`], opp[`score_${cat}`]), 0
+    );
+    const h2hRecord = h2h.find(o => o.name === opp.name);
+    if (!h2hRecord) return { blendedProb: eloProb, eloProb, h2hRecord: null, h2hWeight: 0, h2hPct: null };
+    const h2hWeight = Math.min(0.4, h2hRecord.total * 0.1);
+    const h2hPct = h2hRecord.wins / h2hRecord.total;
+    const blendedProb = (1 - h2hWeight) * eloProb + h2hWeight * h2hPct;
+    return { blendedProb, eloProb, h2hRecord, h2hWeight, h2hPct };
+  };
+
   // Comparison data for other players
   let comparison = null;
   if (!isOwnProfile && players.length > 0) {
@@ -290,38 +304,48 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
       {/* Top 3 Recommended Opponents */}
       {isOwnProfile && totalGames > 0 && (() => {
         const myK = Math.max(32 - totalGames, 16);
-        const top3 = players
+        const candidates = players
           .filter(p =>
             p.id !== playerId &&
             ((p.games_1v1_21 || 0) + (p.games_1v1_11 || 0) + (p.games_2v2_21 || 0) + (p.games_2v2_11 || 0)) > 0
           )
           .map(opp => {
-            const winProb = computeExpected(player.score_overall, opp.score_overall);
-            const pointsIfWin = myK * (1 - winProb);
-            const expectedGain = winProb * pointsIfWin;
-            return { opp, winProb, pointsIfWin, expectedGain };
-          })
-          .sort((a, b) => b.expectedGain - a.expectedGain)
-          .slice(0, 3);
+            const { blendedProb, eloProb } = computeBlendedProb(opp);
+            const pointsIfWin = myK * (1 - eloProb);
+            const expectedGain = blendedProb * pointsIfWin;
+            return { opp, winProb: blendedProb, pointsIfWin, expectedGain };
+          });
 
-        if (top3.length === 0) return null;
+        if (candidates.length === 0) return null;
 
-        const medals = ['🥇', '🥈', '🥉'];
+        const modes = [
+          { key: 'facile',    label: 'Facile',    color: '#22c55e', sort: (a, b) => b.winProb - a.winProb },
+          { key: 'normale',   label: 'Normale',   color: '#FF6600', sort: (a, b) => b.expectedGain - a.expectedGain },
+          { key: 'difficile', label: 'Difficile', color: '#8b5cf6', sort: (a, b) => b.pointsIfWin - a.pointsIfWin },
+        ];
+        const usedIds = new Set();
+        const picks = modes.map(mode => {
+          const sorted = [...candidates].sort(mode.sort);
+          const pick = sorted.find(c => !usedIds.has(c.opp.id));
+          if (!pick) return null;
+          usedIds.add(pick.opp.id);
+          return { ...pick, mode };
+        }).filter(Boolean);
+
         return (
           <div className="stats-section">
             <h2>Avversari Consigliati</h2>
             <div className="recommend-grid">
-              {top3.map(({ opp, winProb, pointsIfWin }, i) => {
+              {picks.map(({ opp, winProb, pointsIfWin, mode }) => {
                 const pct = Math.round(winProb * 100);
                 const pts = Math.round(pointsIfWin);
-                const color = pct >= 60 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
                 const ringDeg = pct * 3.6;
                 return (
-                  <div className="recommend-card" key={opp.id} style={{ '--rc-color': color }}>
-                    <span className="recommend-medal">{medals[i]}</span>
+                  <div className="recommend-card" key={opp.id} style={{ '--rc-color': mode.color }}>
+                    <span className="recommend-mode-label">{mode.label}</span>
                     <div
                       className="recommend-ring"
-                      style={{ background: `conic-gradient(${color} ${ringDeg}deg, var(--border-color) 0deg)` }}
+                      style={{ background: `conic-gradient(${mode.color} ${ringDeg}deg, var(--border-color) 0deg)` }}
                     >
                       <div className="recommend-ring-inner">
                         <span className="recommend-pct">{pct}%</span>
@@ -347,7 +371,6 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
         if (opponents.length === 0) return null;
 
         const opp = predictOpponent ? opponents.find(o => o.id === predictOpponent) : null;
-        const h2hRecord = opp ? h2h.find(o => o.name === opp.name) : null;
 
         // Compute per-category predictions
         const categories = ['1v1_21', '1v1_11', '2v2_21', '2v2_11'];
@@ -363,21 +386,8 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
             return { cat, eloPct, played, label: CAT_LABELS[cat] };
           });
 
-          // Overall: weighted the same as the ELO system
-          const weights = { '1v1_21': 0.4, '1v1_11': 0.3, '2v2_21': 0.2, '2v2_11': 0.1 };
-          const overallElo = categories.reduce((sum, cat) => sum + weights[cat] * catPreds.find(c => c.cat === cat).eloPct, 0);
-
-          // Blend with h2h — gradual ramp: 10% weight per match, max 40%
-          let overallPct = overallElo;
-          let h2hPct = null;
-          let h2hWeight = 0;
-          if (h2hRecord) {
-            h2hPct = h2hRecord.wins / h2hRecord.total;
-            h2hWeight = Math.min(0.4, h2hRecord.total * 0.1);
-            overallPct = (1 - h2hWeight) * overallElo + h2hWeight * h2hPct;
-          }
-
-          predictions = { overall: overallPct, categories: catPreds, h2hPct, h2hRecord, h2hWeight };
+          const { blendedProb, h2hRecord, h2hWeight, h2hPct } = computeBlendedProb(opp);
+          predictions = { overall: blendedProb, categories: catPreds, h2hPct, h2hRecord, h2hWeight };
         }
 
         return (
