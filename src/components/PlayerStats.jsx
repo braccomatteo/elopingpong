@@ -306,28 +306,29 @@ const PlayerStats = ({ playerId, players = [], onClose }) => {
 
         if (top3.length === 0) return null;
 
+        const medals = ['🥇', '🥈', '🥉'];
         return (
           <div className="stats-section">
             <h2>Avversari Consigliati</h2>
-            <p className="recommend-subtitle">Bilanciamento tra probabilità di vittoria e punti in palio.</p>
             <div className="recommend-grid">
               {top3.map(({ opp, winProb, pointsIfWin }, i) => {
                 const pct = Math.round(winProb * 100);
                 const pts = Math.round(pointsIfWin);
-                const barColor = pct >= 60 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
+                const color = pct >= 60 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
+                const ringDeg = pct * 3.6;
                 return (
-                  <div className="recommend-card" key={opp.id}>
-                    <span className="recommend-rank">#{i + 1}</span>
-                    <div className="recommend-info">
-                      <span className="recommend-name">{opp.name}</span>
-                      <div className="recommend-bar-bg">
-                        <div className="recommend-bar" style={{ width: `${pct}%`, background: barColor }} />
-                      </div>
-                      <div className="recommend-meta">
-                        <span style={{ color: barColor, fontWeight: 700 }}>{pct}% vittoria</span>
-                        <span className="recommend-pts">+{pts} pts se vinci</span>
+                  <div className="recommend-card" key={opp.id} style={{ '--rc-color': color }}>
+                    <span className="recommend-medal">{medals[i]}</span>
+                    <div
+                      className="recommend-ring"
+                      style={{ background: `conic-gradient(${color} ${ringDeg}deg, var(--border-color) 0deg)` }}
+                    >
+                      <div className="recommend-ring-inner">
+                        <span className="recommend-pct">{pct}%</span>
                       </div>
                     </div>
+                    <span className="recommend-name">{opp.name}</span>
+                    <span className="recommend-pts">+{pts} pts</span>
                   </div>
                 );
               })}
