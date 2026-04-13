@@ -17,6 +17,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('overall')
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
   const [showAllPlayers, setShowAllPlayers] = useState(false)
+  const [showRankingFilter, setShowRankingFilter] = useState(false)
   const [rankingFilterCompany, setRankingFilterCompany] = useState('')
   const [rankingFilterBu, setRankingFilterBu] = useState('')
   const [statsPlayerId, setStatsPlayerId] = useState(null)
@@ -170,6 +171,37 @@ function App() {
       .map(p => p.bu).filter(Boolean)
   )].sort()
 
+  const filterIcon = rankingCompanies.length > 1 && (
+    <button
+      onClick={() => setShowRankingFilter(v => !v)}
+      title="Filtra per azienda/BU"
+      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'inline-flex', alignItems: 'center', marginLeft: '4px', opacity: (showRankingFilter || rankingFilterCompany) ? 1 : 0.5, color: rankingFilterCompany ? '#FF6600' : 'currentColor' }}
+    >
+      <svg width="17" height="17" viewBox="0 0 24 24" fill={rankingFilterCompany ? '#FF6600' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+      </svg>
+    </button>
+  )
+
+  const rankingFilterBar = showRankingFilter && rankingCompanies.length > 1 && (
+    <div className="ranking-filter-bar">
+      {rankingCompanies.map(c => (
+        <button
+          key={c}
+          className={`ranking-filter-btn${rankingFilterCompany === c ? ' active' : ''}`}
+          onClick={() => { if (rankingFilterCompany === c) { setRankingFilterCompany(''); setRankingFilterBu(''); } else { setRankingFilterCompany(c); setRankingFilterBu(''); } }}
+        >{c}</button>
+      ))}
+      {rankingFilterCompany && rankingBUs.length > 0 && (
+        <><span className="ranking-filter-sep">|</span>
+          {rankingBUs.map(b => (
+            <button key={b} className={`ranking-filter-btn bu${rankingFilterBu === b ? ' active' : ''}`} onClick={() => setRankingFilterBu(prev => prev === b ? '' : b)}>{b}</button>
+          ))}
+        </>
+      )}
+    </div>
+  )
+
   const rankChangesOverall = computeRankChanges(playersOverall, 'score_overall', 'last_delta_overall', null)
   const rankChanges1v1_21 = computeRankChanges(players1v1_21, 'score_1v1_21', 'last_delta_1v1_21', 'games_1v1_21')
   const rankChanges1v1_11 = computeRankChanges(players1v1_11, 'score_1v1_11', 'last_delta_1v1_11', 'games_1v1_11')
@@ -237,37 +269,11 @@ function App() {
           </div>
         )}
 
-        {user && ['overall', '1v1_21', '1v1_11', '2v2_21', '2v2_11'].includes(activeTab) && rankingCompanies.length > 1 && (
-          <div className="ranking-filter-bar">
-            {rankingCompanies.map(c => (
-              <button
-                key={c}
-                className={`ranking-filter-btn${rankingFilterCompany === c ? ' active' : ''}`}
-                onClick={() => {
-                  if (rankingFilterCompany === c) { setRankingFilterCompany(''); setRankingFilterBu(''); }
-                  else { setRankingFilterCompany(c); setRankingFilterBu(''); }
-                }}
-              >{c}</button>
-            ))}
-            {rankingFilterCompany && rankingBUs.length > 0 && (
-              <>
-                <span className="ranking-filter-sep">|</span>
-                {rankingBUs.map(b => (
-                  <button
-                    key={b}
-                    className={`ranking-filter-btn bu${rankingFilterBu === b ? ' active' : ''}`}
-                    onClick={() => setRankingFilterBu(prev => prev === b ? '' : b)}
-                  >{b}</button>
-                ))}
-              </>
-            )}
-          </div>
-        )}
-
         <div className="tab-content">
           {activeTab === 'overall' && (
             <section className="ranking-card full-width">
-              <h2>Overall Ranking {toggleIcon}</h2>
+              <h2>Overall Ranking {toggleIcon}{filterIcon}</h2>
+              {rankingFilterBar}
               <table>
                 <thead>
                   <tr>
@@ -299,7 +305,8 @@ function App() {
 
           {activeTab === '1v1_21' && (
             <section className="ranking-card full-width">
-              <h2>1v1 (21 Punti) {toggleIcon}</h2>
+              <h2>1v1 (21 Punti) {toggleIcon}{filterIcon}</h2>
+              {rankingFilterBar}
               <table>
                 <thead>
                   <tr>
@@ -330,7 +337,8 @@ function App() {
 
           {activeTab === '1v1_11' && (
             <section className="ranking-card full-width">
-              <h2>1v1 (11 Punti) {toggleIcon}</h2>
+              <h2>1v1 (11 Punti) {toggleIcon}{filterIcon}</h2>
+              {rankingFilterBar}
               <table>
                 <thead>
                   <tr>
@@ -361,7 +369,8 @@ function App() {
 
           {activeTab === '2v2_21' && (
             <section className="ranking-card full-width">
-              <h2>2v2 (21 Punti) {toggleIcon}</h2>
+              <h2>2v2 (21 Punti) {toggleIcon}{filterIcon}</h2>
+              {rankingFilterBar}
               <table>
                 <thead>
                   <tr>
@@ -392,7 +401,8 @@ function App() {
 
           {activeTab === '2v2_11' && (
             <section className="ranking-card full-width">
-              <h2>2v2 (11 Punti) {toggleIcon}</h2>
+              <h2>2v2 (11 Punti) {toggleIcon}{filterIcon}</h2>
+              {rankingFilterBar}
               <table>
                 <thead>
                   <tr>
