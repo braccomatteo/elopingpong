@@ -838,6 +838,7 @@ const AdminDashboard = ({ players, onUpdate }) => {
 
               {/* Scatter: BU - partite vs ELO medio */}
               {(() => {
+                const SC_COLORS = ['#FF6600','#8b5cf6','#22c55e','#ef4444','#3b82f6','#f59e0b','#ec4899','#14b8a6','#a855f7','#6366f1','#f97316','#06b6d4','#e11d48','#84cc16','#0ea5e9','#d946ef'];
                 const buMap = {};
                 players.forEach(p => {
                   if (!p.bu) return;
@@ -847,9 +848,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
                   buMap[p.bu].eloSum += p.score_overall || 1000;
                   buMap[p.bu].count++;
                 });
-                const buData = Object.entries(buMap).map(([bu, v]) => ({
-                  name: bu, games: v.games, elo: Math.round(v.eloSum / v.count),
-                })).filter(d => d.games > 0);
+                const buData = Object.entries(buMap).map(([bu, v], i) => ({
+                  name: bu, games: v.games, elo: Math.round(v.eloSum / v.count), color: SC_COLORS[i % SC_COLORS.length],
+                })).filter(d => d.games > 0).sort((a,b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
                 if (buData.length < 2) return null;
                 return (
                   <div className="gsp-section" style={{ marginTop: '1rem' }}>
@@ -864,15 +865,17 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
                             if (!payload?.length) return null;
                             const d = payload[0].payload;
-                            return <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 6, padding: '8px 12px', fontSize: '0.8rem' }}><strong>{d.name}</strong><br/>Partite: {d.games}<br/>ELO medio: {d.elo}</div>;
+                            return <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 6, padding: '8px 12px', fontSize: '0.8rem' }}><strong style={{ color: d.color }}>{d.name}</strong><br/>Partite: {d.games}<br/>ELO medio: {d.elo}</div>;
                           }} />
-                          <Scatter data={buData} fill="#8b5cf6" />
+                          <Scatter data={buData}>
+                            {buData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                          </Scatter>
                         </ScatterChart>
                       </ResponsiveContainer>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
-                        {[...buData].sort((a,b) => a.name.localeCompare(b.name, undefined, { numeric: true })).map(d => (
+                        {buData.map(d => (
                           <span key={d.name} style={{ fontSize: '0.72rem', color: 'var(--text-dim)', background: 'var(--input-bg)', padding: '2px 8px', borderRadius: 3 }}>
-                            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6', marginRight: 5, verticalAlign: 'middle' }} />
+                            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: d.color, marginRight: 5, verticalAlign: 'middle' }} />
                             {d.name} — {d.games} pt, ELO {d.elo}
                           </span>
                         ))}
@@ -884,10 +887,12 @@ const AdminDashboard = ({ players, onUpdate }) => {
 
               {/* Scatter: Players - partite vs ELO */}
               {(() => {
-                const playerData = players.map(p => ({
+                const SC_COLORS = ['#FF6600','#8b5cf6','#22c55e','#ef4444','#3b82f6','#f59e0b','#ec4899','#14b8a6','#a855f7','#6366f1','#f97316','#06b6d4','#e11d48','#84cc16','#0ea5e9','#d946ef'];
+                const playerData = players.map((p, i) => ({
                   name: p.name,
                   games: (p.games_1v1_21||0)+(p.games_1v1_11||0)+(p.games_2v2_21||0)+(p.games_2v2_11||0),
                   elo: Math.round(p.score_overall || 1000),
+                  color: SC_COLORS[i % SC_COLORS.length],
                 })).filter(d => d.games > 0);
                 if (playerData.length < 2) return null;
                 return (
@@ -903,11 +908,21 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
                             if (!payload?.length) return null;
                             const d = payload[0].payload;
-                            return <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 6, padding: '8px 12px', fontSize: '0.8rem' }}><strong>{d.name}</strong><br/>Partite: {d.games}<br/>ELO: {d.elo}</div>;
+                            return <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 6, padding: '8px 12px', fontSize: '0.8rem' }}><strong style={{ color: d.color }}>{d.name}</strong><br/>Partite: {d.games}<br/>ELO: {d.elo}</div>;
                           }} />
-                          <Scatter data={playerData} fill="#FF6600" />
+                          <Scatter data={playerData}>
+                            {playerData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                          </Scatter>
                         </ScatterChart>
                       </ResponsiveContainer>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+                        {[...playerData].sort((a,b) => b.elo - a.elo).map(d => (
+                          <span key={d.name} style={{ fontSize: '0.72rem', color: 'var(--text-dim)', background: 'var(--input-bg)', padding: '2px 8px', borderRadius: 3 }}>
+                            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: d.color, marginRight: 5, verticalAlign: 'middle' }} />
+                            {d.name}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 );
