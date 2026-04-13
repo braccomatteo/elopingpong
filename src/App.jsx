@@ -17,6 +17,8 @@ function App() {
   const [activeTab, setActiveTab] = useState('overall')
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false)
   const [showAllPlayers, setShowAllPlayers] = useState(false)
+  const [rankingFilterCompany, setRankingFilterCompany] = useState('')
+  const [rankingFilterBu, setRankingFilterBu] = useState('')
   const [statsPlayerId, setStatsPlayerId] = useState(null)
   const [notifications, setNotifications] = useState([])
   const { user, justLoggedIn, setJustLoggedIn } = useAuth()
@@ -88,7 +90,9 @@ function App() {
   const totalGames = (p) => (p.games_1v1_21 || 0) + (p.games_1v1_11 || 0) + (p.games_2v2_21 || 0) + (p.games_2v2_11 || 0)
 
   const filterAndSort = (sortKey, gamesKey) => {
-    const sorted = [...players].sort((a, b) => b[sortKey] - a[sortKey])
+    let sorted = [...players].sort((a, b) => b[sortKey] - a[sortKey])
+    if (rankingFilterCompany) sorted = sorted.filter(p => p.company?.toUpperCase() === rankingFilterCompany.toUpperCase())
+    if (rankingFilterBu) sorted = sorted.filter(p => p.bu === rankingFilterBu)
     if (showAllPlayers) return sorted
     return sorted.filter(p => (gamesKey ? (p[gamesKey] || 0) : totalGames(p)) > 0)
   }
@@ -160,6 +164,12 @@ function App() {
   const players2v2_21 = filterAndSort('score_2v2_21', 'games_2v2_21')
   const players2v2_11 = filterAndSort('score_2v2_11', 'games_2v2_11')
 
+  const rankingCompanies = [...new Set(players.map(p => p.company).filter(Boolean))].sort()
+  const rankingBUs = [...new Set(
+    (rankingFilterCompany ? players.filter(p => p.company?.toUpperCase() === rankingFilterCompany.toUpperCase()) : players)
+      .map(p => p.bu).filter(Boolean)
+  )].sort()
+
   const rankChangesOverall = computeRankChanges(playersOverall, 'score_overall', 'last_delta_overall', null)
   const rankChanges1v1_21 = computeRankChanges(players1v1_21, 'score_1v1_21', 'last_delta_1v1_21', 'games_1v1_21')
   const rankChanges1v1_11 = computeRankChanges(players1v1_11, 'score_1v1_11', 'last_delta_1v1_11', 'games_1v1_11')
@@ -224,6 +234,33 @@ function App() {
         {!user && activeTab !== 'admin' && (
           <div className="actions-header" style={{ marginBottom: '1.5rem' }}>
             <h1 style={{ margin: 0 }}>Classifica</h1>
+          </div>
+        )}
+
+        {user && ['overall', '1v1_21', '1v1_11', '2v2_21', '2v2_11'].includes(activeTab) && rankingCompanies.length > 1 && (
+          <div className="ranking-filter-bar">
+            {rankingCompanies.map(c => (
+              <button
+                key={c}
+                className={`ranking-filter-btn${rankingFilterCompany === c ? ' active' : ''}`}
+                onClick={() => {
+                  if (rankingFilterCompany === c) { setRankingFilterCompany(''); setRankingFilterBu(''); }
+                  else { setRankingFilterCompany(c); setRankingFilterBu(''); }
+                }}
+              >{c}</button>
+            ))}
+            {rankingFilterCompany && rankingBUs.length > 0 && (
+              <>
+                <span className="ranking-filter-sep">|</span>
+                {rankingBUs.map(b => (
+                  <button
+                    key={b}
+                    className={`ranking-filter-btn bu${rankingFilterBu === b ? ' active' : ''}`}
+                    onClick={() => setRankingFilterBu(prev => prev === b ? '' : b)}
+                  >{b}</button>
+                ))}
+              </>
+            )}
           </div>
         )}
 

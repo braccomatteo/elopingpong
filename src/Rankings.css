@@ -322,10 +322,51 @@ tr.inactive-player .score {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   padding-left: 160px;
   padding-right: 160px;
 }
+
+.ranking-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.ranking-filter-btn {
+  background: var(--input-bg);
+  border: none;
+  color: var(--text-dim);
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ranking-filter-btn:hover:not(.active) {
+  color: var(--text-main);
+}
+
+.ranking-filter-btn.active {
+  background: #FF6600;
+  color: #fff;
+}
+
+.ranking-filter-btn.bu.active {
+  background: #8b5cf6;
+}
+
+.ranking-filter-sep {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  opacity: 0.4;
+  padding: 0 2px;
+}
+
 
 .actions-title {
   position: absolute;

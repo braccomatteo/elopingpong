@@ -4,6 +4,9 @@ Cronologia delle funzionalità aggiunte al progetto.
 
 ---
 
+## [2026-04-13] Filtri ranking per azienda e BU
+Nella classifica è ora possibile filtrare i giocatori per azienda e BU tramite pulsanti toggle sopra le tabelle. I filtri sono persistenti al cambio di tab e si resettano automaticamente quando si deseleziona l'azienda. File coinvolti: `src/App.jsx`, `src/Rankings.css`.
+
 ## [2026-04-10] Filtri storico partite
 Nello storico delle partite personale è ora possibile filtrare per nome avversario, azienda e BU. I filtri vengono inviati al backend che applica le condizioni SQL dinamicamente con paginazione corretta. File coinvolti: `lib/controllers/matchController.js`, `src/components/PlayerStats.jsx`, `src/components/PlayerStats.css`.
 
