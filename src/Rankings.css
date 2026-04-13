@@ -329,11 +329,17 @@ tr.inactive-player .score {
 
 .ranking-filter-bar {
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+  margin-top: -4px;
+}
+
+.ranking-filter-row {
+  display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
-  margin-top: -4px;
 }
 
 .ranking-filter-btn {
