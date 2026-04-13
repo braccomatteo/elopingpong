@@ -169,7 +169,7 @@ function App() {
   const rankingBUs = [...new Set(
     (rankingFilterCompany ? players.filter(p => p.company?.toUpperCase() === rankingFilterCompany.toUpperCase()) : players)
       .map(p => p.bu).filter(Boolean)
-  )].sort()
+  )].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }))
 
   const filterIcon = rankingCompanies.length > 1 && (
     <button
