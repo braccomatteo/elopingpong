@@ -385,6 +385,15 @@ tr.inactive-player .score {
   white-space: nowrap;
 }
 
+.ranking-filter-bar-line {
+  display: inline-block;
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
 
 .actions-title {
   position: absolute;

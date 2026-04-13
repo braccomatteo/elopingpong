@@ -186,7 +186,7 @@ function App() {
   const rankingFilterBar = showRankingFilter && rankingCompanies.length > 1 && (
     <div className="ranking-filter-bar">
       <div className="ranking-filter-row">
-        <span className="ranking-filter-label">Azienda</span>
+        <span className="ranking-filter-bar-line" style={{ background: '#FF6600' }} />
         {rankingCompanies.map(c => (
           <button
             key={c}
@@ -197,7 +197,7 @@ function App() {
       </div>
       {rankingFilterCompany && rankingBUs.length > 0 && (
         <div className="ranking-filter-row">
-          <span className="ranking-filter-label">BU</span>
+          <span className="ranking-filter-bar-line" style={{ background: '#8b5cf6' }} />
           {rankingBUs.map(b => (
             <button key={b} className={`ranking-filter-btn bu${rankingFilterBu === b ? ' active' : ''}`} onClick={() => setRankingFilterBu(prev => prev === b ? '' : b)}>{b}</button>
           ))}
