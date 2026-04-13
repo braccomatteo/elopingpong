@@ -14,22 +14,6 @@ const token = () => localStorage.getItem('token');
 const headers = () => ({ 'Authorization': `Bearer ${token()}` });
 const jsonHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token()}` });
 
-const computeTrend = (data) => {
-  const n = data.length;
-  if (n < 2) return [];
-  const sumX = data.reduce((s, d) => s + d.games, 0);
-  const sumY = data.reduce((s, d) => s + d.elo, 0);
-  const sumXY = data.reduce((s, d) => s + d.games * d.elo, 0);
-  const sumX2 = data.reduce((s, d) => s + d.games * d.games, 0);
-  const denom = n * sumX2 - sumX * sumX;
-  if (denom === 0) return [];
-  const m = (n * sumXY - sumX * sumY) / denom;
-  const b = (sumY - m * sumX) / n;
-  const minX = Math.min(...data.map(d => d.games));
-  const maxX = Math.max(...data.map(d => d.games));
-  return [{ games: minX, elo: Math.round(m * minX + b) }, { games: maxX, elo: Math.round(m * maxX + b) }];
-};
-
 const AdminDashboard = ({ players, onUpdate }) => {
   const [adminTab, setAdminTab] = useState('players');
 
@@ -891,10 +875,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <Scatter data={buData}>
                             {buData.map((d, i) => <Cell key={i} fill={d.color} />)}
                           </Scatter>
-                          {showBuTrend && (() => {
-                            const td = computeTrend(buData);
-                            return td.length === 2 ? <Scatter data={td} line={{ stroke: 'rgba(255,255,255,0.4)', strokeDasharray: '6 4', strokeWidth: 2 }} shape={() => null} fill="transparent" /> : null;
-                          })()}
+                          {showBuTrend && buData.map((d, i) => (
+                            <Scatter key={`t-${i}`} data={[{ games: 0, elo: 1000 }, { games: d.games, elo: d.elo }]} line={{ stroke: d.color, strokeDasharray: '6 4', strokeWidth: 1.5 }} shape={() => null} fill="transparent" legendType="none" />
+                          ))}
                         </ScatterChart>
                       </ResponsiveContainer>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
@@ -941,10 +924,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <Scatter data={playerData}>
                             {playerData.map((d, i) => <Cell key={i} fill={d.color} />)}
                           </Scatter>
-                          {showPlayerTrend && (() => {
-                            const td = computeTrend(playerData);
-                            return td.length === 2 ? <Scatter data={td} line={{ stroke: 'rgba(255,255,255,0.4)', strokeDasharray: '6 4', strokeWidth: 2 }} shape={() => null} fill="transparent" /> : null;
-                          })()}
+                          {showPlayerTrend && playerData.map((d, i) => (
+                            <Scatter key={`t-${i}`} data={[{ games: 0, elo: 1000 }, { games: d.games, elo: d.elo }]} line={{ stroke: d.color, strokeDasharray: '6 4', strokeWidth: 1.5 }} shape={() => null} fill="transparent" legendType="none" />
+                          ))}
                         </ScatterChart>
                       </ResponsiveContainer>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
