@@ -875,9 +875,21 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <Scatter data={buData}>
                             {buData.map((d, i) => <Cell key={i} fill={d.color} />)}
                           </Scatter>
-                          {showBuTrend && buData.map((d, i) => (
-                            <Scatter key={`t-${i}`} data={[{ games: 0, elo: 1000 }, { games: d.games, elo: d.elo }]} line={{ stroke: d.color, strokeDasharray: '6 4', strokeWidth: 1.5 }} shape={() => null} fill="transparent" legendType="none" />
-                          ))}
+                          {showBuTrend && chartData?.eloTrajectories && buData.map((bu) => {
+                            // group by BU: collect all events from all BU players sorted by global match idx
+                            const buPlayerNames = players.filter(p => p.bu === bu.name).map(p => p.name);
+                            const trajs = chartData.eloTrajectories.filter(t => buPlayerNames.includes(t.name));
+                            if (!trajs.length) return null;
+                            const startElos = {};
+                            buPlayerNames.forEach(n => { startElos[n] = 1000; });
+                            const events = [];
+                            trajs.forEach(t => t.data.forEach(d => events.push({ match: d.match, name: t.name, elo: d.elo })));
+                            events.sort((a, b) => a.match - b.match);
+                            const cur = { ...startElos };
+                            const lineData = [{ games: 0, elo: 1000 }];
+                            events.forEach((ev, idx) => { cur[ev.name] = ev.elo; lineData.push({ games: idx + 1, elo: Math.round(Object.values(cur).reduce((s, e) => s + e, 0) / buPlayerNames.length) }); });
+                            return <Scatter key={`bt-${bu.name}`} data={lineData} line={{ stroke: bu.color, strokeDasharray: '5 3', strokeWidth: 1.5 }} shape={() => null} fill="transparent" legendType="none" />;
+                          })}
                         </ScatterChart>
                       </ResponsiveContainer>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
@@ -924,9 +936,12 @@ const AdminDashboard = ({ players, onUpdate }) => {
                           <Scatter data={playerData}>
                             {playerData.map((d, i) => <Cell key={i} fill={d.color} />)}
                           </Scatter>
-                          {showPlayerTrend && playerData.map((d, i) => (
-                            <Scatter key={`t-${i}`} data={[{ games: 0, elo: 1000 }, { games: d.games, elo: d.elo }]} line={{ stroke: d.color, strokeDasharray: '6 4', strokeWidth: 1.5 }} shape={() => null} fill="transparent" legendType="none" />
-                          ))}
+                          {showPlayerTrend && chartData?.eloTrajectories && playerData.map((p) => {
+                            const traj = chartData.eloTrajectories.find(t => t.name === p.name);
+                            if (!traj) return null;
+                            const lineData = [{ games: 0, elo: 1000 }, ...traj.data.map((d, idx) => ({ games: idx + 1, elo: d.elo }))];
+                            return <Scatter key={`pt-${p.name}`} data={lineData} line={{ stroke: p.color, strokeDasharray: '5 3', strokeWidth: 1.5 }} shape={() => null} fill="transparent" legendType="none" />;
+                          })}
                         </ScatterChart>
                       </ResponsiveContainer>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
