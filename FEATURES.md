@@ -4,6 +4,9 @@ Cronologia delle funzionalità aggiunte al progetto.
 
 ---
 
+## [2026-04-13] Scatter chart partite/ELO nella tab Stats (admin)
+Aggiunti due scatter chart nella tab Stats dell'admin: uno per BU (X = partite totali della BU, Y = ELO medio) con legenda e uno per singolo giocatore (X = partite, Y = ELO). I dati sono calcolati dal prop `players` senza fetch aggiuntive. File coinvolti: `src/components/AdminDashboard.jsx`.
+
 ## [2026-04-13] Filtri ranking per azienda e BU
 Nella classifica è ora possibile filtrare i giocatori per azienda e BU tramite pulsanti toggle sopra le tabelle. I filtri sono persistenti al cambio di tab e si resettano automaticamente quando si deseleziona l'azienda. File coinvolti: `src/App.jsx`, `src/Rankings.css`.
 

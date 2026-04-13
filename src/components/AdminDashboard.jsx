@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  AreaChart, Area, CartesianGrid, LineChart, Line
+  AreaChart, Area, CartesianGrid, LineChart, Line,
+  ScatterChart, Scatter, ZAxis, Cell
 } from 'recharts';
 import Pagination from './Pagination';
 import CustomSelect from './CustomSelect';
@@ -829,6 +830,83 @@ const AdminDashboard = ({ players, onUpdate }) => {
                             <Line key={name} type="monotone" dataKey={name} stroke={TRAJ_COLORS[i % TRAJ_COLORS.length]} strokeWidth={1.5} dot={false} connectNulls />
                           ))}
                         </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Scatter: BU - partite vs ELO medio */}
+              {(() => {
+                const buMap = {};
+                players.forEach(p => {
+                  if (!p.bu) return;
+                  const games = (p.games_1v1_21||0)+(p.games_1v1_11||0)+(p.games_2v2_21||0)+(p.games_2v2_11||0);
+                  if (!buMap[p.bu]) buMap[p.bu] = { games: 0, eloSum: 0, count: 0 };
+                  buMap[p.bu].games += games;
+                  buMap[p.bu].eloSum += p.score_overall || 1000;
+                  buMap[p.bu].count++;
+                });
+                const buData = Object.entries(buMap).map(([bu, v]) => ({
+                  name: bu, games: v.games, elo: Math.round(v.eloSum / v.count),
+                })).filter(d => d.games > 0);
+                if (buData.length < 2) return null;
+                return (
+                  <div className="gsp-section" style={{ marginTop: '1rem' }}>
+                    <h3>Partite totali vs ELO medio per BU</h3>
+                    <div className="gsp-chart-container">
+                      <ResponsiveContainer width="100%" height={280}>
+                        <ScatterChart margin={{ bottom: 20, left: 10 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                          <XAxis type="number" dataKey="games" name="Partite" stroke="var(--text-dim)" fontSize={11} label={{ value: 'Partite giocate', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <YAxis type="number" dataKey="elo" name="ELO medio" stroke="var(--text-dim)" fontSize={11} domain={['dataMin - 30', 'dataMax + 30']} label={{ value: 'ELO medio', angle: -90, position: 'insideLeft', style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <ZAxis range={[60, 60]} />
+                          <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
+                            if (!payload?.length) return null;
+                            const d = payload[0].payload;
+                            return <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 6, padding: '8px 12px', fontSize: '0.8rem' }}><strong>{d.name}</strong><br/>Partite: {d.games}<br/>ELO medio: {d.elo}</div>;
+                          }} />
+                          <Scatter data={buData} fill="#8b5cf6" />
+                        </ScatterChart>
+                      </ResponsiveContainer>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+                        {[...buData].sort((a,b) => a.name.localeCompare(b.name, undefined, { numeric: true })).map(d => (
+                          <span key={d.name} style={{ fontSize: '0.72rem', color: 'var(--text-dim)', background: 'var(--input-bg)', padding: '2px 8px', borderRadius: 3 }}>
+                            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6', marginRight: 5, verticalAlign: 'middle' }} />
+                            {d.name} — {d.games} pt, ELO {d.elo}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Scatter: Players - partite vs ELO */}
+              {(() => {
+                const playerData = players.map(p => ({
+                  name: p.name,
+                  games: (p.games_1v1_21||0)+(p.games_1v1_11||0)+(p.games_2v2_21||0)+(p.games_2v2_11||0),
+                  elo: Math.round(p.score_overall || 1000),
+                })).filter(d => d.games > 0);
+                if (playerData.length < 2) return null;
+                return (
+                  <div className="gsp-section" style={{ marginTop: '1rem' }}>
+                    <h3>Partite giocate vs ELO per giocatore</h3>
+                    <div className="gsp-chart-container">
+                      <ResponsiveContainer width="100%" height={300}>
+                        <ScatterChart margin={{ bottom: 20, left: 10 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                          <XAxis type="number" dataKey="games" name="Partite" stroke="var(--text-dim)" fontSize={11} label={{ value: 'Partite giocate', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <YAxis type="number" dataKey="elo" name="ELO" stroke="var(--text-dim)" fontSize={11} domain={['dataMin - 30', 'dataMax + 30']} label={{ value: 'ELO', angle: -90, position: 'insideLeft', style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <ZAxis range={[40, 40]} />
+                          <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
+                            if (!payload?.length) return null;
+                            const d = payload[0].payload;
+                            return <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 6, padding: '8px 12px', fontSize: '0.8rem' }}><strong>{d.name}</strong><br/>Partite: {d.games}<br/>ELO: {d.elo}</div>;
+                          }} />
+                          <Scatter data={playerData} fill="#FF6600" />
+                        </ScatterChart>
                       </ResponsiveContainer>
                     </div>
                   </div>
