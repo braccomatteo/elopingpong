@@ -404,7 +404,15 @@ const MatchModal = ({ isOpen, onClose, players, onMatchAdded }) => {
                   min="1"
                   max="20"
                   value={matchCount}
-                  onChange={(e) => handleMatchCountChange(parseInt(e.target.value))}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    if (raw === '') { setMatchCount(''); return; }
+                    handleMatchCountChange(parseInt(raw));
+                  }}
+                  onBlur={(e) => {
+                    const n = parseInt(e.target.value);
+                    handleMatchCountChange(isNaN(n) ? 1 : n);
+                  }}
                 />
               </div>
 

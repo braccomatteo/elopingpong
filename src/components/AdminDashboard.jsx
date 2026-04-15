@@ -854,6 +854,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
                   name: bu, games: v.games, elo: Math.round(v.eloSum / v.count), color: SC_COLORS[i % SC_COLORS.length],
                 })).filter(d => d.games > 0).sort((a,b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
                 if (buData.length < 2) return null;
+                const buXMax = Math.max(...buData.map(d => d.games));
+                const buYMin = Math.min(...buData.map(d => d.elo));
+                const buYMax = Math.max(...buData.map(d => d.elo));
                 return (
                   <div className="gsp-section" style={{ marginTop: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -864,8 +867,8 @@ const AdminDashboard = ({ players, onUpdate }) => {
                       <ResponsiveContainer width="100%" height={280}>
                         <ScatterChart margin={{ bottom: 20, left: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                          <XAxis type="number" dataKey="games" name="Partite" stroke="var(--text-dim)" fontSize={11} label={{ value: 'Partite giocate', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
-                          <YAxis type="number" dataKey="elo" name="ELO medio" stroke="var(--text-dim)" fontSize={11} domain={['dataMin - 30', 'dataMax + 30']} label={{ value: 'ELO medio', angle: -90, position: 'insideLeft', style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <XAxis type="number" dataKey="games" name="Partite" stroke="var(--text-dim)" fontSize={11} domain={[0, buXMax * 1.05]} label={{ value: 'Partite giocate', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <YAxis type="number" dataKey="elo" name="ELO medio" stroke="var(--text-dim)" fontSize={11} domain={[buYMin - 30, buYMax + 30]} label={{ value: 'ELO medio', angle: -90, position: 'insideLeft', style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
                           <ZAxis range={[60, 60]} />
                           <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
                             if (!payload?.length) return null;
@@ -915,6 +918,9 @@ const AdminDashboard = ({ players, onUpdate }) => {
                   color: SC_COLORS[i % SC_COLORS.length],
                 })).filter(d => d.games > 0);
                 if (playerData.length < 2) return null;
+                const pXMax = Math.max(...playerData.map(d => d.games));
+                const pYMin = Math.min(...playerData.map(d => d.elo));
+                const pYMax = Math.max(...playerData.map(d => d.elo));
                 return (
                   <div className="gsp-section" style={{ marginTop: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -925,8 +931,8 @@ const AdminDashboard = ({ players, onUpdate }) => {
                       <ResponsiveContainer width="100%" height={300}>
                         <ScatterChart margin={{ bottom: 20, left: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                          <XAxis type="number" dataKey="games" name="Partite" stroke="var(--text-dim)" fontSize={11} label={{ value: 'Partite giocate', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
-                          <YAxis type="number" dataKey="elo" name="ELO" stroke="var(--text-dim)" fontSize={11} domain={['dataMin - 30', 'dataMax + 30']} label={{ value: 'ELO', angle: -90, position: 'insideLeft', style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <XAxis type="number" dataKey="games" name="Partite" stroke="var(--text-dim)" fontSize={11} domain={[0, pXMax * 1.05]} label={{ value: 'Partite giocate', position: 'insideBottom', offset: -5, style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
+                          <YAxis type="number" dataKey="elo" name="ELO" stroke="var(--text-dim)" fontSize={11} domain={[pYMin - 30, pYMax + 30]} label={{ value: 'ELO', angle: -90, position: 'insideLeft', style: { fill: 'var(--text-dim)', fontSize: 11 } }} />
                           <ZAxis range={[40, 40]} />
                           <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
                             if (!payload?.length) return null;
